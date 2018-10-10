@@ -1,0 +1,46 @@
+## Packages
+
+We will be using the forecast and tseries packages, with the MARSS package to implement ARMAX models.  However we will also use a variety of other packages.  So that you can keep track of what package a function come from, I will use the `::` notation for functions that are not from the following standard packages:
+
+* base R
+* stats
+* ggplot2
+
+Thus to call function fun1 from package pack1, I will use `pack1::fun1()`.  This will make the code a bit more verbose but you will be able to keep track to what function comes from what package.
+
+Make sure you have the following packages installed:
+
+* ggplot2
+* gridExtra
+* grid
+* forecast
+* tseries
+* urca
+
+#### tidyverse and piping {-}
+
+Also I will minimize the use of tidyverse and piping.  Although the latter can create much more concise code, for beginner R users and programmers, I think it will interfere with learning.  I may add the piped versions of the code later.  I am not going to be doing much 'data-wrangling'.  I will assume that your data are in the tidyverse format, though I will not be using tibbles explicitly.  Our data are quite simple, so this is not hard.  See the chapter on inputting your data. 
+
+#### plotting packages {-}
+
+I will use a combination of base plotting and ggplot2 plotting.  Doing a tutorial on basic plotting with ggplot2 may be helpful for the material.
+
+## References
+
+We will be using classic methods for catch forecasting discussed in the following reference papers:
+
+* We are replicating the work in [Stergio and Christou 1996](https://fish-forecast.github.io/Catch-Forecasting-INCOIS/references/Stergiou and Christou 1996 modelling and forecasting annual landings. comparison of regression and ts.pdf).
+* These methods are also discussed in [Lawer 2016](https://fish-forecast.github.io/Catch-Forecasting-INCOIS/references/Lawer 2016 empirical modeling of annual fishery landings.pdf)
+* And in [Georgakarakos et al 2006](https://fish-forecast.github.io/Catch-Forecasting-INCOIS/references/Georgakarakos et al 2006 time series analysis and forecasting techniques applied landings.pdf)
+* The chapter on modeling seasonal catch data will use models discussed in [Stergiou et al 1997](https://fish-forecast.github.io/Catch-Forecasting-INCOIS/references/Stergiou et al 1997 modelling and forecasting monthly fisheries landings.pdf)
+
+You can download all the reference papers [here](https://github.com/Fish-Forecast/Catch-Forecasting-INCOIS/tree/master/references).  
+
+
+
+```{r include=FALSE}
+# automatically create a bib database for R packages
+knitr::write_bib(c(
+  .packages(), 'bookdown', 'forecast', 'tseries', "MARSS"
+), 'packages.bib')
+```

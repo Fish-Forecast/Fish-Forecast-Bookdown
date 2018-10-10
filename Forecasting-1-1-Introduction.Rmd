@@ -1,0 +1,174 @@
+# Introduction
+
+There are many approaches for forecasting from time series alone--meaning without any covariates or exogenous variables. Examples are the approaches used in the following papers.
+
+**Stergiou and Christou 1996**
+
+- Time-varying regression
+- Box-Jenkins models, aka ARIMA models
+- Multivariate time-series approaches
+    - Harmonic regression
+    - Dynamic regression
+    - Vector autoregression (MAR)
+- Exponential smoothing (2 variants)
+- Exponential surplus yield model (FOX)
+
+**Georgakarakos et al. 2006**
+
+- Box-Jenkins models, aka ARIMA models
+- Artificial neural networks (ANNs)
+- Bayesian dynamic models
+
+**Lawer 2016**
+
+- Box-Jenkins models, aka ARIMA models
+- Artificial neural networks (ANNs)
+- Exponential Smoothing (6 variants)
+
+This course will focus on three of these methods: time-varying regression, ARIMA models and Exponential smoothing models.  These will be shown with and without seasonality.  Methods which use covariates, or exogenous variables, will also be addressed.
+
+## Stergiou and Christou 1996
+
+These three methods will be demonstrated by replicating the work in Stergiou and Christou (1996) *Modelling and forecasting annual fisheries catches: comparison of regression, univariate and multivariate time series methods*. Fisheries Research 25: 105-136.
+
+![Stergiou and Christou 1996](./figs/StergiouChristou1996.png)
+
+
+
+---
+
+### Hellenic landings data
+
+We will use the annual landings data from Hellenic (Greek) waters that were used in Stergiou and Christou (1996). 
+
+Stergiou and Christou analyzed 16 species.  We will look two of the species: Anchovy and Sardine.  
+
+Stergiou and Christou used the data from 1964-1989.  We have the data up to 2007, but will focus mainly on 1964-1989 (the first half of the time series) to replicate Stergiou and Christou's analyses.
+
+
+![Area where data were collected](./figs/Greece.png)
+
+
+![Statistical Reports](./figs/StatisticalReportCover.png)
+
+
+![Statistical Report Table IV](./figs/StatisticalReportTableIV.png)
+
+## The landings data, landings.RData
+
+The landings data object contains the following:
+
+* **landings** The 1964 to 2007 total landings data multiple species.  It is stored as a data frame, not ts object, with a year column, a species column and columns for landings in metric tons and log metric tons.
+* **anchovy** and **sardine** A data frame for the landings (in log metric tons) of these species.  These are the example catch time series used in the chapters.  The data are 1964-2007, however Stergiou and Christou used 1964-1989 and the time series are subsetted to this time period for the examples.  These data frames have only year and log.metric.tons columns.
+* **anchovyts** and **sardinets** A ts object for the yearly landings (in log metric tons) of these species.
+* **anchovy87** and **sardine87** A subsetted data frame with Year <= 1987.  This is the training data used in Stergiou and Christou.
+* **anchovy87ts** and **sardine87ts** A ts object for the yearly landings (in log metric tons) of these species for 1964-1987.
+* **covsmean.mon** and **covsmean.year** The covariates air temperature, pressure, sea surface temperature, vertical wind, and wind speed cubed average monthly and yearly over three 1 degree boxes in the study area.  See the appendix in the chapter on covariates.
+
+Load the data as follows and use only the 1964-1989 landings.  We use `subset()` to subset the landings data frame.  Not `window()` as that is a function for subsetting ts objects.
+
+```{r f11-load_data, fig.align = "center", fig.height = 4, fig.width = 8}
+load("landings.RData")
+landings89 = subset(landings, Year <= 1989)
+ggplot(landings89, aes(x=Year, y=log.metric.tons)) +
+  geom_line() + facet_wrap(~Species)
+```
+
+## ts objects
+
+A ts object in R is a time series, univariate or multivariate, that has information on the major time step value (e.g. year) and the period of the minor time step, if any.  For example, if your data are monthly then the major time step is year, the minor time step is month and the period is 12 (12 months a year).  If you have daily data collected hourly then you major time step is day, minor time step is hour and period is 24 (24 hours per day).  If you have yearly data collected yearly, your major time step is year, your minor time step is also year, and the period is 1 (1 year per year).  You cannot have multiple minor time steps, for example monthly data collected hourly with daily and hourly periods specified. 
+
+The data in a ts object cannot have any missing time steps.  For example, if your data were in a data frame with a column for year, you could have a missing year, say no row for year 1988, and the data sense would still 'make sense'.  The data in a ts object cannot have any missing 'rows'.  If there is no data for a particular year or year/month (if your data are monthly), then that data point must be entered as a NA.  You do not need a time step (e.g. year/month) column(s) for a ts object.  You only need the starting major time step and the starting minor time step (if not 1) and the period.  All the time values from each data point can be computed from those 2 pieces of information if there are no gaps in your time series.  Missing data are fine; they just have to be entered with a NA.
+
+All the non-seasonal examples shown will work on a plain vector of numbers, and it it is not necessary to convert a non-seasonal time series into a ts object.  That said, if you do not convert to a ts object, you will miss out on all the plotting and subsetting functions that are written for ts objects.  Also when you do multivariate regression with covariates, having your data and covariates stored as a ts object will make regressing against lagged covariates (covariate values in the past) easier.
+
+---
+
+### `ts()` function
+
+To convert a vector of numbers to a ts object, we use the `ts()` function.
+
+```
+ts(data = NA, start = 1, end = numeric(), frequency = 1)
+```
+
+`start` is a two number vector with the first major time step and the first minor time step.  If you only pass in one number, then it will use 1 (first minor time step) as the 2nd number in `start`.  `end` is specified in exactly the same way and you only need to specified `start` or `end`, not both.   `frequency` is the number of minor time steps per major time step.  If you do not pass this in, it will assume that `frequency=1`, i.e. no periods or season in your data.  
+
+If you specify `frequency=4`, it will assume that the period is quarterly.  If you specify that `frequency=12`, it will assume that period is monthly.  This just affects the labeling of the minor time step columns and will print your data with 4 or 12 columns.  For other frequencies, the data will not be printed with columns for the minor time steps, but the information is there and plotting will use the major steps.
+
+#### Examples {-}
+
+Quarterly data
+
+```{r ts.example1}
+aa <- ts(1:24, start=c(1960,1), frequency=4)
+aa
+plot(aa, type="p")
+```
+
+Monthly data
+
+```{r ts.example2}
+aa <- ts(1:24, start=c(1960,1), frequency=12)
+aa
+plot(aa, type="p")
+```
+
+Biennial data
+
+```{r ts.example3}
+aa <- ts(1:24, start=c(1960,1), frequency=2)
+aa
+plot(aa, type="p")
+```
+
+---
+
+### ggplot and ts objects
+
+In some ways, plotting ts object is easy.  Just use `plot()` or `autoplot()` and it takes care of the time axis.  In other ways, it can be frustrating if you want to alter the defaults.
+
+#### `autoplot()` {-}
+
+`autoplot()` is a ggplot of the ts object.
+
+```{r autoplot.ts}
+aa <- ts(1:24, start=c(1960,1), frequency=12)
+autoplot(aa) 
+```
+and you have access to the usual gglot functions.
+
+```{r autoplot.ts2}
+autoplot(aa) + 
+  geom_point() +
+  ylab("landings") + xlab("") +
+  ggtitle("Anchovy landings")
+```
+Adding minor tick marks in ggplot is tedious (google if you want that) but adding vertical lines at your minor ticks is easy.
+
+```{r autoplot.ts3}
+aa <- ts(1:24, start=c(1960,1), frequency=12)
+vline_breaks <-  seq(1960, 1962, by=1/12)
+autoplot(aa) + 
+  geom_vline(xintercept = vline_breaks, color ="blue") +
+  geom_point() 
+```
+
+---
+
+### Plotting using a data frame
+
+Often it is easier to work with a data frame (or a tibble) with columns for your major and minor time steps. That way you are not locked into whatever choices the plotting and printing functions use for ts objects.  Many plotting functions work nicely with this type of data frame and you have full control over plotting and summarizing your data.  
+
+To plot the x-axis, we need to add a date column in date format.  Knowing the right format to use for `as.Date()` will take some sleuthing on the internet.  The default is `1960-12-31` so if you get stuff you can always write your date in that format and use the default.   Here I use `1960Jan01` and specify the format for that.  I have used the `date_format()` function in the scales package to help format the dates on the x-axis.
+
+```{r plot.df1}
+aa <- data.frame(
+  year=rep(1960:1961,each=12), 
+  month = rep(month.abb,2),
+  val=1:24)
+aa$date <- as.Date(paste0(aa$year,aa$month,"01"),"%Y%b%d")
+ggplot(aa, aes(x=date, y=val)) + geom_point() +
+  scale_x_date(labels=scales::date_format("%b-%Y")) +
+  ylab("landings") + xlab("")
+```

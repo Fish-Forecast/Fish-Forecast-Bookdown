@@ -1,0 +1,228 @@
+## Measures of forecast accuracy
+
+```{r f52-load_packages, echo=FALSE, message=FALSE, warning=FALSE}
+library(ggplot2)
+```
+
+```{r f36-load_data, message=FALSE, warning=FALSE, echo=FALSE}
+load("landings.RData")
+```
+
+
+To measure the forecast fit, we fit a model to training data and test a forecast against data in a test set.  We 'held out' the test data and did not use it at all in our fitting.
+
+Stergiou and Christou used 1964-1987 as their training data and tested their forecasts against 1988 and 1989.  This is a training set/test set approach to forecast performance evaluation.
+
+```{r echo=FALSE}
+spp <- "Anchovy"
+training = subset(landings, Year <= 1987)
+test = subset(landings, Year >= 1988 & Year <= 1989)
+
+traindat <- subset(training, Species==spp)$log.metric.tons
+testdat <- subset(test, Species==spp)$log.metric.tons
+```
+
+#### Forecast versus actual
+
+We will fit to the training data and make a forecast for the test data.  We can then compare the forecast to the actual values in the test data.
+
+```{r}
+fit1 <- forecast::auto.arima(traindat)
+fr <- forecast::forecast(fit1, h=2)
+fr
+```
+
+Plot the forecast and compare to the actual values in 1988 and 1989.
+
+```{r}
+plot(fr)
+points(25:26, testdat, pch=2, col="red")
+legend("topleft", c("forecast","actual"), pch=c(20,2), col=c("blue","red"))
+```
+
+### Metrics
+
+How to we quantify the difference between the forecast and the actual values in the test data set?
+
+```{r}
+fr.err <- testdat - fr$mean
+fr.err
+```
+
+The `accuracy()` function in forecast provides many different metrics such as mean error, root mean square error, mean absolute error, mean percentage error, mean absolute percentage error.
+
+#### ME Mean err {-}
+
+```{r}
+me <- mean(fr.err)
+me
+```
+
+#### RMSE Root mean squared error {-}
+
+```{r}
+rmse <- sqrt(mean(fr.err^2))
+rmse
+```
+
+#### MAE Mean absolute error {-}
+
+```{r}
+mae <- mean(abs(fr.err))
+mae
+```
+
+
+#### MPE Mean percentage error {-}
+
+```{r}
+fr.pe <- 100*fr.err/testdat
+mpe <- mean(fr.pe)
+mpe
+```
+
+#### MAPE Mean absolute percentage error {-}
+
+```{r}
+mape <- mean(abs(fr.pe))
+mape
+```
+
+```{r}
+accuracy(fr, testdat)[,1:5]
+```
+
+```{r}
+c(me, rmse, mae, mpe, mape)
+```
+
+---
+
+### Test multiple models
+
+Now that you have some metrics for forecast accuracy, you can compute these for all the models in your candidate set.
+
+```{r}
+# The model picked by auto.arima
+fit1 <- forecast::Arima(traindat, order=c(0,1,1))
+fr1 <- forecast::forecast(fit1, h=2)
+test1 <- forecast::accuracy(fr1, testdat)[2,1:5]
+
+# AR-1
+fit2 <- forecast::Arima(traindat, order=c(1,1,0))
+fr2 <- forecast::forecast(fit2, h=2)
+test2 <- forecast::accuracy(fr2, testdat)[2,1:5]
+
+# Naive model with drift
+fit3 <- forecast::rwf(traindat, drift=TRUE)
+fr3 <- forecast::forecast(fit3, h=2)
+test3 <- forecast::accuracy(fr3, testdat)[2,1:5]
+```
+
+#### Show a summary {-}
+
+```{r results='asis', echo=FALSE}
+sum.tests <- rbind(test1, test2, test3)
+row.names(sum.tests) <- c("(0,1,1)","(1,1,0)","Naive")
+sum.tests <- format(sum.tests, digits=3)
+knitr::kable(sum.tests, format="html")
+```
+
+---
+
+### Cross-Validation
+
+An alternate approach to testing a model's forecast accuracy is to use cross-validation.  This approach uses windows or shorter segments of the whole time series to make a series of single forecasts.  We can use either a sliding or a fixed window.  For example for the Anchovy time series, we could fit the model 1964-1973 and forecast 1974, then 1964-1974 and forecast 1975, then 1964-1975 and forecast 1976, and continue up to 1964-1988 and forecast 1989.  This would create 16 forecasts to test.  The window is 'sliding' because the length of the time series used for fitting the model, keeps increasing by 1.
+
+```{r cv.sliding, echo=FALSE}
+p <- list()
+for(i in 1:9){
+  p[[i]]<-ggplot(subset(landings, Species=="Anchovy"&Year<1974+i), aes(x=Year, y=log.metric.tons))+geom_point()+ylab("landings")+xlab("")+xlim(1964,1990)+ylim(8,12)+
+    geom_point(data=subset(landings, Species=="Anchovy"&Year==1974+i),aes(x=Year,y=log.metric.tons),color="red") +
+    ggtitle(paste0("forecast ",i))
+}
+gridExtra::grid.arrange(
+  p[[1]],p[[2]],p[[3]],p[[4]],p[[5]],p[[6]],p[[7]],p[[8]],p[[9]],nrow=3,
+  top = grid::textGrob("Cross-validation: sliding window", gp=grid::gpar(fontsize=20,font=3))
+)
+```
+
+
+Another approach uses a fixed window.  For example, a 10-year window.
+
+```{r cv.fixed, echo=FALSE}
+p <- list()
+for(i in 1:9){
+  p[[i]]<-ggplot(subset(landings, Species=="Anchovy"&Year>=1964+i-1&Year<1974+i), aes(x=Year, y=log.metric.tons))+geom_point()+ylab("landings")+xlab("")+xlim(1964,1990)+ylim(8,12)+
+    geom_point(data=subset(landings, Species=="Anchovy"&Year==1974+i),aes(x=Year,y=log.metric.tons),color="red") +
+    ggtitle(paste0("forecast ",i))
+}
+gridExtra::grid.arrange(
+  p[[1]],p[[2]],p[[3]],p[[4]],p[[5]],p[[6]],p[[7]],p[[8]],p[[9]],nrow=3,
+  top = grid::textGrob("Cross-validation: fixed window", gp=grid::gpar(fontsize=20,font=3))
+)
+```
+
+#### Time-series cross-validation with `tsCV()`
+
+```{r}
+far2 <- function(x, h, order){
+  forecast::forecast(Arima(x, order=order), h=h)
+  }
+e <- forecast::tsCV(traindat, far2, h=1, order=c(0,1,1))
+tscv1 <- c(ME=mean(e, na.rm=TRUE), RMSE=sqrt(mean(e^2, na.rm=TRUE)), MAE=mean(abs(e), na.rm=TRUE))
+tscv1
+```
+
+Compare to RMSE from just the 2 test data points.
+```{r}
+test1[c("ME","RMSE","MAE")]
+```
+
+#### Cross-validation farther in future {-}
+
+```{r cv.sliding.4plot, echo=FALSE}
+p <- list()
+for(i in 1:9){
+  p[[i]]<-ggplot(subset(landings, Species=="Anchovy"&Year<1974+i), aes(x=Year, y=log.metric.tons))+geom_point()+ylab("landings")+xlab("")+xlim(1964,1990)+ylim(8,12)+
+    geom_point(data=subset(landings, Species=="Anchovy"&Year==1974+i+3),aes(x=Year,y=log.metric.tons),color="red") +
+    ggtitle(paste0("forecast ",i))
+}
+gridExtra::grid.arrange(
+  p[[1]],p[[2]],p[[3]],p[[4]],p[[5]],p[[6]],p[[7]],p[[8]],p[[9]],nrow=3,
+  top = grid::textGrob("Cross-validation: 4 step ahead forecast", gp=grid::gpar(fontsize=20,font=3))
+)
+```
+
+
+Compare accuracy of forecasts 1 year out versus 4 years out.  If `h` is greater than 1, then the errors are returned as a matrix with each `h` in a column.  Column 4 is the forecast, 4 years out.
+
+```{r cv.sliding.4}
+e <- forecast::tsCV(traindat, far2, h=4, order=c(0,1,1))[,4]
+#RMSE
+tscv4 <- c(ME=mean(e, na.rm=TRUE), RMSE=sqrt(mean(e^2, na.rm=TRUE)), MAE=mean(abs(e), na.rm=TRUE))
+rbind(tscv1, tscv4)
+```
+
+#### Cross-validation with a fixed window {-}
+
+Compare accuracy of forecasts with a fixed 10-year window and 1-year out forecasts.
+
+```{r fixed.cv.1}
+e <- forecast::tsCV(traindat, far2, h=1, order=c(0,1,1), window=10)
+#RMSE
+tscvf1 <- c(ME=mean(e, na.rm=TRUE), RMSE=sqrt(mean(e^2, na.rm=TRUE)), MAE=mean(abs(e), na.rm=TRUE))
+tscvf1
+```
+
+#### All the forecasts tests together {-}
+
+```{r results='asis'}
+comp.tab <- rbind(test1=test1[c("ME","RMSE","MAE")],
+      slide1=tscv1,
+      slide4=tscv4,
+      fixed1=tscvf1)
+knitr::kable(comp.tab, format="html")
+```
+
+

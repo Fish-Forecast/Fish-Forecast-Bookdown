@@ -11,9 +11,21 @@ In the table, sardine is denoted ' Pilchard'
 
 I saved all the ones I took data from.
 
+To create landings do the following and then add on the covariates (code in about covariates)
+
 library(reshape2)
 test <- read.csv("Data/Landings_in_Hellenic_Waters.csv", stringsAsFactors = FALSE)
 test <- melt(test, id="Year", value.name="metric.tons", variable.name="Species")
 test$log.metric.tons <- log(test$metric.tons)
 landings <- test
-save(landings, file="test.RData")
+anchovy <- subset(landings, Species=="Anchovy")
+sardine <- subset(landings, Species=="Sardine")
+anchovyts <- ts(anchovy, start=1964)
+sardinets <- ts(anchovy, start=1964)
+anchovy87 <- subset(anchovy, Year<=1987)
+sardine87 <- subset(sardine, Year<=1987)
+anchovy87ts <- ts(anchovy87$log.metric.tons, start=1964)
+sardine87ts <- ts(anchovy87$log.metric.tons, start=1964)
+
+# run the covariate code or load in a landings.RData with on it
+save(landings, anchovy, anchovyts, anchovy87, anchovy87ts, sardine, sardinets, sardine87, sardine87ts, covs, covsmean.mon, covsmean.year, file="landings.RData")

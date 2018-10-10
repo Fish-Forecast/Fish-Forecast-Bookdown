@@ -1,0 +1,90 @@
+# Appendix: Inputting data {-}
+
+This chapter will illustrate how to input data that is stored in csv files in various common formats.
+
+### one response variable {-}
+
+If your data look like this:
+
+```
+  Year Species metric.tons
+ 2018,   Fish1,           1
+ 2019,   Fish1,           2
+ 2018,   Fish2,           3
+ 2019,   Fish2,           4
+ 2018,   Fish3,           6
+ 2019,   Fish4,          NA
+```
+with this code:
+
+```
+test <- read.csv("Data/test.csv", stringsAsFactors = FALSE)
+save(test, file="test.RData")
+```
+
+---
+
+### Many response variables {-}
+
+Read in a file where the data are in columns.  If your data look like this with each species (or site) across the columns:
+
+```
+Year,Anchovy,Sardine,Chub mackerel,Horse mackerel,Mackerel,Jack Mackerel
+1964,5449.2,12984.4,1720.7,4022.4,NA,NA
+1965,4263.5,10611.1,1278.5,4158.3,NA,NA
+1966,5146.4,11437.8,802.6,3012.1,NA,NA
+```
+
+Use this code:
+
+```
+library(reshape2)
+test <- read.csv("Data/test.csv", stringsAsFactors = FALSE)
+melt(test, id="Year", value.name="metric.tons", variable.name="Species")
+save(test, file="test.RData")
+```
+
+---
+
+### Many response variables, two time variables {-}
+
+If your data also have, say, a month (or qtr) column, use this code:
+
+```
+Year,Month,Anchovy,Sardine,Chub mackerel,Horse mackerel,Mackerel,Jack Mackerel
+1964,1,5449.2,12984.4,1720.7,4022.4,NA,NA
+1964,2,4263.5,10611.1,1278.5,4158.3,NA,NA
+1964,3,5146.4,11437.8,802.6,3012.1,NA,NA
+```
+Use this code:
+
+```
+library(reshape2)
+test <- read.csv("Data/test.csv", stringsAsFactors = FALSE)
+melt(test, id=c("Year","Month"), value.name="metric.tons", variable.name="Species")
+save(test, file="test.RData")
+```
+
+---
+
+### One response variable, multiple explanatory variables {-}
+
+```
+Year, Anchovy, SST,  Mackerel
+1964, 5449.2,  24.4, 1720.7
+1965, 4263.5,  30.1, 1278.5
+1966, 5146.4,  23.8,  802.6
+```
+
+Use this code:
+
+```
+test <- read.csv("Data/test.csv", stringsAsFactors = FALSE)
+save(test, file="test.RData")
+```
+
+Use this `lm()` model (or gam() etc):
+
+```
+fit <- lm(Anchovy ~ SST + Mackerel, data=test)
+```

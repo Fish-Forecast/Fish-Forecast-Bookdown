@@ -1,0 +1,167 @@
+## Forecasting
+
+
+```{r f35-load_data, echo=FALSE, message=FALSE, warning=FALSE}
+library(ggplot2)
+library(gridExtra)
+library(reshape2)
+library(tseries)
+library(forecast)
+```
+
+```{r f35-load_data2, message=FALSE, warning=FALSE, echo=FALSE}
+load("landings.RData")
+landings$log.metric.tons = log(landings$metric.tons)
+landings = subset(landings, Year <= 1987)
+anchovy = subset(landings, Species=="Anchovy")$log.metric.tons
+sardine = subset(landings, Species=="Sardine")$log.metric.tons
+```
+
+
+The basic idea of forecasting with an ARIMA model is the same as forecasting with a time-varying regressiion model.
+
+We estimate a model and the parameters for that model.  For example, let's say we want to forecast with ARIMA(2,1,0) model:
+$$y_t = \beta_1 y_{t-1} + \beta_2 y_{t-2} + e_t$$
+where $y_t$ is the first difference of our anchovy data.
+
+
+Let's estimate the $\beta$'s:
+
+```{r}
+fit <- Arima(anchovy, order=c(2,1,0))
+coef(fit)
+```
+
+So we will forecast with this model:
+
+$$y_t = -0.3348 y_{t-1} - 0.1454 y_{t-2} + e_t$$
+
+So to get our forecast for 1988, we do this
+
+$$(y_{1988}-y_{1987}) = -0.3348 (y_{1987}-y_{1986}) - 0.1454 (y_{1986}-y_{1985})$$
+
+Thus
+
+$$y_{1988} = y_{1987}-0.3348 (y_{1987}-y_{1986}) - 0.1454 (y_{1986}-y_{1985})$$
+
+Here is R code to do that:
+
+```{r}
+anchovy[24]+coef(fit)[1]*(anchovy[24]-anchovy[23])+
+  coef(fit)[2]*(anchovy[23]-anchovy[22])
+```
+
+---
+
+### Forecasting with `forecast()`
+
+`forecast(fit, h=h)` automates the forecast calculations for us.  `forecast()` takes a fitted object, `fit`,  from `arima()` and output forecasts for `h` time steps forward.  The upper and lower prediction intervals are also computed.
+
+```{r}
+fit <- forecast::auto.arima(sardine87ts, test="adf")
+fr <- forecast::forecast(fit, h=5)
+fr
+```
+
+We can plot our forecast with prediction intervals.  Here is the sardine forecast:
+
+```{r}
+plot(fr, xlab="Year")
+```
+
+---
+
+#### Forecast for anchovy {-}
+
+```{r}
+spp="Anchovy"
+dat <- subset(landings, Species==spp & Year<=1987)$log.metric.tons
+dat <- ts(dat, start=1964)
+fit <- forecast::auto.arima(dat)
+fr <- forecast::forecast(fit, h=5)
+plot(fr)
+```
+
+---
+
+#### Forecasts for chub mackerel {-}
+
+We can repeat for other species using the same code.
+
+```{r}
+spp="Chub.mackerel"
+dat <- subset(landings, Species==spp & Year<=1987)$log.metric.tons
+dat <- ts(dat, start=1964)
+fit <- forecast::auto.arima(dat)
+fr <- forecast::forecast(fit, h=5)
+plot(fr, ylim=c(6,10))
+```
+
+---
+
+### Missing values
+
+Missing values are allowed for `arima()` and we can product forecasts with the same code.
+
+```{r}
+anchovy.miss <- anchovy87ts
+anchovy.miss[10:14] <- NA
+fit <- forecast::auto.arima(anchovy.miss)
+fr <- forecast::forecast(fit, h=5)
+plot(fr)
+```
+
+---
+
+### Null forecast models
+
+Whenever we are testing a forecast model or procedure we have developed, we should test against 'null' forecast models.  These are standard 'competing' forecast models.
+
+* The Naive forecast
+* The Naive forecast with drift
+* The mean or average forecast
+
+#### The "Naive" forecast {-}
+
+The "naive" forecast is simply the last value observed.  If we want to prediction landings in 2019, the naive forecast would be the landings in 2018.  This is a difficult forecast to beat!  It has the advantage of having no parameters.
+
+In forecast, we can fit this model with the `naive()` function.  Note this is the same as the `rwf()` function.
+
+```{r}
+fit.naive <- forecast::naive(anchovy87ts)
+fr.naive <- forecast::forecast(fit.naive, h=5)
+plot(fr.naive)
+```
+
+---
+
+#### The "Naive" forecast with drift {-}
+
+The "naive" forecast is equivalent to a random walk with no drift.  So this
+$$x_t = x_{t-1} + e_t$$
+As you saw with the anchovy fit, it doesn't allow an upward trend.  Let's make it a little more flexible by add `drift`.  This means we estimate one term, the trend.
+
+$$x_t = \mu + x_{t-1} + e_t$$
+
+
+```{r}
+fit.rwf <- forecast::rwf(anchovy, drift=TRUE)
+fr.rwf <- forecast::forecast(fit.rwf, h=5)
+plot(fr.rwf)
+```
+
+---
+
+#### The "mean" forecast {-}
+
+The "mean" forecast is simply the mean of the data.  If we want to prediction landings in 2019, the mean forecast would be the average of all our data.  This is a poor forecast typically.  It uses no information about the most recent values.
+
+In forecast, we can fit this model with the `Arima()` function and `order=c(0,0,0)`.  This will fit this model:
+$$x_t = e_t$$
+where $e_t \sim N(\mu, \sigma)$.
+
+```{r}
+fit.mean <- forecast::Arima(anchovy, order=c(0,0,0))
+fr.mean <- forecast::forecast(fit.mean, h=5)
+plot(fr.mean)
+```

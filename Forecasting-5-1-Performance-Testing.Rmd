@@ -1,0 +1,5 @@
+# Testing forecast accuracy
+
+Once you have found a set of possible forecast models, you are ready to compare forecasts from a variety of models and choose a forecast model.  
+
+The are multiple metric you can use to quantify forecast accuracy and different approaches you can take for creating the forecasts that you test.

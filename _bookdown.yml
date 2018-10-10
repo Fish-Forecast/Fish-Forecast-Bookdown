@@ -1,0 +1,6 @@
+book_filename: "Fish-Forecast"
+language:
+  ui:
+    chapter_name: "Chapter "
+delete_merged_file: false
+output_dir: "docs"

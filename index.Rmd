@@ -1,15 +1,30 @@
----
+--- 
 title: "Forecasting Catch Time Series"
+author: "Elizabeth Holmes"
+date: "`r Sys.Date()`"
+site: bookdown::bookdown_site
+output: bookdown::gitbook
+documentclass: book
+bibliography: [book.bib, packages.bib]
+biblio-style: apalike
+link-citations: yes
+github-repo: rstudio/bookdown-demo
+description: "Forecasting catch time series using R."
 ---
 
-```{r echo=FALSE, warnings=FALSE, include=FALSE}
+```{r setup, include=FALSE, message=FALSE}
+knitr::opts_chunk$set(fig.height=5, fig.align="center", echo=TRUE, cache=FALSE)
+library(huxtable)
 # devtools::install_github("rstudio/fontawesome")
 library(fontawesome)
+library(ggplot2)
+library(forecast)
+library(tseries)
 ```
 
-This week we will learn a number of standard approaches for forecasting from catch time series.  We will be using the data and methods discussed in Stergiou and Christou (1996) Modelling and forecasting annual fisheries catches: comparison of regression, univariate and multivariate time series methods. Fisheries Research 25: 105-136.
+# Preface {-}
 
-# Course Syllabus
+In this course, you will learn how to use R to model and forecast catch time series using a variety of different forecasting models. 
 
 <img style="float: right" src="https://rverse-tutorials.github.io/Fish-Forecast-Training-Course/images/fish-forecast.jpg" width=20%>
 
@@ -17,21 +32,6 @@ This week we will learn a number of standard approaches for forecasting from cat
 - Box-Jenkins (ARMA) Models
 - Exponential smoothing
 - Modelling time series with seasonality
+- Multivaritate regression with ARMA errors
+- ARMA models with covariates (ARMAX)
 - Forecast diagnostics and accuracy metrics
-
-# References
-
-You can download the reference papers [here](https://github.com/Fish-Forecast/Catch-Forecasting-INCOIS/tree/master/references).  We are replicating the work in [Stergio and Christou 1997](https://fish-forecast.github.io/Catch-Forecasting-INCOIS/references/Stergiou and Christou 1996 modelling and forecasting annual landings. comparison of regression and ts.pdf).
-
-# Links
-
-- [Main Course Page](https://rverse-tutorials.github.io/Fish-Forecast-Training-Course/)
-- [Catch Forecasting](https://fish-forecast.github.io/Catch-Forecasting-INCOIS/)
-- [R Workflow](https://rverse-tutorials.github.io/RWorkflow-Workshop/)
-
-<hr>
-
-
-<div style="text-align: center">
-<i class="fas fa-cubes"></i> NOAA Fisheries - NW Fisheries Science Center <i class="fas fa-cubes"></i>
-</div>

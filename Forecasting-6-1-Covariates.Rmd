@@ -1,0 +1,10 @@
+
+```{r f61-load_packages, echo=FALSE, message=FALSE, warning=FALSE}
+library(ggplot2)
+```
+
+# Covariates
+
+Often we want to explain the variability in our data using covariates or exogenous variables.  We may want to do this in order to create forecasts using information from the covariates in time step $t-1$ or $t$ to help forecast at time $t$.  Or we may want to understand what causes variability in our data in order to help understand the underlying process.
+
+We can include covariates in the time-varying regression model and the ARIMA models.  We cannot include covariates in an exponential smoothing model.  That doesn't make sense as a exponential model is a type of filter of the data not a 'process' model.

@@ -1,0 +1,181 @@
+## Fitting time-varying regressions
+
+Fitting a time-varying regression is done with the `lm()` function.  For example, here is how to fit a 4th-order polynomial for time to the anchovy data.  We are fitting this model:
+
+$$log(Anchovy) = \alpha + \beta t + \beta_2 t^2 + \beta_3 t^3 + \beta_4 t^4 + e_t$$
+
+First load in the data.  `landings.RData` includes a number of data objects.   `anchovy` is a data frame with year and log.metric.tons columns. `anchovy87` is the same data frame but with the years 1964 to 1987. These are the years that Stergio and Christou use for fitting their models.  They hold out 1988 and 1989 for forecast evaluation.
+
+```{r f21-load_data}
+load("landings.RData")
+```
+
+We need to add on a column for $t$ (and $t^2$, $t^3$, $t^4$) where the first year is $t=1$.  We could regress against year (so 1964 to 1987), but by convention, one regresses against 1 to the number of years or 0 to the number of years minus 1.  Stergiou and Christou did the former.
+
+```{r tvreg.anchovy}
+anchovy87$t = anchovy87$Year-1963
+anchovy87$t2 = anchovy87$t^2
+anchovy87$t3 = anchovy87$t^3
+anchovy87$t4 = anchovy87$t^4
+model <- lm(log.metric.tons ~ t + t2 + t3 + t4, data=anchovy87)
+```
+
+All our covariates are functions of $t$, so we do not actually need to add on the $t^2$, $t^3$ and $t^4$ to our data frame.  We can use the `I()` function.  This function is useful whenever you want to use a transformed value of a column of your data frame in your regression.
+
+```{r tvreg.anchovy.I}
+anchovy87$t = anchovy87$Year-1963
+model <- lm(log.metric.tons ~ t + I(t^2) + I(t^3) + I(t^4), data=anchovy87)
+```
+
+Let's look at the fit.
+
+```{r}
+summary(model)
+```
+
+---
+
+### Orthogonal polynomials
+
+None of the time effects are significant despite an obvious linear temporal trend to the data.  What's going on?  Well $t$, $t^2$, $t^3$ and $t^4$ are all highly correlated.  Fitting a linear regression with multiple highly correlated covariates will not get you anywhere unless perhaps all the covariates are needed to explain the data.  We will see the latter case for the sardine. In the anchovy case, multiple of the covariates could explain the linear-ish trend.
+
+You could try fitting the first degree model $x_t = \alpha + \beta t + e_t$, then the second $x_t = \alpha + \beta_1 t + \beta_2 t^2 + e_t$, then the third.  This would reveal that in the first and second order fits, we get significant effects of time in our model.  However the correct way to do this would be to use orthogonal polynomials.
+
+#### `poly()` function
+
+The `poly()` function creates orthogonal covariates for your polynomial.  What does that mean? Let's say you want to fit a model with a 2nd order polynomial of $t$.  It has $t$ and $t^2$, but using these as covariates directly lead to using two covariates that are highly correlated.  Instead we want a covariate that explains $t$ and another that explains the part of $t^2$ that cannot be explained by $t$.  `poly()` creates these orthogonal covariates.  The `poly()` function creates covariates with mean zero and identical variances.  Covariates with different means and variances makes it hard to compare the estimated effect sizes.  
+
+```{r poly}
+T1 = 1:24; T2=T1^2
+c(mean(T1),mean(T2),cov(T1, T2))
+T1 = poly(T1,2)[,1]; T2=poly(T1,2)[,2]
+c(mean(T1),mean(T2),cov(T1, T2))
+```
+
+#### Using `poly()` to fit the anchovy data {-}
+
+We saw in the anchovy fit that using $t$, $t^2$, $t^3$ and $t^4$ directly in the fit resulted in no significant estimated time effect despite a clear temporal trend in the data.  If we fit with `poly()` so that we do not use correlated time covariates, we see a different picture.
+
+```{r tvreg.poly.anchovy}
+model <- lm(log.metric.tons ~ poly(t,4), data=anchovy87)
+summary(model)
+```
+
+### Residual diagnostics
+
+We want to test if our residuals are temporally independent.  We can do this with the Ljung-Box test as Stergio and Christou do.  For the Ljung-Box test
+
+* Null hypothesis is that the data are independent
+* Alternate hypothesis is that the data are serially correlated
+
+#### Example of the Ljung-Box test {-}
+
+```{r example_LB_test}
+Box.test(rnorm(100), type="Ljung-Box")
+```
+
+The null hypothesis is not rejected.  These are not serially correlated.
+
+
+Stergio and Christou appear to use a lag of 14 for the test (this is a bit large for 24 data points).  The degrees of freedom is lag minus the number of estimated parameters in the model.  So for the Anchovy data, $df = 14 - 2$.
+
+```{r}
+x <- resid(model)
+Box.test(x, lag = 14, type = "Ljung-Box", fitdf=2)
+```
+
+Compare to the values in the far right column in Table 4.  The null hypothesis of independence is rejected.
+
+#### Breusch-Godfrey test {-}
+
+Although Stergiou and Christou use the Ljung-Box test, the Breusch-Godfrey test is more standard for regression residuals.  The forecast package has the `checkresiduals()` function which will run this test and some diagnostic plots.
+
+```{r}
+forecast::checkresiduals(model)
+```
+
+### Compare to Stergiou and Christou
+
+Stergiou and Christou (1996) fit time-varying regressions to the 1964-1987 data and show the results in Table 4.
+
+![Table 4](./figs/SC1995Table4.png)
+
+#### Compare anchovy fit to Stergiou and Christou {-}
+
+Stergiou and Christou use a first order polynomial, linear relationship with time, for the anchovy data.  They do not state how they choose this over a 2nd order polynomial which also appears supported (see fit with `poly()` fit to the anchovy data).
+
+```{r tvreg.anchovy2}
+anchovy87$t = anchovy87$Year-1963
+model <- lm(log.metric.tons ~ t, data=anchovy87)
+```
+
+The coefficients and adjusted R2 are similar to that shown in their Table 4.  The coefficients are not identical so there may be some differences in the data I extracted from the Greek statistical reports and those used in Stergiou and Christou.
+
+```{r}
+c(coef(model), summary(model)$adj.r.squared)
+```
+
+#### Compare sardine fit to Stergiou and Christou {-}
+
+For the sardine (bottom row in Table 4), Stergio and Christou fit a 4th order polynomial.  With `poly()`, a 4th order time-varying regression model is fit to the sardine data as:
+
+```{r tvreg.sardine}
+sardine87$t = sardine87$Year-1963
+model <- lm(log.metric.tons ~ poly(t,4), data=sardine87)
+```
+
+This indicates support for the 2nd, 3rd, and 4th orders but not the 1st (linear) part.
+
+
+```{r poly.summary}
+summary(model)
+```
+
+Stergiou and Christou appear to have used a raw polynomial model using $t$, $t^2$, $t^3$ and $t^4$ as the covariates instead of orthogonal polynomials.  To fit the model that they did, we use
+
+```{r tvreg.sardine2}
+model <- lm(log.metric.tons ~ t + I(t^2) + I(t^3) + I(t^4), data=sardine87)
+```
+
+Using a model fit with the raw time covariates, the coefficients and adjusted R2 are similar to that shown in Table 4.
+
+```{r}
+c(coef(model), summary(model)$adj.r.squared)
+```
+
+The test for autocorrelation of the residuals is 
+
+```{r}
+x <- resid(model)
+Box.test(x, lag = 14, type = "Ljung-Box", fitdf=5)
+```
+
+`fitdf` specifies the number of parameters estimated by the model.  In this case it is 5, intercept and 4 coefficients.
+
+The p-value is less than 0.05 indicating that the residuals are temporally correlated.
+
+### Summary
+
+#### Why use time-varying regression? {-}
+
+* It looks there is a simple time relationship.  If a high-order polynomial is required, that is a bad sign.
+
+* Easy and fast
+
+* Easy to explain
+
+* You are only forecasting a few years ahead
+
+* No assumptions required about 'stationarity'
+
+#### Why not to use time-varying regression? {-}
+
+* Autocorrelation is not modeled.  That autocorrelation may hold information for forecasting.
+
+* You are only using temporal trend for forecasting (mean level).
+
+* If you use a high-order polynomial, you might be modeling noise from a random walk.  That means interpreting the temporal pattern as having information when in fact it has none.
+
+#### Is time-varying regression used? {-}
+
+It seems pretty simple.  Is this used?  All the time.  Most "trend" analyses are a variant of time-varying regression.  If you fit a line to your data and report the trend or percent change, that's a time-varying regression.

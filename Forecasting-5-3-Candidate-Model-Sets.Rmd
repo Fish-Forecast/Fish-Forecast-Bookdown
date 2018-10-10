@@ -1,0 +1,65 @@
+## Testing multiple models
+
+For each model, you will do the same steps:
+
+1. Fit the model
+
+2. Create forecasts for a test data set or use cross-validation
+
+3. Compute forecast accuracy metrics for the forecasts
+
+Note when you compare models, you can use both 'training data/test data' and use time-series cross-validation, but report the metrics in separate columns.  Example, 'RMSE from tsCV' and 'RMSE from test data'.
+
+---
+
+### Example candidate model set for anchovy
+
+* Exponential smoothing model with trend
+```
+fit <- forecast::ets(traindat, model="AAN")
+fr <- forecast::forecast(fit, h=1)
+```
+* Exponential smoothing model no trend
+```
+fit <- forecast::ets(traindat, model="ANN")
+fr <- forecast::forecast(fit, h=1)
+```
+* ARIMA(0,1,1) with drift (best)
+```
+fit <- forecast::Arima(traindat, order(0,1,1), include.drift=TRUE)
+fr <- forecast::forecast(fit, h=1)
+```
+* ARIMA(2,1,0) with drift (within 2 AIC of best)
+```
+fit <- forecast::Arima(traindat, order(2,1,0), include.drift=TRUE)
+fr <- forecast::forecast(fr)
+```
+
+* Time-varying regression with linear time
+```
+traindat$t <- 1:24
+fit <- lm(log.metric.tons ~ t, data=traindat)
+fr <- forecast::forecast(fit, newdata=data.frame(t=25))
+```
+
+#### Null models {-}
+
+* Naive no trend
+```
+fit <- forecast::Arima(traindat, order(0,1,0))
+fr <- forecast::forecast(fit, h=1)
+# or simply
+fr <- forecast::rwf(traindat)
+```
+* Naive with trend
+```
+fit <- forecast::Arima(traindat, order(0,1,0), include.drift=TRUE)
+fr <- forecast::forecast(fit)
+# or simply
+fr <- forecast::rwf(traindat, drift=TRUE)
+```
+* Average or mean
+```
+fit <- forecast::Arima(traindat, order(0,0,0))
+fr <- forecast::forecast(fit)
+```

@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+<html >
+
+<head>
+
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>Forecasting Catch Time Series</title>
+  <meta name="description" content="Forecasting catch time series using R.">
+  <meta name="generator" content="bookdown  and GitBook 2.6.7">
+
+  <meta property="og:title" content="Forecasting Catch Time Series" />
+  <meta property="og:type" content="book" />
+  
+  
+  <meta property="og:description" content="Forecasting catch time series using R." />
+  <meta name="github-repo" content="rstudio/bookdown-demo" />
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Forecasting Catch Time Series" />
+  
+  <meta name="twitter:description" content="Forecasting catch time series using R." />
+  
+
+<meta name="author" content="Elizabeth Holmes">
+
+
+<meta name="date" content="2018-10-10">
+
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  
+  
+<link rel="prev" href="overview.html">
+<link rel="next" href="model-structure.html">
+<script src="libs/jquery-2.2.3/jquery.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+
+<style type="text/css">
+a.sourceLine { display: inline-block; line-height: 1.25; }
+a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
+a.sourceLine:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode { white-space: pre; position: relative; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+code.sourceCode { white-space: pre-wrap; }
+a.sourceLine { text-indent: -1em; padding-left: 1em; }
+}
+pre.numberSource a.sourceLine
+  { position: relative; left: -4em; }
+pre.numberSource a.sourceLine::before
+  { content: attr(data-line-number);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; pointer-events: all; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {  }
+@media screen {
+a.sourceLine::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+<link rel="stylesheet" href="style.css" type="text/css" />
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li><a href="./index.html">Fish Forecast</a></li>
+
+<li class="divider"></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i>Preface</a></li>
+<li class="chapter" data-level="1" data-path="introduction.html"><a href="introduction.html"><i class="fa fa-check"></i><b>1</b> Introduction</a><ul>
+<li class="chapter" data-level="1.1" data-path="stergiou-and-christou-1996.html"><a href="stergiou-and-christou-1996.html"><i class="fa fa-check"></i><b>1.1</b> Stergiou and Christou 1996</a><ul>
+<li class="chapter" data-level="1.1.1" data-path="stergiou-and-christou-1996.html"><a href="stergiou-and-christou-1996.html#hellenic-landings-data"><i class="fa fa-check"></i><b>1.1.1</b> Hellenic landings data</a></li>
+</ul></li>
+<li class="chapter" data-level="1.2" data-path="the-landings-data-landings-rdata.html"><a href="the-landings-data-landings-rdata.html"><i class="fa fa-check"></i><b>1.2</b> The landings data, landings.RData</a></li>
+<li class="chapter" data-level="1.3" data-path="ts-objects.html"><a href="ts-objects.html"><i class="fa fa-check"></i><b>1.3</b> ts objects</a><ul>
+<li class="chapter" data-level="1.3.1" data-path="ts-objects.html"><a href="ts-objects.html#ts-function"><i class="fa fa-check"></i><b>1.3.1</b> <code>ts()</code> function</a></li>
+<li class="chapter" data-level="1.3.2" data-path="ts-objects.html"><a href="ts-objects.html#ggplot-and-ts-objects"><i class="fa fa-check"></i><b>1.3.2</b> ggplot and ts objects</a></li>
+<li class="chapter" data-level="1.3.3" data-path="ts-objects.html"><a href="ts-objects.html#plotting-using-a-data-frame"><i class="fa fa-check"></i><b>1.3.3</b> Plotting using a data frame</a></li>
+</ul></li>
+<li class="chapter" data-level="1.4" data-path="packages.html"><a href="packages.html"><i class="fa fa-check"></i><b>1.4</b> Packages</a></li>
+<li class="chapter" data-level="1.5" data-path="references.html"><a href="references.html"><i class="fa fa-check"></i><b>1.5</b> References</a></li>
+</ul></li>
+<li class="chapter" data-level="2" data-path="time-varying-regression.html"><a href="time-varying-regression.html"><i class="fa fa-check"></i><b>2</b> Time-varying regression</a><ul>
+<li class="chapter" data-level="2.1" data-path="fitting-time-varying-regressions.html"><a href="fitting-time-varying-regressions.html"><i class="fa fa-check"></i><b>2.1</b> Fitting time-varying regressions</a><ul>
+<li class="chapter" data-level="2.1.1" data-path="fitting-time-varying-regressions.html"><a href="fitting-time-varying-regressions.html#orthogonal-polynomials"><i class="fa fa-check"></i><b>2.1.1</b> Orthogonal polynomials</a></li>
+<li class="chapter" data-level="2.1.2" data-path="fitting-time-varying-regressions.html"><a href="fitting-time-varying-regressions.html#residual-diagnostics"><i class="fa fa-check"></i><b>2.1.2</b> Residual diagnostics</a></li>
+<li class="chapter" data-level="2.1.3" data-path="fitting-time-varying-regressions.html"><a href="fitting-time-varying-regressions.html#compare-to-stergiou-and-christou"><i class="fa fa-check"></i><b>2.1.3</b> Compare to Stergiou and Christou</a></li>
+<li class="chapter" data-level="2.1.4" data-path="fitting-time-varying-regressions.html"><a href="fitting-time-varying-regressions.html#summary"><i class="fa fa-check"></i><b>2.1.4</b> Summary</a></li>
+</ul></li>
+<li class="chapter" data-level="2.2" data-path="forecasting-with-a-time-varying-regression-model.html"><a href="forecasting-with-a-time-varying-regression-model.html"><i class="fa fa-check"></i><b>2.2</b> Forecasting with a time-varying regression model</a><ul>
+<li class="chapter" data-level="2.2.1" data-path="forecasting-with-a-time-varying-regression-model.html"><a href="forecasting-with-a-time-varying-regression-model.html#the-forecast-package"><i class="fa fa-check"></i><b>2.2.1</b> The forecast package</a></li>
+<li class="chapter" data-level="2.2.2" data-path="forecasting-with-a-time-varying-regression-model.html"><a href="forecasting-with-a-time-varying-regression-model.html#summary-1"><i class="fa fa-check"></i><b>2.2.2</b> Summary</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="3" data-path="arima-models.html"><a href="arima-models.html"><i class="fa fa-check"></i><b>3</b> ARIMA Models</a><ul>
+<li class="chapter" data-level="3.1" data-path="overview.html"><a href="overview.html"><i class="fa fa-check"></i><b>3.1</b> Overview</a><ul>
+<li class="chapter" data-level="3.1.1" data-path="overview.html"><a href="overview.html#components-of-an-arima-model"><i class="fa fa-check"></i><b>3.1.1</b> Components of an ARIMA model</a></li>
+<li class="chapter" data-level="3.1.2" data-path="overview.html"><a href="overview.html#box-jenkins-method"><i class="fa fa-check"></i><b>3.1.2</b> Box-Jenkins Method</a></li>
+<li class="chapter" data-level="3.1.3" data-path="overview.html"><a href="overview.html#acf-and-pacf-functions"><i class="fa fa-check"></i><b>3.1.3</b> ACF and PACF functions</a></li>
+</ul></li>
+<li class="chapter" data-level="3.2" data-path="stationarity.html"><a href="stationarity.html"><i class="fa fa-check"></i><b>3.2</b> Stationarity</a><ul>
+<li class="chapter" data-level="3.2.1" data-path="stationarity.html"><a href="stationarity.html#definition"><i class="fa fa-check"></i><b>3.2.1</b> Definition</a></li>
+<li class="chapter" data-level="3.2.2" data-path="stationarity.html"><a href="stationarity.html#non-stationarity"><i class="fa fa-check"></i><b>3.2.2</b> Non-stationarity</a></li>
+<li class="chapter" data-level="3.2.3" data-path="stationarity.html"><a href="stationarity.html#stationarity-tests"><i class="fa fa-check"></i><b>3.2.3</b> Stationarity tests</a></li>
+<li class="chapter" data-level="3.2.4" data-path="stationarity.html"><a href="stationarity.html#differencing-the-data"><i class="fa fa-check"></i><b>3.2.4</b> Differencing the data</a></li>
+<li class="chapter" data-level="3.2.5" data-path="stationarity.html"><a href="stationarity.html#summary-2"><i class="fa fa-check"></i><b>3.2.5</b> Summary</a></li>
+</ul></li>
+<li class="chapter" data-level="3.3" data-path="model-structure.html"><a href="model-structure.html"><i class="fa fa-check"></i><b>3.3</b> Model Structure</a><ul>
+<li class="chapter" data-level="3.3.1" data-path="model-structure.html"><a href="model-structure.html#ar-and-ma-lags"><i class="fa fa-check"></i><b>3.3.1</b> AR and MA lags</a></li>
+<li class="chapter" data-level="3.3.2" data-path="model-structure.html"><a href="model-structure.html#model-order"><i class="fa fa-check"></i><b>3.3.2</b> Model order</a></li>
+<li class="chapter" data-level="3.3.3" data-path="model-structure.html"><a href="model-structure.html#choosing-the-ar-and-ma-levels"><i class="fa fa-check"></i><b>3.3.3</b> Choosing the AR and MA levels</a></li>
+<li class="chapter" data-level="3.3.4" data-path="model-structure.html"><a href="model-structure.html#trace-true"><i class="fa fa-check"></i><b>3.3.4</b> Trace = TRUE</a></li>
+<li class="chapter" data-level="3.3.5" data-path="model-structure.html"><a href="model-structure.html#stepwisefalse"><i class="fa fa-check"></i><b>3.3.5</b> stepwise=FALSE</a></li>
+<li class="chapter" data-level="3.3.6" data-path="model-structure.html"><a href="model-structure.html#summary-3"><i class="fa fa-check"></i><b>3.3.6</b> Summary</a></li>
+</ul></li>
+<li class="chapter" data-level="3.4" data-path="fitting-arima-models.html"><a href="fitting-arima-models.html"><i class="fa fa-check"></i><b>3.4</b> Fitting ARIMA Models</a><ul>
+<li class="chapter" data-level="3.4.1" data-path="fitting-arima-models.html"><a href="fitting-arima-models.html#fitting-with-auto.arima"><i class="fa fa-check"></i><b>3.4.1</b> Fitting with <code>auto.arima()</code></a></li>
+<li class="chapter" data-level="3.4.2" data-path="fitting-arima-models.html"><a href="fitting-arima-models.html#outputting-the-models-tested"><i class="fa fa-check"></i><b>3.4.2</b> Outputting the models tested</a></li>
+<li class="chapter" data-level="3.4.3" data-path="fitting-arima-models.html"><a href="fitting-arima-models.html#repeat-with-the-sardine-data"><i class="fa fa-check"></i><b>3.4.3</b> Repeat with the sardine data</a></li>
+<li class="chapter" data-level="3.4.4" data-path="fitting-arima-models.html"><a href="fitting-arima-models.html#missing-values"><i class="fa fa-check"></i><b>3.4.4</b> Missing values</a></li>
+<li class="chapter" data-level="3.4.5" data-path="fitting-arima-models.html"><a href="fitting-arima-models.html#fit-a-specific-arima-model"><i class="fa fa-check"></i><b>3.4.5</b> Fit a specific ARIMA model</a></li>
+<li class="chapter" data-level="3.4.6" data-path="fitting-arima-models.html"><a href="fitting-arima-models.html#model-checking"><i class="fa fa-check"></i><b>3.4.6</b> Model Checking</a></li>
+<li class="chapter" data-level="3.4.7" data-path="fitting-arima-models.html"><a href="fitting-arima-models.html#workflow-for-non-seasonal-data"><i class="fa fa-check"></i><b>3.4.7</b> Workflow for non-seasonal data</a></li>
+<li class="chapter" data-level="3.4.8" data-path="fitting-arima-models.html"><a href="fitting-arima-models.html#stepwise-vs-exhaustive-model-selection"><i class="fa fa-check"></i><b>3.4.8</b> Stepwise vs exhaustive model selection</a></li>
+<li class="chapter" data-level="3.4.9" data-path="fitting-arima-models.html"><a href="fitting-arima-models.html#summary-4"><i class="fa fa-check"></i><b>3.4.9</b> Summary</a></li>
+</ul></li>
+<li class="chapter" data-level="3.5" data-path="forecasting.html"><a href="forecasting.html"><i class="fa fa-check"></i><b>3.5</b> Forecasting</a><ul>
+<li class="chapter" data-level="3.5.1" data-path="forecasting.html"><a href="forecasting.html#forecasting-with-forecast"><i class="fa fa-check"></i><b>3.5.1</b> Forecasting with <code>forecast()</code></a></li>
+<li class="chapter" data-level="3.5.2" data-path="forecasting.html"><a href="forecasting.html#missing-values-1"><i class="fa fa-check"></i><b>3.5.2</b> Missing values</a></li>
+<li class="chapter" data-level="3.5.3" data-path="forecasting.html"><a href="forecasting.html#null-forecast-models"><i class="fa fa-check"></i><b>3.5.3</b> Null forecast models</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="4" data-path="exponential-smoothing-models.html"><a href="exponential-smoothing-models.html"><i class="fa fa-check"></i><b>4</b> Exponential Smoothing Models</a><ul>
+<li class="chapter" data-level="4.1" data-path="naive-forecast.html"><a href="naive-forecast.html"><i class="fa fa-check"></i><b>4.1</b> Naive forecast</a></li>
+<li class="chapter" data-level="4.2" data-path="simple-ets.html"><a href="simple-ets.html"><i class="fa fa-check"></i><b>4.2</b> Simple ETS</a></li>
+<li class="chapter" data-level="4.3" data-path="fitting-with-ets.html"><a href="fitting-with-ets.html"><i class="fa fa-check"></i><b>4.3</b> Fitting with <code>ets()</code></a><ul>
+<li class="chapter" data-level="4.3.1" data-path="fitting-with-ets.html"><a href="fitting-with-ets.html#exponential-smoothing-with-no-trend"><i class="fa fa-check"></i><b>4.3.1</b> Exponential smoothing with no trend</a></li>
+<li class="chapter" data-level="4.3.2" data-path="fitting-with-ets.html"><a href="fitting-with-ets.html#the-weighting-function"><i class="fa fa-check"></i><b>4.3.2</b> The weighting function</a></li>
+<li class="chapter" data-level="4.3.3" data-path="fitting-with-ets.html"><a href="fitting-with-ets.html#produce-forecast-using-a-previous-fit"><i class="fa fa-check"></i><b>4.3.3</b> Produce forecast using a previous fit</a></li>
+<li class="chapter" data-level="4.3.4" data-path="fitting-with-ets.html"><a href="fitting-with-ets.html#naive-model-with-drift"><i class="fa fa-check"></i><b>4.3.4</b> Naive model with drift</a></li>
+<li class="chapter" data-level="4.3.5" data-path="fitting-with-ets.html"><a href="fitting-with-ets.html#exponential-smoothing-model-with-trend"><i class="fa fa-check"></i><b>4.3.5</b> Exponential smoothing model with trend</a></li>
+<li class="chapter" data-level="4.3.6" data-path="fitting-with-ets.html"><a href="fitting-with-ets.html#naive-model-with-trend"><i class="fa fa-check"></i><b>4.3.6</b> Naive model with trend</a></li>
+<li class="chapter" data-level="4.3.7" data-path="fitting-with-ets.html"><a href="fitting-with-ets.html#exponential-smoothing-model-with-trend-1"><i class="fa fa-check"></i><b>4.3.7</b> Exponential smoothing model with trend</a></li>
+<li class="chapter" data-level="4.3.8" data-path="fitting-with-ets.html"><a href="fitting-with-ets.html#decomposing-your-model-fit"><i class="fa fa-check"></i><b>4.3.8</b> Decomposing your model fit</a></li>
+<li class="chapter" data-level="4.3.9" data-path="fitting-with-ets.html"><a href="fitting-with-ets.html#forecast-performance"><i class="fa fa-check"></i><b>4.3.9</b> Forecast performance</a></li>
+<li class="chapter" data-level="4.3.10" data-path="fitting-with-ets.html"><a href="fitting-with-ets.html#test-forecast-performance"><i class="fa fa-check"></i><b>4.3.10</b> Test forecast performance</a></li>
+<li class="chapter" data-level="4.3.11" data-path="fitting-with-ets.html"><a href="fitting-with-ets.html#testing-a-specific-ets-model"><i class="fa fa-check"></i><b>4.3.11</b> Testing a specific ets model</a></li>
+<li class="chapter" data-level="4.3.12" data-path="fitting-with-ets.html"><a href="fitting-with-ets.html#forecast-accuracy-metrics"><i class="fa fa-check"></i><b>4.3.12</b> Forecast accuracy metrics</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="5" data-path="testing-forecast-accuracy.html"><a href="testing-forecast-accuracy.html"><i class="fa fa-check"></i><b>5</b> Testing forecast accuracy</a><ul>
+<li class="chapter" data-level="5.1" data-path="measures-of-forecast-accuracy.html"><a href="measures-of-forecast-accuracy.html"><i class="fa fa-check"></i><b>5.1</b> Measures of forecast accuracy</a><ul>
+<li class="chapter" data-level="5.1.1" data-path="measures-of-forecast-accuracy.html"><a href="measures-of-forecast-accuracy.html#metrics"><i class="fa fa-check"></i><b>5.1.1</b> Metrics</a></li>
+<li class="chapter" data-level="5.1.2" data-path="measures-of-forecast-accuracy.html"><a href="measures-of-forecast-accuracy.html#test-multiple-models"><i class="fa fa-check"></i><b>5.1.2</b> Test multiple models</a></li>
+<li class="chapter" data-level="5.1.3" data-path="measures-of-forecast-accuracy.html"><a href="measures-of-forecast-accuracy.html#cross-validation"><i class="fa fa-check"></i><b>5.1.3</b> Cross-Validation</a></li>
+</ul></li>
+<li class="chapter" data-level="5.2" data-path="testing-multiple-models.html"><a href="testing-multiple-models.html"><i class="fa fa-check"></i><b>5.2</b> Testing multiple models</a><ul>
+<li class="chapter" data-level="5.2.1" data-path="testing-multiple-models.html"><a href="testing-multiple-models.html#example-candidate-model-set-for-anchovy"><i class="fa fa-check"></i><b>5.2.1</b> Example candidate model set for anchovy</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="6" data-path="covariates.html"><a href="covariates.html"><i class="fa fa-check"></i><b>6</b> Covariates</a><ul>
+<li class="chapter" data-level="6.1" data-path="multivariate-linear-regression-with-arma-errors.html"><a href="multivariate-linear-regression-with-arma-errors.html"><i class="fa fa-check"></i><b>6.1</b> Multivariate linear regression with ARMA errors</a><ul>
+<li class="chapter" data-level="6.1.1" data-path="multivariate-linear-regression-with-arma-errors.html"><a href="multivariate-linear-regression-with-arma-errors.html#example-anchovy"><i class="fa fa-check"></i><b>6.1.1</b> Example: anchovy</a></li>
+<li class="chapter" data-level="6.1.2" data-path="multivariate-linear-regression-with-arma-errors.html"><a href="multivariate-linear-regression-with-arma-errors.html#mreg-of-first-or-second-differences"><i class="fa fa-check"></i><b>6.1.2</b> MREG of first or second differences</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="7" data-path="seasonality.html"><a href="seasonality.html"><i class="fa fa-check"></i><b>7</b> Seasonality</a><ul>
+<li class="chapter" data-level="7.0.1" data-path="seasonality.html"><a href="seasonality.html#load-the-chinook-salmon-data-set"><i class="fa fa-check"></i><b>7.0.1</b> Load the chinook salmon data set</a></li>
+<li class="chapter" data-level="7.0.2" data-path="seasonality.html"><a href="seasonality.html#plot-seasonal-data"><i class="fa fa-check"></i><b>7.0.2</b> Plot seasonal data</a></li>
+<li class="chapter" data-level="7.1" data-path="seasonal-exponential-smoothing-model.html"><a href="seasonal-exponential-smoothing-model.html"><i class="fa fa-check"></i><b>7.1</b> Seasonal Exponential Smoothing Model</a><ul>
+<li class="chapter" data-level="7.1.1" data-path="seasonal-exponential-smoothing-model.html"><a href="seasonal-exponential-smoothing-model.html#force-seasonality-to-evolve-more"><i class="fa fa-check"></i><b>7.1.1</b> Force seasonality to evolve more</a></li>
+</ul></li>
+<li class="chapter" data-level="7.2" data-path="seasonal-arima-model.html"><a href="seasonal-arima-model.html"><i class="fa fa-check"></i><b>7.2</b> Seasonal ARIMA model</a></li>
+<li class="chapter" data-level="7.3" data-path="missing-values-2.html"><a href="missing-values-2.html"><i class="fa fa-check"></i><b>7.3</b> Missing values</a></li>
+<li class="chapter" data-level="7.4" data-path="forecast-evaluation.html"><a href="forecast-evaluation.html"><i class="fa fa-check"></i><b>7.4</b> Forecast evaluation</a></li>
+</ul></li>
+<li class="chapter" data-level="" data-path="appendix-inputting-data.html"><a href="appendix-inputting-data.html"><i class="fa fa-check"></i>Appendix: Inputting data</a><ul>
+<li class="chapter" data-level="" data-path="appendix-inputting-data.html"><a href="appendix-inputting-data.html#one-response-variable"><i class="fa fa-check"></i>one response variable</a></li>
+<li class="chapter" data-level="" data-path="appendix-inputting-data.html"><a href="appendix-inputting-data.html#many-response-variables"><i class="fa fa-check"></i>Many response variables</a></li>
+<li class="chapter" data-level="" data-path="appendix-inputting-data.html"><a href="appendix-inputting-data.html#many-response-variables-two-time-variables"><i class="fa fa-check"></i>Many response variables, two time variables</a></li>
+<li class="chapter" data-level="" data-path="appendix-inputting-data.html"><a href="appendix-inputting-data.html#one-response-variable-multiple-explanatory-variables"><i class="fa fa-check"></i>One response variable, multiple explanatory variables</a></li>
+</ul></li>
+<li class="chapter" data-level="" data-path="appendix-downloading-icoads-covariates.html"><a href="appendix-downloading-icoads-covariates.html"><i class="fa fa-check"></i>Appendix: Downloading ICOADS covariates</a></li>
+<li class="divider"></li>
+<li><a href="https://github.com/rstudio/bookdown" target="blank">Published with bookdown</a></li>
+
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Forecasting Catch Time Series</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="stationarity" class="section level2">
+<h2><span class="header-section-number">3.2</span> Stationarity</h2>
+<p>The first two steps of the Box-Jenkins Method have to do with evaluating for stationarity and correcting for lack of stationarity in your data:</p>
+<p>A. Model form selection</p>
+<ol style="list-style-type: decimal">
+<li><strong>Evaluate stationarity and seasonality</strong></li>
+<li><strong>Selection of the differencing level (d)</strong></li>
+<li>Selection of the AR level (p)</li>
+<li>Selection of the MA level (q)</li>
+</ol>
+<p>B. Parameter estimation</p>
+<p>C. Model checking</p>
+<div id="definition" class="section level3">
+<h3><span class="header-section-number">3.2.1</span> Definition</h3>
+<p>Stationarity means ‘not changing in time’ in the context of time-series models. Typically we test the trend and variance, however more generally all statistical properties of a time-series is time-constant if the time series is ‘stationary’.</p>
+<p>Many ARMA models exhibit stationarity. White noise is one type:
+<span class="math display">\[x_t = e_t, e_t \sim N(0,\sigma)\]</span></p>
+<pre><code>## Loading required package: gridExtra</code></pre>
+<pre><code>## Loading required package: reshape2</code></pre>
+<p><img src="Fish-Forecast_files/figure-html/fig.stationarity-1.png" width="768" style="display: block; margin: auto;" /></p>
+<p>An AR-1 process with <span class="math inline">\(b&lt;1\)</span>
+<span class="math display">\[x_t = b x_{t-1} + e_t\]</span>
+is also stationary.</p>
+<p><img src="Fish-Forecast_files/figure-html/fig.stationarity2-1.png" width="768" style="display: block; margin: auto;" /></p>
+<div id="stationarity-around-a-trend" class="section level4 unnumbered">
+<h4>Stationarity around a trend</h4>
+<p>The processes shown above have mean 0 and a flat level. We can also have stationarity around an non-zero level or stationarity around an linear trend. If <span class="math inline">\(b=0\)</span>, we have white noise and if <span class="math inline">\(b&lt;1\)</span> we have AR-1.</p>
+<ol style="list-style-type: decimal">
+<li><p>Non-zero mean: <span class="math inline">\(x_t = \mu + b x_{t-1} + e_t\)</span></p></li>
+<li><p>Linear trend: <span class="math inline">\(x_t = \mu + at + b x_{t-1} + e_t\)</span></p></li>
+</ol>
+<p><img src="Fish-Forecast_files/figure-html/fig.stationarity3-1.png" width="768" style="display: block; margin: auto;" /></p>
+<hr />
+</div>
+</div>
+<div id="non-stationarity" class="section level3">
+<h3><span class="header-section-number">3.2.2</span> Non-stationarity</h3>
+<p>One of the most common forms of non-stationarity that is tested for is ‘unit root’, which means that the process is a random walk:
+<span class="math display">\[x_t = x_{t-1} + e_t\]</span> .</p>
+<p><img src="Fish-Forecast_files/figure-html/fig.nonstationarity-1.png" width="768" style="display: block; margin: auto;" /></p>
+<div id="non-stationarity-with-a-trend" class="section level4 unnumbered">
+<h4>Non-stationarity with a trend</h4>
+<p>Similar to the way we added an intecept and linear trend to the stationarity processes, we can do the same to the random walk.</p>
+<ol style="list-style-type: decimal">
+<li><p>Non-zero mean or intercept: <span class="math inline">\(x_t = \mu + x_{t-1} + e_t\)</span></p></li>
+<li><p>Linear trend: <span class="math inline">\(x_t = \mu + at + x_{t-1} + e_t\)</span></p></li>
+</ol>
+<p>The effects are fundamentally different however. The addition of <span class="math inline">\(\mu\)</span> leads to a upward mean linear trend while the addition of <span class="math inline">\(at\)</span> leads to exponential growth.</p>
+<p><img src="Fish-Forecast_files/figure-html/fig.stationarity4-1.png" width="768" style="display: block; margin: auto;" /></p>
+<hr />
+</div>
+</div>
+<div id="stationarity-tests" class="section level3">
+<h3><span class="header-section-number">3.2.3</span> Stationarity tests</h3>
+<p>Why is evaluating stationarity important?</p>
+<ul>
+<li>Many AR models have a flat level or trend and time-constant variance. If your data do not have those properties, you are fitting a model that is fundamentally inconsistent with your data.</li>
+<li>Many standard algorithms for fitting ARIMA models assume stationarity. Note, you can fit ARIMA models without making this assumption, but you need to use the appropriate algorithm.</li>
+</ul>
+<p>We will discuss three common approaches to evaluating stationarity:</p>
+<ul>
+<li>Visual test</li>
+<li>(Augmented) Dickey-Fuller test</li>
+<li>KPSS test</li>
+</ul>
+<div id="visual-test" class="section level4 unnumbered">
+<h4>Visual test</h4>
+<p>The visual test is simply looking at a plot of the data versus time. Look for</p>
+<ul>
+<li>Change in the level over time. Is the time series increasing or decreasing? Does it appear to cycle?</li>
+<li>Change in the variance over time. Do deviations away from the mean change over time, increase or decrease?</li>
+</ul>
+<p>Here is a plot of the anchovy and sardine in Greek waters from 1965 to 1989. The anchovies have an obvious non-stationary trend during this period. The mean level is going up. The sardines have a roughly stationary trend. The variance (deviations away from the mean) appear to be roughly stationary, neither increasing or decreasing in time.</p>
+<p><img src="Fish-Forecast_files/figure-html/fig.vis-1.png" width="768" style="display: block; margin: auto;" /></p>
+<p>Although the logged anchovy time series is increasing, it appears to have an linear trend.</p>
+</div>
+<div id="dickey-fuller-test" class="section level4 unnumbered">
+<h4>Dickey-Fuller test</h4>
+<p>The Dickey=Fuller test (and Augmented Dickey-Fuller test) look for evidence that the time series has a unit root.</p>
+<p>The null hypothesis is that the time series has a unit root, that is, it has a random walk component.</p>
+<p>The alternative hypothesis is some variation of stationarity. The test has three main verisons.</p>
+<p>Visually, the null and alternative hypotheses for the three Dickey-Fuller tests are the following. It is hard to see but in the panels on the left, the variance around the trend is increasing and on the right, it is not.</p>
+<p><img src="Fish-Forecast_files/figure-html/fig.df-1.png" width="768" style="display: block; margin: auto;" /></p>
+<p>Mathematically, here are the null and alternative hypotheses. In each, we are testing if <span class="math inline">\(\delta=0\)</span>.</p>
+<ol style="list-style-type: decimal">
+<li>Null is a random walk with no drift
+<span class="math inline">\(x_t = x_{t-1}+e_t\)</span></li>
+</ol>
+<p>Alternative is a mean-reverting (stationary) process with zero mean.
+<span class="math inline">\(x_t = \delta x_{t-1}+e_t\)</span></p>
+<ol start="2" style="list-style-type: decimal">
+<li>Null is a random walk with drift (linear STOCHASTIC trend)
+<span class="math inline">\(x_t = \mu + x_{t-1} + e_t\)</span></li>
+</ol>
+<p>Alternative is a mean-reverting (stationary) process with non-zero mean and no trend.
+<span class="math inline">\(x_t = \mu + \delta x_{t-1} + e_t\)</span></p>
+<ol start="3" style="list-style-type: decimal">
+<li>Null is a random walk with exponential trend
+<span class="math inline">\(x_t = \mu + at + x_{t-1} + e_t\)</span></li>
+</ol>
+<p>Alternative is a mean-reverting (stationary) process with non-zero mean and linear DETERMINISTIC trend.
+<span class="math inline">\(x_t = \mu + at + \delta x_{t-1} + e_t\)</span></p>
+</div>
+<div id="example-dickey-fuller-test-using-adf.test" class="section level4 unnumbered">
+<h4>Example: Dickey-Fuller test using adf.test()</h4>
+<p><code>adf.test()</code> in the tseries package will apply the Augemented Dickey-Fuller and report the p-value. We want to reject the Dickey=Fuller null hypothesis of non-stationarity. We will set <code>k=0</code> to apply the Dickey-Fuller test which tests for AR(1) stationarity. The Augmented Dickey-Fuller tests for more general lag-p stationarity.</p>
+<pre><code>adf.test(x, alternative = c(&quot;stationary&quot;, &quot;explosive&quot;),
+         k = trunc((length(x)-1)^(1/3)))</code></pre>
+<p><code>x</code> is the time-series data in vector or ts form. Here is how to apply this test to the anchovy data</p>
+<pre class="sourceCode r"><code class="sourceCode r">tseries<span class="op">::</span><span class="kw">adf.test</span>(anchovy87ts, <span class="dt">k=</span><span class="dv">0</span>)</code></pre>
+<pre><code>## 
+##  Augmented Dickey-Fuller Test
+## 
+## data:  anchovy87ts
+## Dickey-Fuller = -2.8685, Lag order = 0, p-value = 0.2415
+## alternative hypothesis: stationary</code></pre>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="co"># or tseries::adf.test(anchovy87$log.metric.tons, k=0)</span></code></pre>
+<p>The null hypothesis is not rejected. That is not what we want.</p>
+</div>
+<div id="example-dickey-fuller-test-using-ur.df" class="section level4 unnumbered">
+<h4>Example: Dickey-Fuller test using ur.df()</h4>
+<p>The <code>urca</code> R package can also be used to apply the Dickey-Fuller tests. Use <code>lags=0</code> for Dickey-Fuller which tests for AR(1) stationarity. We will set <code>type=&quot;trend&quot;</code> to deal with the trend seen in the anchovy data. Note, <code>adf.test()</code> uses this type by default.</p>
+<pre><code>ur.df(y, type = c(&quot;none&quot;, &quot;drift&quot;, &quot;trend&quot;), lags = 0)</code></pre>
+<pre class="sourceCode r"><code class="sourceCode r">test =<span class="st"> </span>urca<span class="op">::</span><span class="kw">ur.df</span>(anchovy87ts, <span class="dt">type=</span><span class="st">&quot;trend&quot;</span>, <span class="dt">lags=</span><span class="dv">0</span>)
+test</code></pre>
+<pre><code>## 
+## ############################################################### 
+## # Augmented Dickey-Fuller Test Unit Root / Cointegration Test # 
+## ############################################################### 
+## 
+## The value of the test statistic is: -2.8685 4.0886 4.7107</code></pre>
+<p><code>ur.df()</code> will report the test statistic. You can look up the values of the test statistic for different <span class="math inline">\(\alpha\)</span> levels using <code>summary(test)</code> or <code>attr(test, &quot;cval&quot;)</code>. If the test statistic is less than the critical value for <span class="math inline">\(\alpha\)</span>=0.05 (‘5pct’ in cval), it means the null hypothesis of non-stationarity is rejected. For the Dickey-Fuller test, you do want to reject the null hypothesis.</p>
+<p>The test statistic is</p>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">attr</span>(test, <span class="st">&quot;teststat&quot;</span>)</code></pre>
+<pre><code>##               tau3     phi2    phi3
+## statistic -2.86847 4.088559 4.71069</code></pre>
+<p>and the critical value at <span class="math inline">\(\alpha = 0.05\)</span> is</p>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">attr</span>(test,<span class="st">&quot;cval&quot;</span>)</code></pre>
+<pre><code>##       1pct  5pct 10pct
+## tau3 -4.38 -3.60 -3.24
+## phi2  8.21  5.68  4.67
+## phi3 10.61  7.24  5.91</code></pre>
+<p>The statistic is larger than the critical value and thus the null hypothesis of non-stationarity is not rejected. That’s not what we want.</p>
+</div>
+<div id="augmented-dickey-fuller-test" class="section level4 unnumbered">
+<h4>Augmented Dickey-Fuller test</h4>
+<p>The Dickey-Fuller test assumes that the stationary process is AR(1) (autoregressive lag-1). The Augmented Dickey-Fuller test allows a general stationary process. The idea of the test however is the same.</p>
+<p>We can apply the Augmented Dickey-Fuller test with the <code>ur.df()</code> function or the <code>adf.test()</code> function in the <code>tseries</code> package.</p>
+<pre><code>adf.test(x, alternative = c(&quot;stationary&quot;, &quot;explosive&quot;),
+         k = trunc((length(x)-1)^(1/3)))</code></pre>
+<p>The alternative is either stationary like <span class="math inline">\(x_t = \delta x_{t-1} + \eta_t\)</span> with <span class="math inline">\(\delta&lt;1\)</span> or ‘explosive’ with <span class="math inline">\(\delta&gt;1\)</span>. <code>k</code> is the number of lags which determines the number of time lags allowed in the autoregression. <code>k</code> is generally determined by the length of your time series.</p>
+</div>
+<div id="example-augmented-dickey-fuller-tests-with-adf.test" class="section level4 unnumbered">
+<h4>Example: Augmented Dickey-Fuller tests with adf.test()</h4>
+<p>With the <code>tseries</code> package, we apply the Augmented Dickey-Fuller test with <code>adf.test()</code>. This function uses the test where the alternative model is stationary around a linear trend: <span class="math inline">\(x_t = \mu + at + \delta x_{t-1} + e_t\)</span>.</p>
+<pre class="sourceCode r"><code class="sourceCode r">tseries<span class="op">::</span><span class="kw">adf.test</span>(anchovy87ts)</code></pre>
+<pre><code>## 
+##  Augmented Dickey-Fuller Test
+## 
+## data:  anchovy87ts
+## Dickey-Fuller = -0.57814, Lag order = 2, p-value = 0.9685
+## alternative hypothesis: stationary</code></pre>
+<p>In both cases, we do not reject the null hypothesis that the data have a random walk. Thus there is not support for these time series being stationary.</p>
+</div>
+<div id="example-augmented-dickey-fuller-tests-with-ur.df" class="section level4 unnumbered">
+<h4>Example: Augmented Dickey-Fuller tests with ur.df()</h4>
+<p>With the <code>urca</code> package, we apply the Augmented Dickey-Fuller test with <code>ur.df()</code>. The defaults for <code>ur.df()</code> are different than for <code>adf.test()</code>.</p>
+<p><code>ur.df()</code> allows you to specify which of the 3 alternative hypotheses you want: none (stationary around 0), drift (stationary around a non-zero intercept), trend (stationary around a linear trend).</p>
+<p>Another difference is that by default, <code>ur.df()</code> uses a fixed lag of 1 while by default <code>adf.test()</code> selects the lag based on the length of the time series.</p>
+<p>We will specify “trend” to make the test similar to <code>adf.test()</code>. We will set the lags like <code>adf.test()</code> does also.</p>
+<pre class="sourceCode r"><code class="sourceCode r">k =<span class="st"> </span><span class="kw">trunc</span>((<span class="kw">length</span>(anchovy87ts)<span class="op">-</span><span class="dv">1</span>)<span class="op">^</span>(<span class="dv">1</span><span class="op">/</span><span class="dv">3</span>))
+test =<span class="st"> </span>urca<span class="op">::</span><span class="kw">ur.df</span>(anchovy87ts, <span class="dt">type=</span><span class="st">&quot;trend&quot;</span>, <span class="dt">lags=</span>k)
+test</code></pre>
+<pre><code>## 
+## ############################################################### 
+## # Augmented Dickey-Fuller Test Unit Root / Cointegration Test # 
+## ############################################################### 
+## 
+## The value of the test statistic is: -0.5781 3.2816 0.8113</code></pre>
+<p>The test statistic values are the same, but we need to look up the critical values with <code>summary(test)</code>.</p>
+</div>
+<div id="kpss-test" class="section level4 unnumbered">
+<h4>KPSS test</h4>
+<p>In the Dickey-Fuller test, the null hypothesis is the unit root, i.e. random walk. Often times, there is not enough power to reject the null hypothesis. A null hypothesis is accepted unless there is strong evidence against it.</p>
+<p>The Kwiatkowski–Phillips–Schmidt–Shin (KPSS) test has as the null hypothesis that a time series is stationary around a level trend (or a linear trend). The alternative hypothesis for the KPSS test is a random walk.</p>
+<p>The stationarity assumption is general; it does not assume a specific type of stationarity such as white noise.</p>
+<p>If both KPSS and Dickey-Fuller tests support non-stationarity, then the stationarity assumption is not supported.</p>
+</div>
+<div id="example-kpss-tests" class="section level4 unnumbered">
+<h4>Example: KPSS tests</h4>
+<pre class="sourceCode r"><code class="sourceCode r">tseries<span class="op">::</span><span class="kw">kpss.test</span>(anchovy87ts, <span class="dt">null=</span><span class="st">&quot;Trend&quot;</span>)</code></pre>
+<pre><code>## 
+##  KPSS Test for Trend Stationarity
+## 
+## data:  anchovy87ts
+## KPSS Trend = 0.22597, Truncation lag parameter = 1, p-value = 0.01</code></pre>
+<p>Here <code>null=&quot;Trend&quot;</code> was included to account for the increasing trend in the data. The null hypothesis of stationarity is rejected. Thus both the KPSS and Dickey-Fuller tests support the hypothesis that the anchovy time series is non-stationary. That’s not what we want.</p>
+<hr />
+</div>
+</div>
+<div id="differencing-the-data" class="section level3">
+<h3><span class="header-section-number">3.2.4</span> Differencing the data</h3>
+<p>Differencing the data is used to correct non-stationarity. Differencing means to create a new time series <span class="math inline">\(z_t = x_t - x_{t-1}\)</span>. First order differencing means you do this once (so <span class="math inline">\(z_t\)</span>) and second order differencing means you do this twice (so <span class="math inline">\(z_t - z_{t-1}\)</span>).</p>
+<p>The <code>diff()</code> function takes the first difference:</p>
+<pre class="sourceCode r"><code class="sourceCode r">x &lt;-<span class="st"> </span><span class="kw">diff</span>(<span class="kw">c</span>(<span class="dv">1</span>,<span class="dv">2</span>,<span class="dv">4</span>,<span class="dv">7</span>,<span class="dv">11</span>))
+x</code></pre>
+<pre><code>## [1] 1 2 3 4</code></pre>
+<p>The second difference is the first difference of the first difference.</p>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">diff</span>(x)</code></pre>
+<pre><code>## [1] 1 1 1</code></pre>
+<p>Here is a plot of the anchovy data and its first difference.</p>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">par</span>(<span class="dt">mfrow=</span><span class="kw">c</span>(<span class="dv">1</span>,<span class="dv">2</span>))
+<span class="kw">plot</span>(anchovy87ts, <span class="dt">type=</span><span class="st">&quot;l&quot;</span>)
+<span class="kw">title</span>(<span class="st">&quot;Anchovy&quot;</span>)
+<span class="kw">plot</span>(<span class="kw">diff</span>(anchovy87ts), <span class="dt">type=</span><span class="st">&quot;l&quot;</span>)
+<span class="kw">title</span>(<span class="st">&quot;Anchovy first difference&quot;</span>)</code></pre>
+<p><img src="Fish-Forecast_files/figure-html/diff1.plot-1.png" width="768" style="display: block; margin: auto;" /></p>
+<p>Let’s test the anchovy data with one difference using the KPSS test.</p>
+<pre class="sourceCode r"><code class="sourceCode r">diff.anchovy =<span class="st"> </span><span class="kw">diff</span>(anchovy87ts)
+tseries<span class="op">::</span><span class="kw">kpss.test</span>(diff.anchovy)</code></pre>
+<pre><code>## Warning in tseries::kpss.test(diff.anchovy): p-value greater than printed
+## p-value</code></pre>
+<pre><code>## 
+##  KPSS Test for Level Stationarity
+## 
+## data:  diff.anchovy
+## KPSS Level = 0.18309, Truncation lag parameter = 1, p-value = 0.1</code></pre>
+<p>The null hypothesis of stationairity is not rejected. That is good.</p>
+<p>Let’s test the first difference of the anchovy data using the Augmented Dickey-Fuller test. We do the default test and allow it to chose the number of lags.</p>
+<pre class="sourceCode r"><code class="sourceCode r">tseries<span class="op">::</span><span class="kw">adf.test</span>(diff.anchovy)</code></pre>
+<pre><code>## 
+##  Augmented Dickey-Fuller Test
+## 
+## data:  diff.anchovy
+## Dickey-Fuller = -4.2126, Lag order = 2, p-value = 0.01584
+## alternative hypothesis: stationary</code></pre>
+<p>The null hypothesis of non-stationarity is rejected. That is what we want. However, we differenced which removed the trend thus we are testing against a more general model than we need. Let’s test with an alternative hypothesis that has a non-zero mean but not trend. We can do this with <code>ur.df()</code> and <code>type='drift'</code>.</p>
+<pre class="sourceCode r"><code class="sourceCode r">test &lt;-<span class="st"> </span>urca<span class="op">::</span><span class="kw">ur.df</span>(diff.anchovy, <span class="dt">type=</span><span class="st">&quot;drift&quot;</span>, <span class="dt">lags=</span><span class="dv">2</span>)</code></pre>
+<p>The null hypothesis of NON-stationairity IS rejected. That is good.</p>
+<p>The test statistic is</p>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">attr</span>(test, <span class="st">&quot;teststat&quot;</span>)</code></pre>
+<pre><code>##                tau2     phi1
+## statistic -3.492685 6.099778</code></pre>
+<p>and the critical value at <span class="math inline">\(\alpha = 0.05\)</span> is</p>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">attr</span>(test,<span class="st">&quot;cval&quot;</span>)</code></pre>
+<pre><code>##       1pct  5pct 10pct
+## tau2 -3.75 -3.00 -2.63
+## phi1  7.88  5.18  4.12</code></pre>
+<hr />
+</div>
+<div id="summary-2" class="section level3">
+<h3><span class="header-section-number">3.2.5</span> Summary</h3>
+<p>Test stationarity before you fit a ARMA model.</p>
+<ul>
+<li>Visual test: is the time series flutuating about a level or a linear trend?</li>
+</ul>
+<p>Yes or maybe? Apply a “unit root” test.</p>
+<ul>
+<li>(Augmented) Dickey-Fuller test</li>
+<li>KPSS test</li>
+</ul>
+<p>No or fails the unit root test.</p>
+<ul>
+<li>Apply differencing again and re-test.</li>
+</ul>
+<p>Still not passing?</p>
+<ul>
+<li>Try a second difference.</li>
+</ul>
+<p>Still not passing?</p>
+<ul>
+<li>ARMA model might not be the best choice. Or you may need to an adhoc detrend.</li>
+</ul>
+
+</div>
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="overview.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="model-structure.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/lunr.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": {
+"github": false,
+"facebook": true,
+"twitter": true,
+"google": false,
+"linkedin": false,
+"weibo": false,
+"instapper": false,
+"vk": false,
+"all": ["facebook", "google", "twitter", "linkedin", "weibo", "instapaper"]
+},
+"fontsettings": {
+"theme": "white",
+"family": "sans",
+"size": 2
+},
+"edit": {
+"link": null,
+"text": null
+},
+"download": null,
+"toc": {
+"collapse": "section"
+}
+});
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "true";
+    if (src === "" || src === "true") src = "https://cdn.bootcss.com/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:" && /^https?:/.test(src))
+      src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+</body>
+
+</html>

@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html >
+
+<head>
+
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>Forecasting Catch Time Series</title>
+  <meta name="description" content="Forecasting catch time series using R.">
+  <meta name="generator" content="bookdown  and GitBook 2.6.7">
+
+  <meta property="og:title" content="Forecasting Catch Time Series" />
+  <meta property="og:type" content="book" />
+  
+  
+  <meta property="og:description" content="Forecasting catch time series using R." />
+  <meta name="github-repo" content="rstudio/bookdown-demo" />
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Forecasting Catch Time Series" />
+  
+  <meta name="twitter:description" content="Forecasting catch time series using R." />
+  
+
+<meta name="author" content="Elizabeth Holmes">
+
+
+<meta name="date" content="2018-10-10">
+
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  
+  
+<link rel="prev" href="time-varying-regression.html">
+<link rel="next" href="forecasting-with-a-time-varying-regression-model.html">
+<script src="libs/jquery-2.2.3/jquery.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+
+<style type="text/css">
+a.sourceLine { display: inline-block; line-height: 1.25; }
+a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
+a.sourceLine:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode { white-space: pre; position: relative; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+code.sourceCode { white-space: pre-wrap; }
+a.sourceLine { text-indent: -1em; padding-left: 1em; }
+}
+pre.numberSource a.sourceLine
+  { position: relative; left: -4em; }
+pre.numberSource a.sourceLine::before
+  { content: attr(data-line-number);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; pointer-events: all; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {  }
+@media screen {
+a.sourceLine::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+<link rel="stylesheet" href="style.css" type="text/css" />
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li><a href="./index.html">Fish Forecast</a></li>
+
+<li class="divider"></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i>Preface</a></li>
+<li class="chapter" data-level="1" data-path="introduction.html"><a href="introduction.html"><i class="fa fa-check"></i><b>1</b> Introduction</a><ul>
+<li class="chapter" data-level="1.1" data-path="stergiou-and-christou-1996.html"><a href="stergiou-and-christou-1996.html"><i class="fa fa-check"></i><b>1.1</b> Stergiou and Christou 1996</a><ul>
+<li class="chapter" data-level="1.1.1" data-path="stergiou-and-christou-1996.html"><a href="stergiou-and-christou-1996.html#hellenic-landings-data"><i class="fa fa-check"></i><b>1.1.1</b> Hellenic landings data</a></li>
+</ul></li>
+<li class="chapter" data-level="1.2" data-path="the-landings-data-landings-rdata.html"><a href="the-landings-data-landings-rdata.html"><i class="fa fa-check"></i><b>1.2</b> The landings data, landings.RData</a></li>
+<li class="chapter" data-level="1.3" data-path="ts-objects.html"><a href="ts-objects.html"><i class="fa fa-check"></i><b>1.3</b> ts objects</a><ul>
+<li class="chapter" data-level="1.3.1" data-path="ts-objects.html"><a href="ts-objects.html#ts-function"><i class="fa fa-check"></i><b>1.3.1</b> <code>ts()</code> function</a></li>
+<li class="chapter" data-level="1.3.2" data-path="ts-objects.html"><a href="ts-objects.html#ggplot-and-ts-objects"><i class="fa fa-check"></i><b>1.3.2</b> ggplot and ts objects</a></li>
+<li class="chapter" data-level="1.3.3" data-path="ts-objects.html"><a href="ts-objects.html#plotting-using-a-data-frame"><i class="fa fa-check"></i><b>1.3.3</b> Plotting using a data frame</a></li>
+</ul></li>
+<li class="chapter" data-level="1.4" data-path="packages.html"><a href="packages.html"><i class="fa fa-check"></i><b>1.4</b> Packages</a></li>
+<li class="chapter" data-level="1.5" data-path="references.html"><a href="references.html"><i class="fa fa-check"></i><b>1.5</b> References</a></li>
+</ul></li>
+<li class="chapter" data-level="2" data-path="time-varying-regression.html"><a href="time-varying-regression.html"><i class="fa fa-check"></i><b>2</b> Time-varying regression</a><ul>
+<li class="chapter" data-level="2.1" data-path="fitting-time-varying-regressions.html"><a href="fitting-time-varying-regressions.html"><i class="fa fa-check"></i><b>2.1</b> Fitting time-varying regressions</a><ul>
+<li class="chapter" data-level="2.1.1" data-path="fitting-time-varying-regressions.html"><a href="fitting-time-varying-regressions.html#orthogonal-polynomials"><i class="fa fa-check"></i><b>2.1.1</b> Orthogonal polynomials</a></li>
+<li class="chapter" data-level="2.1.2" data-path="fitting-time-varying-regressions.html"><a href="fitting-time-varying-regressions.html#residual-diagnostics"><i class="fa fa-check"></i><b>2.1.2</b> Residual diagnostics</a></li>
+<li class="chapter" data-level="2.1.3" data-path="fitting-time-varying-regressions.html"><a href="fitting-time-varying-regressions.html#compare-to-stergiou-and-christou"><i class="fa fa-check"></i><b>2.1.3</b> Compare to Stergiou and Christou</a></li>
+<li class="chapter" data-level="2.1.4" data-path="fitting-time-varying-regressions.html"><a href="fitting-time-varying-regressions.html#summary"><i class="fa fa-check"></i><b>2.1.4</b> Summary</a></li>
+</ul></li>
+<li class="chapter" data-level="2.2" data-path="forecasting-with-a-time-varying-regression-model.html"><a href="forecasting-with-a-time-varying-regression-model.html"><i class="fa fa-check"></i><b>2.2</b> Forecasting with a time-varying regression model</a><ul>
+<li class="chapter" data-level="2.2.1" data-path="forecasting-with-a-time-varying-regression-model.html"><a href="forecasting-with-a-time-varying-regression-model.html#the-forecast-package"><i class="fa fa-check"></i><b>2.2.1</b> The forecast package</a></li>
+<li class="chapter" data-level="2.2.2" data-path="forecasting-with-a-time-varying-regression-model.html"><a href="forecasting-with-a-time-varying-regression-model.html#summary-1"><i class="fa fa-check"></i><b>2.2.2</b> Summary</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="3" data-path="arima-models.html"><a href="arima-models.html"><i class="fa fa-check"></i><b>3</b> ARIMA Models</a><ul>
+<li class="chapter" data-level="3.1" data-path="overview.html"><a href="overview.html"><i class="fa fa-check"></i><b>3.1</b> Overview</a><ul>
+<li class="chapter" data-level="3.1.1" data-path="overview.html"><a href="overview.html#components-of-an-arima-model"><i class="fa fa-check"></i><b>3.1.1</b> Components of an ARIMA model</a></li>
+<li class="chapter" data-level="3.1.2" data-path="overview.html"><a href="overview.html#box-jenkins-method"><i class="fa fa-check"></i><b>3.1.2</b> Box-Jenkins Method</a></li>
+<li class="chapter" data-level="3.1.3" data-path="overview.html"><a href="overview.html#acf-and-pacf-functions"><i class="fa fa-check"></i><b>3.1.3</b> ACF and PACF functions</a></li>
+</ul></li>
+<li class="chapter" data-level="3.2" data-path="stationarity.html"><a href="stationarity.html"><i class="fa fa-check"></i><b>3.2</b> Stationarity</a><ul>
+<li class="chapter" data-level="3.2.1" data-path="stationarity.html"><a href="stationarity.html#definition"><i class="fa fa-check"></i><b>3.2.1</b> Definition</a></li>
+<li class="chapter" data-level="3.2.2" data-path="stationarity.html"><a href="stationarity.html#non-stationarity"><i class="fa fa-check"></i><b>3.2.2</b> Non-stationarity</a></li>
+<li class="chapter" data-level="3.2.3" data-path="stationarity.html"><a href="stationarity.html#stationarity-tests"><i class="fa fa-check"></i><b>3.2.3</b> Stationarity tests</a></li>
+<li class="chapter" data-level="3.2.4" data-path="stationarity.html"><a href="stationarity.html#differencing-the-data"><i class="fa fa-check"></i><b>3.2.4</b> Differencing the data</a></li>
+<li class="chapter" data-level="3.2.5" data-path="stationarity.html"><a href="stationarity.html#summary-2"><i class="fa fa-check"></i><b>3.2.5</b> Summary</a></li>
+</ul></li>
+<li class="chapter" data-level="3.3" data-path="model-structure.html"><a href="model-structure.html"><i class="fa fa-check"></i><b>3.3</b> Model Structure</a><ul>
+<li class="chapter" data-level="3.3.1" data-path="model-structure.html"><a href="model-structure.html#ar-and-ma-lags"><i class="fa fa-check"></i><b>3.3.1</b> AR and MA lags</a></li>
+<li class="chapter" data-level="3.3.2" data-path="model-structure.html"><a href="model-structure.html#model-order"><i class="fa fa-check"></i><b>3.3.2</b> Model order</a></li>
+<li class="chapter" data-level="3.3.3" data-path="model-structure.html"><a href="model-structure.html#choosing-the-ar-and-ma-levels"><i class="fa fa-check"></i><b>3.3.3</b> Choosing the AR and MA levels</a></li>
+<li class="chapter" data-level="3.3.4" data-path="model-structure.html"><a href="model-structure.html#trace-true"><i class="fa fa-check"></i><b>3.3.4</b> Trace = TRUE</a></li>
+<li class="chapter" data-level="3.3.5" data-path="model-structure.html"><a href="model-structure.html#stepwisefalse"><i class="fa fa-check"></i><b>3.3.5</b> stepwise=FALSE</a></li>
+<li class="chapter" data-level="3.3.6" data-path="model-structure.html"><a href="model-structure.html#summary-3"><i class="fa fa-check"></i><b>3.3.6</b> Summary</a></li>
+</ul></li>
+<li class="chapter" data-level="3.4" data-path="fitting-arima-models.html"><a href="fitting-arima-models.html"><i class="fa fa-check"></i><b>3.4</b> Fitting ARIMA Models</a><ul>
+<li class="chapter" data-level="3.4.1" data-path="fitting-arima-models.html"><a href="fitting-arima-models.html#fitting-with-auto.arima"><i class="fa fa-check"></i><b>3.4.1</b> Fitting with <code>auto.arima()</code></a></li>
+<li class="chapter" data-level="3.4.2" data-path="fitting-arima-models.html"><a href="fitting-arima-models.html#outputting-the-models-tested"><i class="fa fa-check"></i><b>3.4.2</b> Outputting the models tested</a></li>
+<li class="chapter" data-level="3.4.3" data-path="fitting-arima-models.html"><a href="fitting-arima-models.html#repeat-with-the-sardine-data"><i class="fa fa-check"></i><b>3.4.3</b> Repeat with the sardine data</a></li>
+<li class="chapter" data-level="3.4.4" data-path="fitting-arima-models.html"><a href="fitting-arima-models.html#missing-values"><i class="fa fa-check"></i><b>3.4.4</b> Missing values</a></li>
+<li class="chapter" data-level="3.4.5" data-path="fitting-arima-models.html"><a href="fitting-arima-models.html#fit-a-specific-arima-model"><i class="fa fa-check"></i><b>3.4.5</b> Fit a specific ARIMA model</a></li>
+<li class="chapter" data-level="3.4.6" data-path="fitting-arima-models.html"><a href="fitting-arima-models.html#model-checking"><i class="fa fa-check"></i><b>3.4.6</b> Model Checking</a></li>
+<li class="chapter" data-level="3.4.7" data-path="fitting-arima-models.html"><a href="fitting-arima-models.html#workflow-for-non-seasonal-data"><i class="fa fa-check"></i><b>3.4.7</b> Workflow for non-seasonal data</a></li>
+<li class="chapter" data-level="3.4.8" data-path="fitting-arima-models.html"><a href="fitting-arima-models.html#stepwise-vs-exhaustive-model-selection"><i class="fa fa-check"></i><b>3.4.8</b> Stepwise vs exhaustive model selection</a></li>
+<li class="chapter" data-level="3.4.9" data-path="fitting-arima-models.html"><a href="fitting-arima-models.html#summary-4"><i class="fa fa-check"></i><b>3.4.9</b> Summary</a></li>
+</ul></li>
+<li class="chapter" data-level="3.5" data-path="forecasting.html"><a href="forecasting.html"><i class="fa fa-check"></i><b>3.5</b> Forecasting</a><ul>
+<li class="chapter" data-level="3.5.1" data-path="forecasting.html"><a href="forecasting.html#forecasting-with-forecast"><i class="fa fa-check"></i><b>3.5.1</b> Forecasting with <code>forecast()</code></a></li>
+<li class="chapter" data-level="3.5.2" data-path="forecasting.html"><a href="forecasting.html#missing-values-1"><i class="fa fa-check"></i><b>3.5.2</b> Missing values</a></li>
+<li class="chapter" data-level="3.5.3" data-path="forecasting.html"><a href="forecasting.html#null-forecast-models"><i class="fa fa-check"></i><b>3.5.3</b> Null forecast models</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="4" data-path="exponential-smoothing-models.html"><a href="exponential-smoothing-models.html"><i class="fa fa-check"></i><b>4</b> Exponential Smoothing Models</a><ul>
+<li class="chapter" data-level="4.1" data-path="naive-forecast.html"><a href="naive-forecast.html"><i class="fa fa-check"></i><b>4.1</b> Naive forecast</a></li>
+<li class="chapter" data-level="4.2" data-path="simple-ets.html"><a href="simple-ets.html"><i class="fa fa-check"></i><b>4.2</b> Simple ETS</a></li>
+<li class="chapter" data-level="4.3" data-path="fitting-with-ets.html"><a href="fitting-with-ets.html"><i class="fa fa-check"></i><b>4.3</b> Fitting with <code>ets()</code></a><ul>
+<li class="chapter" data-level="4.3.1" data-path="fitting-with-ets.html"><a href="fitting-with-ets.html#exponential-smoothing-with-no-trend"><i class="fa fa-check"></i><b>4.3.1</b> Exponential smoothing with no trend</a></li>
+<li class="chapter" data-level="4.3.2" data-path="fitting-with-ets.html"><a href="fitting-with-ets.html#the-weighting-function"><i class="fa fa-check"></i><b>4.3.2</b> The weighting function</a></li>
+<li class="chapter" data-level="4.3.3" data-path="fitting-with-ets.html"><a href="fitting-with-ets.html#produce-forecast-using-a-previous-fit"><i class="fa fa-check"></i><b>4.3.3</b> Produce forecast using a previous fit</a></li>
+<li class="chapter" data-level="4.3.4" data-path="fitting-with-ets.html"><a href="fitting-with-ets.html#naive-model-with-drift"><i class="fa fa-check"></i><b>4.3.4</b> Naive model with drift</a></li>
+<li class="chapter" data-level="4.3.5" data-path="fitting-with-ets.html"><a href="fitting-with-ets.html#exponential-smoothing-model-with-trend"><i class="fa fa-check"></i><b>4.3.5</b> Exponential smoothing model with trend</a></li>
+<li class="chapter" data-level="4.3.6" data-path="fitting-with-ets.html"><a href="fitting-with-ets.html#naive-model-with-trend"><i class="fa fa-check"></i><b>4.3.6</b> Naive model with trend</a></li>
+<li class="chapter" data-level="4.3.7" data-path="fitting-with-ets.html"><a href="fitting-with-ets.html#exponential-smoothing-model-with-trend-1"><i class="fa fa-check"></i><b>4.3.7</b> Exponential smoothing model with trend</a></li>
+<li class="chapter" data-level="4.3.8" data-path="fitting-with-ets.html"><a href="fitting-with-ets.html#decomposing-your-model-fit"><i class="fa fa-check"></i><b>4.3.8</b> Decomposing your model fit</a></li>
+<li class="chapter" data-level="4.3.9" data-path="fitting-with-ets.html"><a href="fitting-with-ets.html#forecast-performance"><i class="fa fa-check"></i><b>4.3.9</b> Forecast performance</a></li>
+<li class="chapter" data-level="4.3.10" data-path="fitting-with-ets.html"><a href="fitting-with-ets.html#test-forecast-performance"><i class="fa fa-check"></i><b>4.3.10</b> Test forecast performance</a></li>
+<li class="chapter" data-level="4.3.11" data-path="fitting-with-ets.html"><a href="fitting-with-ets.html#testing-a-specific-ets-model"><i class="fa fa-check"></i><b>4.3.11</b> Testing a specific ets model</a></li>
+<li class="chapter" data-level="4.3.12" data-path="fitting-with-ets.html"><a href="fitting-with-ets.html#forecast-accuracy-metrics"><i class="fa fa-check"></i><b>4.3.12</b> Forecast accuracy metrics</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="5" data-path="testing-forecast-accuracy.html"><a href="testing-forecast-accuracy.html"><i class="fa fa-check"></i><b>5</b> Testing forecast accuracy</a><ul>
+<li class="chapter" data-level="5.1" data-path="measures-of-forecast-accuracy.html"><a href="measures-of-forecast-accuracy.html"><i class="fa fa-check"></i><b>5.1</b> Measures of forecast accuracy</a><ul>
+<li class="chapter" data-level="5.1.1" data-path="measures-of-forecast-accuracy.html"><a href="measures-of-forecast-accuracy.html#metrics"><i class="fa fa-check"></i><b>5.1.1</b> Metrics</a></li>
+<li class="chapter" data-level="5.1.2" data-path="measures-of-forecast-accuracy.html"><a href="measures-of-forecast-accuracy.html#test-multiple-models"><i class="fa fa-check"></i><b>5.1.2</b> Test multiple models</a></li>
+<li class="chapter" data-level="5.1.3" data-path="measures-of-forecast-accuracy.html"><a href="measures-of-forecast-accuracy.html#cross-validation"><i class="fa fa-check"></i><b>5.1.3</b> Cross-Validation</a></li>
+</ul></li>
+<li class="chapter" data-level="5.2" data-path="testing-multiple-models.html"><a href="testing-multiple-models.html"><i class="fa fa-check"></i><b>5.2</b> Testing multiple models</a><ul>
+<li class="chapter" data-level="5.2.1" data-path="testing-multiple-models.html"><a href="testing-multiple-models.html#example-candidate-model-set-for-anchovy"><i class="fa fa-check"></i><b>5.2.1</b> Example candidate model set for anchovy</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="6" data-path="covariates.html"><a href="covariates.html"><i class="fa fa-check"></i><b>6</b> Covariates</a><ul>
+<li class="chapter" data-level="6.1" data-path="multivariate-linear-regression-with-arma-errors.html"><a href="multivariate-linear-regression-with-arma-errors.html"><i class="fa fa-check"></i><b>6.1</b> Multivariate linear regression with ARMA errors</a><ul>
+<li class="chapter" data-level="6.1.1" data-path="multivariate-linear-regression-with-arma-errors.html"><a href="multivariate-linear-regression-with-arma-errors.html#example-anchovy"><i class="fa fa-check"></i><b>6.1.1</b> Example: anchovy</a></li>
+<li class="chapter" data-level="6.1.2" data-path="multivariate-linear-regression-with-arma-errors.html"><a href="multivariate-linear-regression-with-arma-errors.html#mreg-of-first-or-second-differences"><i class="fa fa-check"></i><b>6.1.2</b> MREG of first or second differences</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="7" data-path="seasonality.html"><a href="seasonality.html"><i class="fa fa-check"></i><b>7</b> Seasonality</a><ul>
+<li class="chapter" data-level="7.0.1" data-path="seasonality.html"><a href="seasonality.html#load-the-chinook-salmon-data-set"><i class="fa fa-check"></i><b>7.0.1</b> Load the chinook salmon data set</a></li>
+<li class="chapter" data-level="7.0.2" data-path="seasonality.html"><a href="seasonality.html#plot-seasonal-data"><i class="fa fa-check"></i><b>7.0.2</b> Plot seasonal data</a></li>
+<li class="chapter" data-level="7.1" data-path="seasonal-exponential-smoothing-model.html"><a href="seasonal-exponential-smoothing-model.html"><i class="fa fa-check"></i><b>7.1</b> Seasonal Exponential Smoothing Model</a><ul>
+<li class="chapter" data-level="7.1.1" data-path="seasonal-exponential-smoothing-model.html"><a href="seasonal-exponential-smoothing-model.html#force-seasonality-to-evolve-more"><i class="fa fa-check"></i><b>7.1.1</b> Force seasonality to evolve more</a></li>
+</ul></li>
+<li class="chapter" data-level="7.2" data-path="seasonal-arima-model.html"><a href="seasonal-arima-model.html"><i class="fa fa-check"></i><b>7.2</b> Seasonal ARIMA model</a></li>
+<li class="chapter" data-level="7.3" data-path="missing-values-2.html"><a href="missing-values-2.html"><i class="fa fa-check"></i><b>7.3</b> Missing values</a></li>
+<li class="chapter" data-level="7.4" data-path="forecast-evaluation.html"><a href="forecast-evaluation.html"><i class="fa fa-check"></i><b>7.4</b> Forecast evaluation</a></li>
+</ul></li>
+<li class="chapter" data-level="" data-path="appendix-inputting-data.html"><a href="appendix-inputting-data.html"><i class="fa fa-check"></i>Appendix: Inputting data</a><ul>
+<li class="chapter" data-level="" data-path="appendix-inputting-data.html"><a href="appendix-inputting-data.html#one-response-variable"><i class="fa fa-check"></i>one response variable</a></li>
+<li class="chapter" data-level="" data-path="appendix-inputting-data.html"><a href="appendix-inputting-data.html#many-response-variables"><i class="fa fa-check"></i>Many response variables</a></li>
+<li class="chapter" data-level="" data-path="appendix-inputting-data.html"><a href="appendix-inputting-data.html#many-response-variables-two-time-variables"><i class="fa fa-check"></i>Many response variables, two time variables</a></li>
+<li class="chapter" data-level="" data-path="appendix-inputting-data.html"><a href="appendix-inputting-data.html#one-response-variable-multiple-explanatory-variables"><i class="fa fa-check"></i>One response variable, multiple explanatory variables</a></li>
+</ul></li>
+<li class="chapter" data-level="" data-path="appendix-downloading-icoads-covariates.html"><a href="appendix-downloading-icoads-covariates.html"><i class="fa fa-check"></i>Appendix: Downloading ICOADS covariates</a></li>
+<li class="divider"></li>
+<li><a href="https://github.com/rstudio/bookdown" target="blank">Published with bookdown</a></li>
+
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Forecasting Catch Time Series</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="fitting-time-varying-regressions" class="section level2">
+<h2><span class="header-section-number">2.1</span> Fitting time-varying regressions</h2>
+<p>Fitting a time-varying regression is done with the <code>lm()</code> function. For example, here is how to fit a 4th-order polynomial for time to the anchovy data. We are fitting this model:</p>
+<p><span class="math display">\[log(Anchovy) = \alpha + \beta t + \beta_2 t^2 + \beta_3 t^3 + \beta_4 t^4 + e_t\]</span></p>
+<p>First load in the data. <code>landings.RData</code> includes a number of data objects. <code>anchovy</code> is a data frame with year and log.metric.tons columns. <code>anchovy87</code> is the same data frame but with the years 1964 to 1987. These are the years that Stergio and Christou use for fitting their models. They hold out 1988 and 1989 for forecast evaluation.</p>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">load</span>(<span class="st">&quot;landings.RData&quot;</span>)</code></pre>
+<p>We need to add on a column for <span class="math inline">\(t\)</span> (and <span class="math inline">\(t^2\)</span>, <span class="math inline">\(t^3\)</span>, <span class="math inline">\(t^4\)</span>) where the first year is <span class="math inline">\(t=1\)</span>. We could regress against year (so 1964 to 1987), but by convention, one regresses against 1 to the number of years or 0 to the number of years minus 1. Stergiou and Christou did the former.</p>
+<pre class="sourceCode r"><code class="sourceCode r">anchovy87<span class="op">$</span>t =<span class="st"> </span>anchovy87<span class="op">$</span>Year<span class="dv">-1963</span>
+anchovy87<span class="op">$</span>t2 =<span class="st"> </span>anchovy87<span class="op">$</span>t<span class="op">^</span><span class="dv">2</span>
+anchovy87<span class="op">$</span>t3 =<span class="st"> </span>anchovy87<span class="op">$</span>t<span class="op">^</span><span class="dv">3</span>
+anchovy87<span class="op">$</span>t4 =<span class="st"> </span>anchovy87<span class="op">$</span>t<span class="op">^</span><span class="dv">4</span>
+model &lt;-<span class="st"> </span><span class="kw">lm</span>(log.metric.tons <span class="op">~</span><span class="st"> </span>t <span class="op">+</span><span class="st"> </span>t2 <span class="op">+</span><span class="st"> </span>t3 <span class="op">+</span><span class="st"> </span>t4, <span class="dt">data=</span>anchovy87)</code></pre>
+<p>All our covariates are functions of <span class="math inline">\(t\)</span>, so we do not actually need to add on the <span class="math inline">\(t^2\)</span>, <span class="math inline">\(t^3\)</span> and <span class="math inline">\(t^4\)</span> to our data frame. We can use the <code>I()</code> function. This function is useful whenever you want to use a transformed value of a column of your data frame in your regression.</p>
+<pre class="sourceCode r"><code class="sourceCode r">anchovy87<span class="op">$</span>t =<span class="st"> </span>anchovy87<span class="op">$</span>Year<span class="dv">-1963</span>
+model &lt;-<span class="st"> </span><span class="kw">lm</span>(log.metric.tons <span class="op">~</span><span class="st"> </span>t <span class="op">+</span><span class="st"> </span><span class="kw">I</span>(t<span class="op">^</span><span class="dv">2</span>) <span class="op">+</span><span class="st"> </span><span class="kw">I</span>(t<span class="op">^</span><span class="dv">3</span>) <span class="op">+</span><span class="st"> </span><span class="kw">I</span>(t<span class="op">^</span><span class="dv">4</span>), <span class="dt">data=</span>anchovy87)</code></pre>
+<p>Let’s look at the fit.</p>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">summary</span>(model)</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = log.metric.tons ~ t + I(t^2) + I(t^3) + I(t^4), 
+##     data = anchovy87)
+## 
+## Residuals:
+##      Min       1Q   Median       3Q      Max 
+## -0.26951 -0.09922 -0.01018  0.11777  0.20006 
+## 
+## Coefficients:
+##               Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)  8.300e+00  1.953e-01  42.498   &lt;2e-16 ***
+## t            1.751e-01  1.035e-01   1.692    0.107    
+## I(t^2)      -2.182e-02  1.636e-02  -1.333    0.198    
+## I(t^3)       1.183e-03  9.739e-04   1.215    0.239    
+## I(t^4)      -1.881e-05  1.934e-05  -0.972    0.343    
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 0.1458 on 19 degrees of freedom
+## Multiple R-squared:  0.9143, Adjusted R-squared:  0.8962 
+## F-statistic: 50.65 on 4 and 19 DF,  p-value: 7.096e-10</code></pre>
+<hr />
+<div id="orthogonal-polynomials" class="section level3">
+<h3><span class="header-section-number">2.1.1</span> Orthogonal polynomials</h3>
+<p>None of the time effects are significant despite an obvious linear temporal trend to the data. What’s going on? Well <span class="math inline">\(t\)</span>, <span class="math inline">\(t^2\)</span>, <span class="math inline">\(t^3\)</span> and <span class="math inline">\(t^4\)</span> are all highly correlated. Fitting a linear regression with multiple highly correlated covariates will not get you anywhere unless perhaps all the covariates are needed to explain the data. We will see the latter case for the sardine. In the anchovy case, multiple of the covariates could explain the linear-ish trend.</p>
+<p>You could try fitting the first degree model <span class="math inline">\(x_t = \alpha + \beta t + e_t\)</span>, then the second <span class="math inline">\(x_t = \alpha + \beta_1 t + \beta_2 t^2 + e_t\)</span>, then the third. This would reveal that in the first and second order fits, we get significant effects of time in our model. However the correct way to do this would be to use orthogonal polynomials.</p>
+<div id="poly-function" class="section level4">
+<h4><span class="header-section-number">2.1.1.1</span> <code>poly()</code> function</h4>
+<p>The <code>poly()</code> function creates orthogonal covariates for your polynomial. What does that mean? Let’s say you want to fit a model with a 2nd order polynomial of <span class="math inline">\(t\)</span>. It has <span class="math inline">\(t\)</span> and <span class="math inline">\(t^2\)</span>, but using these as covariates directly lead to using two covariates that are highly correlated. Instead we want a covariate that explains <span class="math inline">\(t\)</span> and another that explains the part of <span class="math inline">\(t^2\)</span> that cannot be explained by <span class="math inline">\(t\)</span>. <code>poly()</code> creates these orthogonal covariates. The <code>poly()</code> function creates covariates with mean zero and identical variances. Covariates with different means and variances makes it hard to compare the estimated effect sizes.</p>
+<pre class="sourceCode r"><code class="sourceCode r">T1 =<span class="st"> </span><span class="dv">1</span><span class="op">:</span><span class="dv">24</span>; T2=T1<span class="op">^</span><span class="dv">2</span>
+<span class="kw">c</span>(<span class="kw">mean</span>(T1),<span class="kw">mean</span>(T2),<span class="kw">cov</span>(T1, T2))</code></pre>
+<pre><code>## [1]   12.5000  204.1667 1250.0000</code></pre>
+<pre class="sourceCode r"><code class="sourceCode r">T1 =<span class="st"> </span><span class="kw">poly</span>(T1,<span class="dv">2</span>)[,<span class="dv">1</span>]; T2=<span class="kw">poly</span>(T1,<span class="dv">2</span>)[,<span class="dv">2</span>]
+<span class="kw">c</span>(<span class="kw">mean</span>(T1),<span class="kw">mean</span>(T2),<span class="kw">cov</span>(T1, T2))</code></pre>
+<pre><code>## [1]  4.921826e-18  2.674139e-17 -4.949619e-20</code></pre>
+</div>
+<div id="using-poly-to-fit-the-anchovy-data" class="section level4 unnumbered">
+<h4>Using <code>poly()</code> to fit the anchovy data</h4>
+<p>We saw in the anchovy fit that using <span class="math inline">\(t\)</span>, <span class="math inline">\(t^2\)</span>, <span class="math inline">\(t^3\)</span> and <span class="math inline">\(t^4\)</span> directly in the fit resulted in no significant estimated time effect despite a clear temporal trend in the data. If we fit with <code>poly()</code> so that we do not use correlated time covariates, we see a different picture.</p>
+<pre class="sourceCode r"><code class="sourceCode r">model &lt;-<span class="st"> </span><span class="kw">lm</span>(log.metric.tons <span class="op">~</span><span class="st"> </span><span class="kw">poly</span>(t,<span class="dv">4</span>), <span class="dt">data=</span>anchovy87)
+<span class="kw">summary</span>(model)</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = log.metric.tons ~ poly(t, 4), data = anchovy87)
+## 
+## Residuals:
+##      Min       1Q   Median       3Q      Max 
+## -0.26951 -0.09922 -0.01018  0.11777  0.20006 
+## 
+## Coefficients:
+##             Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)  9.08880    0.02976 305.373  &lt; 2e-16 ***
+## poly(t, 4)1  1.97330    0.14581  13.534 3.31e-11 ***
+## poly(t, 4)2  0.54728    0.14581   3.753  0.00135 ** 
+## poly(t, 4)3  0.30678    0.14581   2.104  0.04892 *  
+## poly(t, 4)4 -0.14180    0.14581  -0.972  0.34302    
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 0.1458 on 19 degrees of freedom
+## Multiple R-squared:  0.9143, Adjusted R-squared:  0.8962 
+## F-statistic: 50.65 on 4 and 19 DF,  p-value: 7.096e-10</code></pre>
+</div>
+</div>
+<div id="residual-diagnostics" class="section level3">
+<h3><span class="header-section-number">2.1.2</span> Residual diagnostics</h3>
+<p>We want to test if our residuals are temporally independent. We can do this with the Ljung-Box test as Stergio and Christou do. For the Ljung-Box test</p>
+<ul>
+<li>Null hypothesis is that the data are independent</li>
+<li>Alternate hypothesis is that the data are serially correlated</li>
+</ul>
+<div id="example-of-the-ljung-box-test" class="section level4 unnumbered">
+<h4>Example of the Ljung-Box test</h4>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">Box.test</span>(<span class="kw">rnorm</span>(<span class="dv">100</span>), <span class="dt">type=</span><span class="st">&quot;Ljung-Box&quot;</span>)</code></pre>
+<pre><code>## 
+##  Box-Ljung test
+## 
+## data:  rnorm(100)
+## X-squared = 3.6284, df = 1, p-value = 0.0568</code></pre>
+<p>The null hypothesis is not rejected. These are not serially correlated.</p>
+<p>Stergio and Christou appear to use a lag of 14 for the test (this is a bit large for 24 data points). The degrees of freedom is lag minus the number of estimated parameters in the model. So for the Anchovy data, <span class="math inline">\(df = 14 - 2\)</span>.</p>
+<pre class="sourceCode r"><code class="sourceCode r">x &lt;-<span class="st"> </span><span class="kw">resid</span>(model)
+<span class="kw">Box.test</span>(x, <span class="dt">lag =</span> <span class="dv">14</span>, <span class="dt">type =</span> <span class="st">&quot;Ljung-Box&quot;</span>, <span class="dt">fitdf=</span><span class="dv">2</span>)</code></pre>
+<pre><code>## 
+##  Box-Ljung test
+## 
+## data:  x
+## X-squared = 14.627, df = 12, p-value = 0.2625</code></pre>
+<p>Compare to the values in the far right column in Table 4. The null hypothesis of independence is rejected.</p>
+</div>
+<div id="breusch-godfrey-test" class="section level4 unnumbered">
+<h4>Breusch-Godfrey test</h4>
+<p>Although Stergiou and Christou use the Ljung-Box test, the Breusch-Godfrey test is more standard for regression residuals. The forecast package has the <code>checkresiduals()</code> function which will run this test and some diagnostic plots.</p>
+<pre class="sourceCode r"><code class="sourceCode r">forecast<span class="op">::</span><span class="kw">checkresiduals</span>(model)</code></pre>
+<p><img src="Fish-Forecast_files/figure-html/unnamed-chunk-4-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre><code>## 
+##  Breusch-Godfrey test for serial correlation of order up to 8
+## 
+## data:  Residuals
+## LM test = 12.858, df = 8, p-value = 0.1168</code></pre>
+</div>
+</div>
+<div id="compare-to-stergiou-and-christou" class="section level3">
+<h3><span class="header-section-number">2.1.3</span> Compare to Stergiou and Christou</h3>
+<p>Stergiou and Christou (1996) fit time-varying regressions to the 1964-1987 data and show the results in Table 4.</p>
+<div class="figure">
+<img src="figs/SC1995Table4.png" alt="Table 4" />
+<p class="caption">Table 4</p>
+</div>
+<div id="compare-anchovy-fit-to-stergiou-and-christou" class="section level4 unnumbered">
+<h4>Compare anchovy fit to Stergiou and Christou</h4>
+<p>Stergiou and Christou use a first order polynomial, linear relationship with time, for the anchovy data. They do not state how they choose this over a 2nd order polynomial which also appears supported (see fit with <code>poly()</code> fit to the anchovy data).</p>
+<pre class="sourceCode r"><code class="sourceCode r">anchovy87<span class="op">$</span>t =<span class="st"> </span>anchovy87<span class="op">$</span>Year<span class="dv">-1963</span>
+model &lt;-<span class="st"> </span><span class="kw">lm</span>(log.metric.tons <span class="op">~</span><span class="st"> </span>t, <span class="dt">data=</span>anchovy87)</code></pre>
+<p>The coefficients and adjusted R2 are similar to that shown in their Table 4. The coefficients are not identical so there may be some differences in the data I extracted from the Greek statistical reports and those used in Stergiou and Christou.</p>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">c</span>(<span class="kw">coef</span>(model), <span class="kw">summary</span>(model)<span class="op">$</span>adj.r.squared)</code></pre>
+<pre><code>## (Intercept)           t             
+##  8.36143085  0.05818942  0.81856644</code></pre>
+</div>
+<div id="compare-sardine-fit-to-stergiou-and-christou" class="section level4 unnumbered">
+<h4>Compare sardine fit to Stergiou and Christou</h4>
+<p>For the sardine (bottom row in Table 4), Stergio and Christou fit a 4th order polynomial. With <code>poly()</code>, a 4th order time-varying regression model is fit to the sardine data as:</p>
+<pre class="sourceCode r"><code class="sourceCode r">sardine87<span class="op">$</span>t =<span class="st"> </span>sardine87<span class="op">$</span>Year<span class="dv">-1963</span>
+model &lt;-<span class="st"> </span><span class="kw">lm</span>(log.metric.tons <span class="op">~</span><span class="st"> </span><span class="kw">poly</span>(t,<span class="dv">4</span>), <span class="dt">data=</span>sardine87)</code></pre>
+<p>This indicates support for the 2nd, 3rd, and 4th orders but not the 1st (linear) part.</p>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">summary</span>(model)</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = log.metric.tons ~ poly(t, 4), data = sardine87)
+## 
+## Residuals:
+##       Min        1Q    Median        3Q       Max 
+## -0.115300 -0.053090 -0.008895  0.041783  0.165885 
+## 
+## Coefficients:
+##             Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)  9.31524    0.01717 542.470  &lt; 2e-16 ***
+## poly(t, 4)1  0.08314    0.08412   0.988 0.335453    
+## poly(t, 4)2 -0.18809    0.08412  -2.236 0.037559 *  
+## poly(t, 4)3 -0.35504    0.08412  -4.220 0.000463 ***
+## poly(t, 4)4  0.25674    0.08412   3.052 0.006562 ** 
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 0.08412 on 19 degrees of freedom
+## Multiple R-squared:  0.6353, Adjusted R-squared:  0.5586 
+## F-statistic: 8.275 on 4 and 19 DF,  p-value: 0.0004846</code></pre>
+<p>Stergiou and Christou appear to have used a raw polynomial model using <span class="math inline">\(t\)</span>, <span class="math inline">\(t^2\)</span>, <span class="math inline">\(t^3\)</span> and <span class="math inline">\(t^4\)</span> as the covariates instead of orthogonal polynomials. To fit the model that they did, we use</p>
+<pre class="sourceCode r"><code class="sourceCode r">model &lt;-<span class="st"> </span><span class="kw">lm</span>(log.metric.tons <span class="op">~</span><span class="st"> </span>t <span class="op">+</span><span class="st"> </span><span class="kw">I</span>(t<span class="op">^</span><span class="dv">2</span>) <span class="op">+</span><span class="st"> </span><span class="kw">I</span>(t<span class="op">^</span><span class="dv">3</span>) <span class="op">+</span><span class="st"> </span><span class="kw">I</span>(t<span class="op">^</span><span class="dv">4</span>), <span class="dt">data=</span>sardine87)</code></pre>
+<p>Using a model fit with the raw time covariates, the coefficients and adjusted R2 are similar to that shown in Table 4.</p>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">c</span>(<span class="kw">coef</span>(model), <span class="kw">summary</span>(model)<span class="op">$</span>adj.r.squared)</code></pre>
+<pre><code>##   (Intercept)             t        I(t^2)        I(t^3)        I(t^4) 
+##  9.672783e+00 -2.443273e-01  3.738773e-02 -1.983588e-03  3.405533e-05 
+##               
+##  5.585532e-01</code></pre>
+<p>The test for autocorrelation of the residuals is</p>
+<pre class="sourceCode r"><code class="sourceCode r">x &lt;-<span class="st"> </span><span class="kw">resid</span>(model)
+<span class="kw">Box.test</span>(x, <span class="dt">lag =</span> <span class="dv">14</span>, <span class="dt">type =</span> <span class="st">&quot;Ljung-Box&quot;</span>, <span class="dt">fitdf=</span><span class="dv">5</span>)</code></pre>
+<pre><code>## 
+##  Box-Ljung test
+## 
+## data:  x
+## X-squared = 32.317, df = 9, p-value = 0.0001755</code></pre>
+<p><code>fitdf</code> specifies the number of parameters estimated by the model. In this case it is 5, intercept and 4 coefficients.</p>
+<p>The p-value is less than 0.05 indicating that the residuals are temporally correlated.</p>
+</div>
+</div>
+<div id="summary" class="section level3">
+<h3><span class="header-section-number">2.1.4</span> Summary</h3>
+<div id="why-use-time-varying-regression" class="section level4 unnumbered">
+<h4>Why use time-varying regression?</h4>
+<ul>
+<li><p>It looks there is a simple time relationship. If a high-order polynomial is required, that is a bad sign.</p></li>
+<li><p>Easy and fast</p></li>
+<li><p>Easy to explain</p></li>
+<li><p>You are only forecasting a few years ahead</p></li>
+<li><p>No assumptions required about ‘stationarity’</p></li>
+</ul>
+</div>
+<div id="why-not-to-use-time-varying-regression" class="section level4 unnumbered">
+<h4>Why not to use time-varying regression?</h4>
+<ul>
+<li><p>Autocorrelation is not modeled. That autocorrelation may hold information for forecasting.</p></li>
+<li><p>You are only using temporal trend for forecasting (mean level).</p></li>
+<li><p>If you use a high-order polynomial, you might be modeling noise from a random walk. That means interpreting the temporal pattern as having information when in fact it has none.</p></li>
+</ul>
+</div>
+<div id="is-time-varying-regression-used" class="section level4 unnumbered">
+<h4>Is time-varying regression used?</h4>
+<p>It seems pretty simple. Is this used? All the time. Most “trend” analyses are a variant of time-varying regression. If you fit a line to your data and report the trend or percent change, that’s a time-varying regression.</p>
+
+</div>
+</div>
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="time-varying-regression.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="forecasting-with-a-time-varying-regression-model.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/lunr.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": {
+"github": false,
+"facebook": true,
+"twitter": true,
+"google": false,
+"linkedin": false,
+"weibo": false,
+"instapper": false,
+"vk": false,
+"all": ["facebook", "google", "twitter", "linkedin", "weibo", "instapaper"]
+},
+"fontsettings": {
+"theme": "white",
+"family": "sans",
+"size": 2
+},
+"edit": {
+"link": null,
+"text": null
+},
+"download": null,
+"toc": {
+"collapse": "section"
+}
+});
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "true";
+    if (src === "" || src === "true") src = "https://cdn.bootcss.com/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:" && /^https?:/.test(src))
+      src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+</body>
+
+</html>

@@ -1,0 +1,714 @@
+<!DOCTYPE html>
+<html >
+
+<head>
+
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>Forecasting Catch Time Series</title>
+  <meta name="description" content="Forecasting catch time series using R.">
+  <meta name="generator" content="bookdown  and GitBook 2.6.7">
+
+  <meta property="og:title" content="Forecasting Catch Time Series" />
+  <meta property="og:type" content="book" />
+  
+  
+  <meta property="og:description" content="Forecasting catch time series using R." />
+  <meta name="github-repo" content="rstudio/bookdown-demo" />
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Forecasting Catch Time Series" />
+  
+  <meta name="twitter:description" content="Forecasting catch time series using R." />
+  
+
+<meta name="author" content="Elizabeth Holmes">
+
+
+<meta name="date" content="2018-10-10">
+
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  
+  
+<link rel="prev" href="model-structure.html">
+<link rel="next" href="forecasting.html">
+<script src="libs/jquery-2.2.3/jquery.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+
+<style type="text/css">
+a.sourceLine { display: inline-block; line-height: 1.25; }
+a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
+a.sourceLine:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode { white-space: pre; position: relative; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+code.sourceCode { white-space: pre-wrap; }
+a.sourceLine { text-indent: -1em; padding-left: 1em; }
+}
+pre.numberSource a.sourceLine
+  { position: relative; left: -4em; }
+pre.numberSource a.sourceLine::before
+  { content: attr(data-line-number);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; pointer-events: all; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {  }
+@media screen {
+a.sourceLine::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+<link rel="stylesheet" href="style.css" type="text/css" />
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li><a href="./index.html">Fish Forecast</a></li>
+
+<li class="divider"></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i>Preface</a></li>
+<li class="chapter" data-level="1" data-path="introduction.html"><a href="introduction.html"><i class="fa fa-check"></i><b>1</b> Introduction</a><ul>
+<li class="chapter" data-level="1.1" data-path="stergiou-and-christou-1996.html"><a href="stergiou-and-christou-1996.html"><i class="fa fa-check"></i><b>1.1</b> Stergiou and Christou 1996</a><ul>
+<li class="chapter" data-level="1.1.1" data-path="stergiou-and-christou-1996.html"><a href="stergiou-and-christou-1996.html#hellenic-landings-data"><i class="fa fa-check"></i><b>1.1.1</b> Hellenic landings data</a></li>
+</ul></li>
+<li class="chapter" data-level="1.2" data-path="the-landings-data-landings-rdata.html"><a href="the-landings-data-landings-rdata.html"><i class="fa fa-check"></i><b>1.2</b> The landings data, landings.RData</a></li>
+<li class="chapter" data-level="1.3" data-path="ts-objects.html"><a href="ts-objects.html"><i class="fa fa-check"></i><b>1.3</b> ts objects</a><ul>
+<li class="chapter" data-level="1.3.1" data-path="ts-objects.html"><a href="ts-objects.html#ts-function"><i class="fa fa-check"></i><b>1.3.1</b> <code>ts()</code> function</a></li>
+<li class="chapter" data-level="1.3.2" data-path="ts-objects.html"><a href="ts-objects.html#ggplot-and-ts-objects"><i class="fa fa-check"></i><b>1.3.2</b> ggplot and ts objects</a></li>
+<li class="chapter" data-level="1.3.3" data-path="ts-objects.html"><a href="ts-objects.html#plotting-using-a-data-frame"><i class="fa fa-check"></i><b>1.3.3</b> Plotting using a data frame</a></li>
+</ul></li>
+<li class="chapter" data-level="1.4" data-path="packages.html"><a href="packages.html"><i class="fa fa-check"></i><b>1.4</b> Packages</a></li>
+<li class="chapter" data-level="1.5" data-path="references.html"><a href="references.html"><i class="fa fa-check"></i><b>1.5</b> References</a></li>
+</ul></li>
+<li class="chapter" data-level="2" data-path="time-varying-regression.html"><a href="time-varying-regression.html"><i class="fa fa-check"></i><b>2</b> Time-varying regression</a><ul>
+<li class="chapter" data-level="2.1" data-path="fitting-time-varying-regressions.html"><a href="fitting-time-varying-regressions.html"><i class="fa fa-check"></i><b>2.1</b> Fitting time-varying regressions</a><ul>
+<li class="chapter" data-level="2.1.1" data-path="fitting-time-varying-regressions.html"><a href="fitting-time-varying-regressions.html#orthogonal-polynomials"><i class="fa fa-check"></i><b>2.1.1</b> Orthogonal polynomials</a></li>
+<li class="chapter" data-level="2.1.2" data-path="fitting-time-varying-regressions.html"><a href="fitting-time-varying-regressions.html#residual-diagnostics"><i class="fa fa-check"></i><b>2.1.2</b> Residual diagnostics</a></li>
+<li class="chapter" data-level="2.1.3" data-path="fitting-time-varying-regressions.html"><a href="fitting-time-varying-regressions.html#compare-to-stergiou-and-christou"><i class="fa fa-check"></i><b>2.1.3</b> Compare to Stergiou and Christou</a></li>
+<li class="chapter" data-level="2.1.4" data-path="fitting-time-varying-regressions.html"><a href="fitting-time-varying-regressions.html#summary"><i class="fa fa-check"></i><b>2.1.4</b> Summary</a></li>
+</ul></li>
+<li class="chapter" data-level="2.2" data-path="forecasting-with-a-time-varying-regression-model.html"><a href="forecasting-with-a-time-varying-regression-model.html"><i class="fa fa-check"></i><b>2.2</b> Forecasting with a time-varying regression model</a><ul>
+<li class="chapter" data-level="2.2.1" data-path="forecasting-with-a-time-varying-regression-model.html"><a href="forecasting-with-a-time-varying-regression-model.html#the-forecast-package"><i class="fa fa-check"></i><b>2.2.1</b> The forecast package</a></li>
+<li class="chapter" data-level="2.2.2" data-path="forecasting-with-a-time-varying-regression-model.html"><a href="forecasting-with-a-time-varying-regression-model.html#summary-1"><i class="fa fa-check"></i><b>2.2.2</b> Summary</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="3" data-path="arima-models.html"><a href="arima-models.html"><i class="fa fa-check"></i><b>3</b> ARIMA Models</a><ul>
+<li class="chapter" data-level="3.1" data-path="overview.html"><a href="overview.html"><i class="fa fa-check"></i><b>3.1</b> Overview</a><ul>
+<li class="chapter" data-level="3.1.1" data-path="overview.html"><a href="overview.html#components-of-an-arima-model"><i class="fa fa-check"></i><b>3.1.1</b> Components of an ARIMA model</a></li>
+<li class="chapter" data-level="3.1.2" data-path="overview.html"><a href="overview.html#box-jenkins-method"><i class="fa fa-check"></i><b>3.1.2</b> Box-Jenkins Method</a></li>
+<li class="chapter" data-level="3.1.3" data-path="overview.html"><a href="overview.html#acf-and-pacf-functions"><i class="fa fa-check"></i><b>3.1.3</b> ACF and PACF functions</a></li>
+</ul></li>
+<li class="chapter" data-level="3.2" data-path="stationarity.html"><a href="stationarity.html"><i class="fa fa-check"></i><b>3.2</b> Stationarity</a><ul>
+<li class="chapter" data-level="3.2.1" data-path="stationarity.html"><a href="stationarity.html#definition"><i class="fa fa-check"></i><b>3.2.1</b> Definition</a></li>
+<li class="chapter" data-level="3.2.2" data-path="stationarity.html"><a href="stationarity.html#non-stationarity"><i class="fa fa-check"></i><b>3.2.2</b> Non-stationarity</a></li>
+<li class="chapter" data-level="3.2.3" data-path="stationarity.html"><a href="stationarity.html#stationarity-tests"><i class="fa fa-check"></i><b>3.2.3</b> Stationarity tests</a></li>
+<li class="chapter" data-level="3.2.4" data-path="stationarity.html"><a href="stationarity.html#differencing-the-data"><i class="fa fa-check"></i><b>3.2.4</b> Differencing the data</a></li>
+<li class="chapter" data-level="3.2.5" data-path="stationarity.html"><a href="stationarity.html#summary-2"><i class="fa fa-check"></i><b>3.2.5</b> Summary</a></li>
+</ul></li>
+<li class="chapter" data-level="3.3" data-path="model-structure.html"><a href="model-structure.html"><i class="fa fa-check"></i><b>3.3</b> Model Structure</a><ul>
+<li class="chapter" data-level="3.3.1" data-path="model-structure.html"><a href="model-structure.html#ar-and-ma-lags"><i class="fa fa-check"></i><b>3.3.1</b> AR and MA lags</a></li>
+<li class="chapter" data-level="3.3.2" data-path="model-structure.html"><a href="model-structure.html#model-order"><i class="fa fa-check"></i><b>3.3.2</b> Model order</a></li>
+<li class="chapter" data-level="3.3.3" data-path="model-structure.html"><a href="model-structure.html#choosing-the-ar-and-ma-levels"><i class="fa fa-check"></i><b>3.3.3</b> Choosing the AR and MA levels</a></li>
+<li class="chapter" data-level="3.3.4" data-path="model-structure.html"><a href="model-structure.html#trace-true"><i class="fa fa-check"></i><b>3.3.4</b> Trace = TRUE</a></li>
+<li class="chapter" data-level="3.3.5" data-path="model-structure.html"><a href="model-structure.html#stepwisefalse"><i class="fa fa-check"></i><b>3.3.5</b> stepwise=FALSE</a></li>
+<li class="chapter" data-level="3.3.6" data-path="model-structure.html"><a href="model-structure.html#summary-3"><i class="fa fa-check"></i><b>3.3.6</b> Summary</a></li>
+</ul></li>
+<li class="chapter" data-level="3.4" data-path="fitting-arima-models.html"><a href="fitting-arima-models.html"><i class="fa fa-check"></i><b>3.4</b> Fitting ARIMA Models</a><ul>
+<li class="chapter" data-level="3.4.1" data-path="fitting-arima-models.html"><a href="fitting-arima-models.html#fitting-with-auto.arima"><i class="fa fa-check"></i><b>3.4.1</b> Fitting with <code>auto.arima()</code></a></li>
+<li class="chapter" data-level="3.4.2" data-path="fitting-arima-models.html"><a href="fitting-arima-models.html#outputting-the-models-tested"><i class="fa fa-check"></i><b>3.4.2</b> Outputting the models tested</a></li>
+<li class="chapter" data-level="3.4.3" data-path="fitting-arima-models.html"><a href="fitting-arima-models.html#repeat-with-the-sardine-data"><i class="fa fa-check"></i><b>3.4.3</b> Repeat with the sardine data</a></li>
+<li class="chapter" data-level="3.4.4" data-path="fitting-arima-models.html"><a href="fitting-arima-models.html#missing-values"><i class="fa fa-check"></i><b>3.4.4</b> Missing values</a></li>
+<li class="chapter" data-level="3.4.5" data-path="fitting-arima-models.html"><a href="fitting-arima-models.html#fit-a-specific-arima-model"><i class="fa fa-check"></i><b>3.4.5</b> Fit a specific ARIMA model</a></li>
+<li class="chapter" data-level="3.4.6" data-path="fitting-arima-models.html"><a href="fitting-arima-models.html#model-checking"><i class="fa fa-check"></i><b>3.4.6</b> Model Checking</a></li>
+<li class="chapter" data-level="3.4.7" data-path="fitting-arima-models.html"><a href="fitting-arima-models.html#workflow-for-non-seasonal-data"><i class="fa fa-check"></i><b>3.4.7</b> Workflow for non-seasonal data</a></li>
+<li class="chapter" data-level="3.4.8" data-path="fitting-arima-models.html"><a href="fitting-arima-models.html#stepwise-vs-exhaustive-model-selection"><i class="fa fa-check"></i><b>3.4.8</b> Stepwise vs exhaustive model selection</a></li>
+<li class="chapter" data-level="3.4.9" data-path="fitting-arima-models.html"><a href="fitting-arima-models.html#summary-4"><i class="fa fa-check"></i><b>3.4.9</b> Summary</a></li>
+</ul></li>
+<li class="chapter" data-level="3.5" data-path="forecasting.html"><a href="forecasting.html"><i class="fa fa-check"></i><b>3.5</b> Forecasting</a><ul>
+<li class="chapter" data-level="3.5.1" data-path="forecasting.html"><a href="forecasting.html#forecasting-with-forecast"><i class="fa fa-check"></i><b>3.5.1</b> Forecasting with <code>forecast()</code></a></li>
+<li class="chapter" data-level="3.5.2" data-path="forecasting.html"><a href="forecasting.html#missing-values-1"><i class="fa fa-check"></i><b>3.5.2</b> Missing values</a></li>
+<li class="chapter" data-level="3.5.3" data-path="forecasting.html"><a href="forecasting.html#null-forecast-models"><i class="fa fa-check"></i><b>3.5.3</b> Null forecast models</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="4" data-path="exponential-smoothing-models.html"><a href="exponential-smoothing-models.html"><i class="fa fa-check"></i><b>4</b> Exponential Smoothing Models</a><ul>
+<li class="chapter" data-level="4.1" data-path="naive-forecast.html"><a href="naive-forecast.html"><i class="fa fa-check"></i><b>4.1</b> Naive forecast</a></li>
+<li class="chapter" data-level="4.2" data-path="simple-ets.html"><a href="simple-ets.html"><i class="fa fa-check"></i><b>4.2</b> Simple ETS</a></li>
+<li class="chapter" data-level="4.3" data-path="fitting-with-ets.html"><a href="fitting-with-ets.html"><i class="fa fa-check"></i><b>4.3</b> Fitting with <code>ets()</code></a><ul>
+<li class="chapter" data-level="4.3.1" data-path="fitting-with-ets.html"><a href="fitting-with-ets.html#exponential-smoothing-with-no-trend"><i class="fa fa-check"></i><b>4.3.1</b> Exponential smoothing with no trend</a></li>
+<li class="chapter" data-level="4.3.2" data-path="fitting-with-ets.html"><a href="fitting-with-ets.html#the-weighting-function"><i class="fa fa-check"></i><b>4.3.2</b> The weighting function</a></li>
+<li class="chapter" data-level="4.3.3" data-path="fitting-with-ets.html"><a href="fitting-with-ets.html#produce-forecast-using-a-previous-fit"><i class="fa fa-check"></i><b>4.3.3</b> Produce forecast using a previous fit</a></li>
+<li class="chapter" data-level="4.3.4" data-path="fitting-with-ets.html"><a href="fitting-with-ets.html#naive-model-with-drift"><i class="fa fa-check"></i><b>4.3.4</b> Naive model with drift</a></li>
+<li class="chapter" data-level="4.3.5" data-path="fitting-with-ets.html"><a href="fitting-with-ets.html#exponential-smoothing-model-with-trend"><i class="fa fa-check"></i><b>4.3.5</b> Exponential smoothing model with trend</a></li>
+<li class="chapter" data-level="4.3.6" data-path="fitting-with-ets.html"><a href="fitting-with-ets.html#naive-model-with-trend"><i class="fa fa-check"></i><b>4.3.6</b> Naive model with trend</a></li>
+<li class="chapter" data-level="4.3.7" data-path="fitting-with-ets.html"><a href="fitting-with-ets.html#exponential-smoothing-model-with-trend-1"><i class="fa fa-check"></i><b>4.3.7</b> Exponential smoothing model with trend</a></li>
+<li class="chapter" data-level="4.3.8" data-path="fitting-with-ets.html"><a href="fitting-with-ets.html#decomposing-your-model-fit"><i class="fa fa-check"></i><b>4.3.8</b> Decomposing your model fit</a></li>
+<li class="chapter" data-level="4.3.9" data-path="fitting-with-ets.html"><a href="fitting-with-ets.html#forecast-performance"><i class="fa fa-check"></i><b>4.3.9</b> Forecast performance</a></li>
+<li class="chapter" data-level="4.3.10" data-path="fitting-with-ets.html"><a href="fitting-with-ets.html#test-forecast-performance"><i class="fa fa-check"></i><b>4.3.10</b> Test forecast performance</a></li>
+<li class="chapter" data-level="4.3.11" data-path="fitting-with-ets.html"><a href="fitting-with-ets.html#testing-a-specific-ets-model"><i class="fa fa-check"></i><b>4.3.11</b> Testing a specific ets model</a></li>
+<li class="chapter" data-level="4.3.12" data-path="fitting-with-ets.html"><a href="fitting-with-ets.html#forecast-accuracy-metrics"><i class="fa fa-check"></i><b>4.3.12</b> Forecast accuracy metrics</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="5" data-path="testing-forecast-accuracy.html"><a href="testing-forecast-accuracy.html"><i class="fa fa-check"></i><b>5</b> Testing forecast accuracy</a><ul>
+<li class="chapter" data-level="5.1" data-path="measures-of-forecast-accuracy.html"><a href="measures-of-forecast-accuracy.html"><i class="fa fa-check"></i><b>5.1</b> Measures of forecast accuracy</a><ul>
+<li class="chapter" data-level="5.1.1" data-path="measures-of-forecast-accuracy.html"><a href="measures-of-forecast-accuracy.html#metrics"><i class="fa fa-check"></i><b>5.1.1</b> Metrics</a></li>
+<li class="chapter" data-level="5.1.2" data-path="measures-of-forecast-accuracy.html"><a href="measures-of-forecast-accuracy.html#test-multiple-models"><i class="fa fa-check"></i><b>5.1.2</b> Test multiple models</a></li>
+<li class="chapter" data-level="5.1.3" data-path="measures-of-forecast-accuracy.html"><a href="measures-of-forecast-accuracy.html#cross-validation"><i class="fa fa-check"></i><b>5.1.3</b> Cross-Validation</a></li>
+</ul></li>
+<li class="chapter" data-level="5.2" data-path="testing-multiple-models.html"><a href="testing-multiple-models.html"><i class="fa fa-check"></i><b>5.2</b> Testing multiple models</a><ul>
+<li class="chapter" data-level="5.2.1" data-path="testing-multiple-models.html"><a href="testing-multiple-models.html#example-candidate-model-set-for-anchovy"><i class="fa fa-check"></i><b>5.2.1</b> Example candidate model set for anchovy</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="6" data-path="covariates.html"><a href="covariates.html"><i class="fa fa-check"></i><b>6</b> Covariates</a><ul>
+<li class="chapter" data-level="6.1" data-path="multivariate-linear-regression-with-arma-errors.html"><a href="multivariate-linear-regression-with-arma-errors.html"><i class="fa fa-check"></i><b>6.1</b> Multivariate linear regression with ARMA errors</a><ul>
+<li class="chapter" data-level="6.1.1" data-path="multivariate-linear-regression-with-arma-errors.html"><a href="multivariate-linear-regression-with-arma-errors.html#example-anchovy"><i class="fa fa-check"></i><b>6.1.1</b> Example: anchovy</a></li>
+<li class="chapter" data-level="6.1.2" data-path="multivariate-linear-regression-with-arma-errors.html"><a href="multivariate-linear-regression-with-arma-errors.html#mreg-of-first-or-second-differences"><i class="fa fa-check"></i><b>6.1.2</b> MREG of first or second differences</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="7" data-path="seasonality.html"><a href="seasonality.html"><i class="fa fa-check"></i><b>7</b> Seasonality</a><ul>
+<li class="chapter" data-level="7.0.1" data-path="seasonality.html"><a href="seasonality.html#load-the-chinook-salmon-data-set"><i class="fa fa-check"></i><b>7.0.1</b> Load the chinook salmon data set</a></li>
+<li class="chapter" data-level="7.0.2" data-path="seasonality.html"><a href="seasonality.html#plot-seasonal-data"><i class="fa fa-check"></i><b>7.0.2</b> Plot seasonal data</a></li>
+<li class="chapter" data-level="7.1" data-path="seasonal-exponential-smoothing-model.html"><a href="seasonal-exponential-smoothing-model.html"><i class="fa fa-check"></i><b>7.1</b> Seasonal Exponential Smoothing Model</a><ul>
+<li class="chapter" data-level="7.1.1" data-path="seasonal-exponential-smoothing-model.html"><a href="seasonal-exponential-smoothing-model.html#force-seasonality-to-evolve-more"><i class="fa fa-check"></i><b>7.1.1</b> Force seasonality to evolve more</a></li>
+</ul></li>
+<li class="chapter" data-level="7.2" data-path="seasonal-arima-model.html"><a href="seasonal-arima-model.html"><i class="fa fa-check"></i><b>7.2</b> Seasonal ARIMA model</a></li>
+<li class="chapter" data-level="7.3" data-path="missing-values-2.html"><a href="missing-values-2.html"><i class="fa fa-check"></i><b>7.3</b> Missing values</a></li>
+<li class="chapter" data-level="7.4" data-path="forecast-evaluation.html"><a href="forecast-evaluation.html"><i class="fa fa-check"></i><b>7.4</b> Forecast evaluation</a></li>
+</ul></li>
+<li class="chapter" data-level="" data-path="appendix-inputting-data.html"><a href="appendix-inputting-data.html"><i class="fa fa-check"></i>Appendix: Inputting data</a><ul>
+<li class="chapter" data-level="" data-path="appendix-inputting-data.html"><a href="appendix-inputting-data.html#one-response-variable"><i class="fa fa-check"></i>one response variable</a></li>
+<li class="chapter" data-level="" data-path="appendix-inputting-data.html"><a href="appendix-inputting-data.html#many-response-variables"><i class="fa fa-check"></i>Many response variables</a></li>
+<li class="chapter" data-level="" data-path="appendix-inputting-data.html"><a href="appendix-inputting-data.html#many-response-variables-two-time-variables"><i class="fa fa-check"></i>Many response variables, two time variables</a></li>
+<li class="chapter" data-level="" data-path="appendix-inputting-data.html"><a href="appendix-inputting-data.html#one-response-variable-multiple-explanatory-variables"><i class="fa fa-check"></i>One response variable, multiple explanatory variables</a></li>
+</ul></li>
+<li class="chapter" data-level="" data-path="appendix-downloading-icoads-covariates.html"><a href="appendix-downloading-icoads-covariates.html"><i class="fa fa-check"></i>Appendix: Downloading ICOADS covariates</a></li>
+<li class="divider"></li>
+<li><a href="https://github.com/rstudio/bookdown" target="blank">Published with bookdown</a></li>
+
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Forecasting Catch Time Series</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="fitting-arima-models" class="section level2">
+<h2><span class="header-section-number">3.4</span> Fitting ARIMA Models</h2>
+<p>We are now at step B of the Box-Jenkins Method.</p>
+<p>A. Model form selection</p>
+<ol style="list-style-type: decimal">
+<li>Evaluate stationarity and seasonality</li>
+<li>Selection of the differencing level (d)</li>
+<li>Selection of the AR level (p)</li>
+<li>Selection of the MA level (q)</li>
+</ol>
+<p>B. <strong>Parameter estimation</strong>
+C. <strong>Model checking</strong></p>
+<hr />
+<div id="fitting-with-auto.arima" class="section level3">
+<h3><span class="header-section-number">3.4.1</span> Fitting with <code>auto.arima()</code></h3>
+<p><code>auto.arima()</code> (in the forecast package) has many arguments.</p>
+<pre><code>auto.arima(y, d = NA, D = NA, max.p = 5, max.q = 5, max.P = 2,
+  max.Q = 2, max.order = 5, max.d = 2, max.D = 1, start.p = 2,
+  start.q = 2, start.P = 1, start.Q = 1, stationary = FALSE,
+  seasonal = TRUE, ic = c(&quot;aicc&quot;, &quot;aic&quot;, &quot;bic&quot;), stepwise = TRUE,
+  trace = FALSE, approximation = (length(x) &gt; 150 | frequency(x) &gt; 12),
+  truncate = NULL, xreg = NULL, test = c(&quot;kpss&quot;, &quot;adf&quot;, &quot;pp&quot;),
+  seasonal.test = c(&quot;seas&quot;, &quot;ocsb&quot;, &quot;hegy&quot;, &quot;ch&quot;), allowdrift = TRUE,
+  allowmean = TRUE, lambda = NULL, biasadj = FALSE, parallel = FALSE,
+  num.cores = 2, x = y, ...)</code></pre>
+<p>When just getting started, we will focus just on a few of these.</p>
+<ul>
+<li><code>trace</code> To print out the models that were tested.</li>
+<li><code>stepwise</code> and <code>approximation</code> To use slower but better estimation when selecting model order.</li>
+<li><code>test</code> The test to use to select the amount of differencing.</li>
+</ul>
+<div id="load-the-data" class="section level4 unnumbered">
+<h4>Load the data</h4>
+<p>Load the data.</p>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">load</span>(<span class="st">&quot;landings.RData&quot;</span>)</code></pre>
+<p><code>anchovy87ts</code> is a ts object of the log metric tons for 1964-1987. We will use this for <code>auto.arima()</code> however we could also use <code>anchovy87$log.metric.tons</code>. <code>anchovy87ts</code> is just</p>
+<pre><code>anchovy87ts &lt;- ts(anchovy87, start=1964)</code></pre>
+</div>
+<div id="fit-to-the-anchovy-data-using-auto.arima" class="section level4 unnumbered">
+<h4>Fit to the anchovy data using <code>auto.arima()</code></h4>
+<pre class="sourceCode r"><code class="sourceCode r">fit &lt;-<span class="st"> </span>forecast<span class="op">::</span><span class="kw">auto.arima</span>(anchovy87ts)</code></pre>
+<p>Here are the values for anchovy in Table 8 of Stergiou and Christou.</p>
+<table>
+<thead>
+<tr class="header">
+<th>Model</th>
+<th><span class="math inline">\(\theta_1\)</span></th>
+<th>drift (c)</th>
+<th>R<span class="math inline">\(^2\)</span></th>
+<th>BIC</th>
+<th>LB</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>(0,1,1)</td>
+<td>0.563</td>
+<td>0.064</td>
+<td>0.83</td>
+<td>1775</td>
+<td>5.4</td>
+</tr>
+</tbody>
+</table>
+<p>Here is the equivalent values from the best fit from <code>auto.arima()</code>:</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left;">
+Model
+</th>
+<th style="text-align:right;">
+theta1
+</th>
+<th style="text-align:right;">
+drift
+</th>
+<th style="text-align:right;">
+R2
+</th>
+<th style="text-align:right;">
+BIC
+</th>
+<th style="text-align:right;">
+LB
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+(0,1,1)
+</td>
+<td style="text-align:right;">
+0.5731337
+</td>
+<td style="text-align:right;">
+0.0640889
+</td>
+<td style="text-align:right;">
+0.8402976
+</td>
+<td style="text-align:right;">
+-3.584377
+</td>
+<td style="text-align:right;">
+5.372543
+</td>
+</tr>
+</tbody>
+</table>
+<p>Where do we find each of the components of Stergiou and Christou’s Table 8?</p>
+</div>
+<div id="the-parameter-estimates" class="section level4 unnumbered">
+<h4>The parameter estimates</h4>
+<p>We can extract the parameter estimates from a fitted object in R using <code>coef()</code>.</p>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">coef</span>(fit)</code></pre>
+<pre><code>##        ma1      drift 
+## -0.5731337  0.0640889</code></pre>
+<p>The <code>ma1</code> is the same as <span class="math inline">\(\theta_1\)</span> except its negative because of the way Stergiou and Christou write their MA models. They write it as</p>
+<p><span class="math display">\[e_t = \eta_t - \theta_1 \eta_{t-1}\]</span></p>
+<p>instead of the form that <code>auto.arima()</code> uses</p>
+<p><span class="math display">\[e_t = \eta_t + \theta_1 \eta_{t-1}\]</span></p>
+</div>
+<div id="computing-r2" class="section level4 unnumbered">
+<h4>Computing R2</h4>
+<p>This is not output as part of a arima fitted object so we need to compute it.</p>
+<pre class="sourceCode r"><code class="sourceCode r">res &lt;-<span class="st"> </span><span class="kw">resid</span>(fit)
+dat &lt;-<span class="st"> </span>anchovy87<span class="op">$</span>log.metric.tons
+meany &lt;-<span class="st"> </span><span class="kw">mean</span>(dat, <span class="dt">na.rm=</span><span class="ot">TRUE</span>)
+r2 &lt;-<span class="st"> </span><span class="dv">1</span><span class="op">-</span><span class="st"> </span><span class="kw">sum</span>(res<span class="op">^</span><span class="dv">2</span>,<span class="dt">na.rm=</span><span class="ot">TRUE</span>)<span class="op">/</span><span class="kw">sum</span>((dat<span class="op">-</span>meany)<span class="op">^</span><span class="dv">2</span>,<span class="dt">na.rm=</span><span class="ot">TRUE</span>)</code></pre>
+</div>
+<div id="ljung-box-statistic" class="section level4 unnumbered">
+<h4>Ljung-Box statistic</h4>
+<pre class="sourceCode r"><code class="sourceCode r">LB &lt;-<span class="st"> </span><span class="kw">Box.test</span>(res, <span class="dt">type=</span><span class="st">&quot;Ljung-Box&quot;</span>, <span class="dt">lag=</span><span class="dv">12</span>, <span class="dt">fitdf=</span><span class="dv">2</span>)<span class="op">$</span>statistic</code></pre>
+<p>fitdf=2 is from the number of parameters estimated.</p>
+</div>
+<div id="bic" class="section level4 unnumbered">
+<h4>BIC</h4>
+<p>BIC is in <code>fit$BIC</code>. Why is BIC different? Because there is a missing constant, which is fairly common. The absolute value of BIC is unimportant. Only its value relative to other models that you tested is important.</p>
+<hr />
+</div>
+</div>
+<div id="outputting-the-models-tested" class="section level3">
+<h3><span class="header-section-number">3.4.2</span> Outputting the models tested</h3>
+<p>Pass in <code>trace=TRUE</code> to see a list of the models tested in <code>auto.arima()</code>’s search. By default <code>auto.arima()</code> uses AICc for model selection and the AICc values are shown. Smaller is better for AICc and AICc values that are different by less than 2 have similar data support. Look for any models with similar AICc to the best selected model. You should consider that model also.</p>
+<pre class="sourceCode r"><code class="sourceCode r">forecast<span class="op">::</span><span class="kw">auto.arima</span>(anchovy87ts, <span class="dt">trace=</span><span class="ot">TRUE</span>)</code></pre>
+<pre><code>## 
+##  ARIMA(2,1,2) with drift         : 0.9971438
+##  ARIMA(0,1,0) with drift         : -1.582738
+##  ARIMA(1,1,0) with drift         : -3.215851
+##  ARIMA(0,1,1) with drift         : -5.727702
+##  ARIMA(0,1,0)                    : -1.869767
+##  ARIMA(1,1,1) with drift         : -2.907571
+##  ARIMA(0,1,2) with drift         : -3.219136
+##  ARIMA(1,1,2) with drift         : -1.363802
+##  ARIMA(0,1,1)                    : -1.425496
+## 
+##  Best model: ARIMA(0,1,1) with drift</code></pre>
+<pre><code>## Series: anchovy87ts 
+## ARIMA(0,1,1) with drift 
+## 
+## Coefficients:
+##           ma1   drift
+##       -0.5731  0.0641
+## s.e.   0.1610  0.0173
+## 
+## sigma^2 estimated as 0.03583:  log likelihood=6.5
+## AIC=-6.99   AICc=-5.73   BIC=-3.58</code></pre>
+<hr />
+</div>
+<div id="repeat-with-the-sardine-data" class="section level3">
+<h3><span class="header-section-number">3.4.3</span> Repeat with the sardine data</h3>
+<p>Stergiou and Christou sardine model (Table 8) is ARIMA(0,1,0):
+<span class="math display">\[x_t = x_{t-1}+e_t\]</span></p>
+<p>The model selected by <code>auto.arima()</code> is ARIMA(0,0,1):
+<span class="math display">\[x_t = e_t + \theta_1 e_{t-1}\]</span></p>
+<pre class="sourceCode r"><code class="sourceCode r">forecast<span class="op">::</span><span class="kw">auto.arima</span>(sardine87ts)</code></pre>
+<pre><code>## Series: sardine87ts 
+## ARIMA(0,1,1) with drift 
+## 
+## Coefficients:
+##           ma1   drift
+##       -0.5731  0.0641
+## s.e.   0.1610  0.0173
+## 
+## sigma^2 estimated as 0.03583:  log likelihood=6.5
+## AIC=-6.99   AICc=-5.73   BIC=-3.58</code></pre>
+<p>Why? Stergiou and Christou used the Augmented Dickey-Fuller test to determine the amount of differencing needed while the default for <code>auto.arima()</code> is to use the KPSS test.</p>
+<div id="repeat-using-testadf" class="section level4 unnumbered">
+<h4>Repeat using <code>test='adf'</code></h4>
+<p>Now the selected model is the same.</p>
+<pre class="sourceCode r"><code class="sourceCode r">fit &lt;-<span class="st"> </span><span class="kw">auto.arima</span>(sardine87ts, <span class="dt">test=</span><span class="st">&quot;adf&quot;</span>)
+fit</code></pre>
+<pre><code>## Series: sardine87ts 
+## ARIMA(0,1,1) with drift 
+## 
+## Coefficients:
+##           ma1   drift
+##       -0.5731  0.0641
+## s.e.   0.1610  0.0173
+## 
+## sigma^2 estimated as 0.03583:  log likelihood=6.5
+## AIC=-6.99   AICc=-5.73   BIC=-3.58</code></pre>
+<p>Compare the estimated values in Stergiou and Christou Table 8:</p>
+<table>
+<thead>
+<tr class="header">
+<th>Model</th>
+<th><span class="math inline">\(\theta_1\)</span></th>
+<th>drift (c)</th>
+<th>R2</th>
+<th>BIC</th>
+<th>LB</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>(0,1,0)</td>
+<td>NA</td>
+<td>NA</td>
+<td>0.00</td>
+<td>1396</td>
+<td>22.2</td>
+</tr>
+</tbody>
+</table>
+<p>versus from <code>auto.arima()</code></p>
+<pre><code>## Warning in mean.default(sardine, na.rm = TRUE): argument is not numeric or
+## logical: returning NA</code></pre>
+<pre><code>## Warning in Ops.factor(left, right): &#39;-&#39; not meaningful for factors</code></pre>
+<table>
+<thead>
+<tr>
+<th style="text-align:left;">
+Model
+</th>
+<th style="text-align:right;">
+theta1
+</th>
+<th style="text-align:right;">
+drift
+</th>
+<th style="text-align:right;">
+R2
+</th>
+<th style="text-align:right;">
+BIC
+</th>
+<th style="text-align:right;">
+LB
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+(0,1,0)
+</td>
+<td style="text-align:right;">
+0.5731337
+</td>
+<td style="text-align:right;">
+0.0640889
+</td>
+<td style="text-align:right;">
+-Inf
+</td>
+<td style="text-align:right;">
+-3.584377
+</td>
+<td style="text-align:right;">
+5.372543
+</td>
+</tr>
+</tbody>
+</table>
+<hr />
+</div>
+</div>
+<div id="missing-values" class="section level3">
+<h3><span class="header-section-number">3.4.4</span> Missing values</h3>
+<p>These functions work fine with missing values. Missing values are denoted NA.</p>
+<pre class="sourceCode r"><code class="sourceCode r">anchovy.miss &lt;-<span class="st"> </span>anchovy87ts
+anchovy.miss[<span class="dv">10</span><span class="op">:</span><span class="dv">14</span>] &lt;-<span class="st"> </span><span class="ot">NA</span>
+fit &lt;-<span class="st"> </span><span class="kw">auto.arima</span>(anchovy.miss)
+fit</code></pre>
+<pre><code>## Series: anchovy.miss 
+## ARIMA(1,1,0) with drift 
+## 
+## Coefficients:
+##           ar1  drift
+##       -0.5622  0.067
+## s.e.   0.2109  0.022
+## 
+## sigma^2 estimated as 0.02245:  log likelihood=6.35
+## AIC=-6.71   AICc=-5.45   BIC=-3.3</code></pre>
+<hr />
+</div>
+<div id="fit-a-specific-arima-model" class="section level3">
+<h3><span class="header-section-number">3.4.5</span> Fit a specific ARIMA model</h3>
+<p>Sometimes you don’t want to search, but rather fit an ARIMA model with a specific order. Say you wanted to fit this model:
+<span class="math display">\[x_t = \beta_1 x_{t-1} + \beta_2 x_{t-2} + e_t\]</span>
+For that you can use <code>Arima()</code> in the forecast package:</p>
+<pre class="sourceCode r"><code class="sourceCode r">fit.AR2 &lt;-<span class="st"> </span>forecast<span class="op">::</span><span class="kw">Arima</span>(anchovy87ts, <span class="dt">order=</span><span class="kw">c</span>(<span class="dv">2</span>,<span class="dv">0</span>,<span class="dv">0</span>))
+fit.AR2</code></pre>
+<pre><code>## Series: anchovy87ts 
+## ARIMA(2,0,0) with non-zero mean 
+## 
+## Coefficients:
+##          ar1     ar2    mean
+##       0.6912  0.2637  9.2353
+## s.e.  0.2063  0.2142  0.5342
+## 
+## sigma^2 estimated as 0.0511:  log likelihood=2.1
+## AIC=3.81   AICc=5.91   BIC=8.52</code></pre>
+<hr />
+</div>
+<div id="model-checking" class="section level3">
+<h3><span class="header-section-number">3.4.6</span> Model Checking</h3>
+<ul>
+<li><p>Plot your data</p></li>
+<li><p>Is the plot long-tailed (Chl, some types of fish data)? Take the logarithm.</p></li>
+<li><p>Fit model.</p></li>
+<li><p>Plot your residuals</p></li>
+<li><p>Check your residuals for stationarity, normality, and independence</p></li>
+</ul>
+<p>Ideally your response variable will be unimodal. If not, you are using an ARIMA model that doesn’t produce data like yours. While you could change the assumptions about the error distribution in the model, it will be easier to transform your data.</p>
+<p>Look at histograms of your data:</p>
+<p><img src="Fish-Forecast_files/figure-html/unnamed-chunk-17-1.png" width="960" style="display: block; margin: auto;" /></p>
+<p>Use <code>checkresiduals()</code> to do basic diagnostics.</p>
+<pre class="sourceCode r"><code class="sourceCode r">fit &lt;-<span class="st"> </span>forecast<span class="op">::</span><span class="kw">auto.arima</span>(anchovy87ts)
+<span class="kw">checkresiduals</span>(fit)</code></pre>
+<p><img src="Fish-Forecast_files/figure-html/unnamed-chunk-18-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre><code>## 
+##  Ljung-Box test
+## 
+## data:  Residuals from ARIMA(0,1,1) with drift
+## Q* = 1.4883, df = 3, p-value = 0.685
+## 
+## Model df: 2.   Total lags used: 5</code></pre>
+<hr />
+</div>
+<div id="workflow-for-non-seasonal-data" class="section level3">
+<h3><span class="header-section-number">3.4.7</span> Workflow for non-seasonal data</h3>
+<ul>
+<li><p>Go through Box-Jenkins Method to evaluate stationarity</p></li>
+<li><p>Plot the data and make decisions about transformations to make the data more unimodal</p></li>
+<li><p>Make some decisions about differencing and any other data transformations via the stationarity tests</p></li>
+<li><p>Use <code>auto.arima(data, trace=TRUE)</code> to evaluate what ARMA models best fit the data. Fix the differencing if needed.</p></li>
+<li><p>Determine a set of candidate models. Include a null model in the candidate list. naive and naive with drift are typical nulls.</p></li>
+<li><p>Test candidate models for forecast performance with cross-validation (next lecture).</p></li>
+</ul>
+<hr />
+</div>
+<div id="stepwise-vs-exhaustive-model-selection" class="section level3">
+<h3><span class="header-section-number">3.4.8</span> Stepwise vs exhaustive model selection</h3>
+<p>Stepwise model selection is fast and useful if you need to explore many models and it takes awhile to fit each model. Our models fit quickly and we don’t have season in our models. Though it will not make a difference for this particular dataset, in general set <code>stepwise=FALSE</code> to do a more thorough model search.</p>
+<pre class="sourceCode r"><code class="sourceCode r">forecast<span class="op">::</span><span class="kw">auto.arima</span>(anchovy87ts, <span class="dt">stepwise=</span><span class="ot">FALSE</span>, <span class="dt">approximation=</span><span class="ot">FALSE</span>)</code></pre>
+<pre><code>## Series: anchovy87ts 
+## ARIMA(0,1,1) with drift 
+## 
+## Coefficients:
+##           ma1   drift
+##       -0.5731  0.0641
+## s.e.   0.1610  0.0173
+## 
+## sigma^2 estimated as 0.03583:  log likelihood=6.5
+## AIC=-6.99   AICc=-5.73   BIC=-3.58</code></pre>
+<hr />
+</div>
+<div id="summary-4" class="section level3">
+<h3><span class="header-section-number">3.4.9</span> Summary</h3>
+<ul>
+<li><p><code>auto.arima()</code> in the forecast package is a good choice for selection and fitting of ARIMA models.</p></li>
+<li><p><code>Arima()</code> is a good choice when you know the order (structure) of the model.</p></li>
+<li>You (may) need to know whether the mean of the data should be zero and whether it is stationary around a linear line.
+<ul>
+<li><code>include.mean=TRUE</code> means the mean is not zero</li>
+<li><code>include.drift=TRUE</code> means fit a model that fluctuates around a trend (up or down)</li>
+</ul></li>
+</ul>
+
+</div>
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="model-structure.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="forecasting.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/lunr.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": {
+"github": false,
+"facebook": true,
+"twitter": true,
+"google": false,
+"linkedin": false,
+"weibo": false,
+"instapper": false,
+"vk": false,
+"all": ["facebook", "google", "twitter", "linkedin", "weibo", "instapaper"]
+},
+"fontsettings": {
+"theme": "white",
+"family": "sans",
+"size": 2
+},
+"edit": {
+"link": null,
+"text": null
+},
+"download": null,
+"toc": {
+"collapse": "section"
+}
+});
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "true";
+    if (src === "" || src === "true") src = "https://cdn.bootcss.com/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:" && /^https?:/.test(src))
+      src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+</body>
+
+</html>
