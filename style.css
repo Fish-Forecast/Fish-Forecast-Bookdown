@@ -25,6 +25,8 @@ body {
     font-family: "Raleway","Helvetica Neue",Helvetica,Arial,sans-serif;
     line-height: 2;
 }
+
+/* Add lines under chapter headers */
 .level1 .header-section-number {
   display: inline-block;
   border-bottom: 3px solid;
@@ -32,6 +34,7 @@ body {
 .level1 h1 {
   border-bottom: 1px solid;
 }
+
 h1 {
   font-size: 32px;
 }
@@ -63,6 +66,9 @@ img {
 img-circle {
     border-radius: 50%;
 }
-code {
-  background-color: white;
+
+
+/* This makes the link at top visible */
+.book .book-header h1 {
+  opacity: 1;
 }

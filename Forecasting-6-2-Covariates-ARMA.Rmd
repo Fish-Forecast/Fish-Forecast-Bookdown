@@ -2,10 +2,6 @@
 
 ```{r f62-load_packages, echo=FALSE, message=FALSE, warning=FALSE}
 library(ggplot2)
-library(gridExtra)
-library(reshape2)
-library(tseries)
-library(forecast)
 ```
 
 
