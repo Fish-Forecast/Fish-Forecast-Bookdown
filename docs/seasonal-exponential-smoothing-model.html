@@ -47,6 +47,7 @@
 
 
 
+<link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
 
 
 <style type="text/css">
@@ -306,10 +307,10 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <p>Unfortunately <code>ets()</code> will not handle missing values and will find the longest continuous piece of our data and use that.</p>
 <pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(forecast)
 traindat &lt;-<span class="st"> </span><span class="kw">window</span>(chinookts, <span class="kw">c</span>(<span class="dv">1990</span>,<span class="dv">1</span>), <span class="kw">c</span>(<span class="dv">1999</span>,<span class="dv">12</span>))
-fit &lt;-<span class="st"> </span><span class="kw">ets</span>(traindat, <span class="dt">model=</span><span class="st">&quot;AAA&quot;</span>)</code></pre>
-<pre><code>## Warning in ets(traindat, model = &quot;AAA&quot;): Missing values encountered. Using
-## longest contiguous portion of time series</code></pre>
-<pre class="sourceCode r"><code class="sourceCode r">fr &lt;-<span class="st"> </span><span class="kw">forecast</span>(fit, <span class="dt">h=</span><span class="dv">24</span>)
+fit &lt;-<span class="st"> </span>forecast<span class="op">::</span><span class="kw">ets</span>(traindat, <span class="dt">model=</span><span class="st">&quot;AAA&quot;</span>)</code></pre>
+<pre><code>## Warning in forecast::ets(traindat, model = &quot;AAA&quot;): Missing values
+## encountered. Using longest contiguous portion of time series</code></pre>
+<pre class="sourceCode r"><code class="sourceCode r">fr &lt;-<span class="st"> </span>forecast<span class="op">::</span><span class="kw">forecast</span>(fit, <span class="dt">h=</span><span class="dv">24</span>)
 <span class="kw">plot</span>(fr)
 <span class="kw">points</span>(<span class="kw">window</span>(chinookts, <span class="kw">c</span>(<span class="dv">1996</span>,<span class="dv">1</span>), <span class="kw">c</span>(<span class="dv">1996</span>,<span class="dv">12</span>)))</code></pre>
 <p><img src="Fish-Forecast_files/figure-html/unnamed-chunk-71-1.png" width="672" style="display: block; margin: auto;" /></p>
@@ -319,9 +320,9 @@ fit &lt;-<span class="st"> </span><span class="kw">ets</span>(traindat, <span cl
 <pre class="sourceCode r"><code class="sourceCode r"><span class="kw">autoplot</span>(fit)</code></pre>
 <p><img src="Fish-Forecast_files/figure-html/unnamed-chunk-72-1.png" width="672" style="display: block; margin: auto;" /></p>
 <p>Pass in a high <code>gamma</code> (the season weighting) to force the seasonality to evolve.</p>
-<pre class="sourceCode r"><code class="sourceCode r">fit &lt;-<span class="st"> </span><span class="kw">ets</span>(traindat, <span class="dt">model=</span><span class="st">&quot;AAA&quot;</span>, <span class="dt">gamma=</span><span class="fl">0.4</span>)</code></pre>
-<pre><code>## Warning in ets(traindat, model = &quot;AAA&quot;, gamma = 0.4): Missing values
-## encountered. Using longest contiguous portion of time series</code></pre>
+<pre class="sourceCode r"><code class="sourceCode r">fit &lt;-<span class="st"> </span>forecast<span class="op">::</span><span class="kw">ets</span>(traindat, <span class="dt">model=</span><span class="st">&quot;AAA&quot;</span>, <span class="dt">gamma=</span><span class="fl">0.4</span>)</code></pre>
+<pre><code>## Warning in forecast::ets(traindat, model = &quot;AAA&quot;, gamma = 0.4): Missing
+## values encountered. Using longest contiguous portion of time series</code></pre>
 <pre class="sourceCode r"><code class="sourceCode r"><span class="kw">autoplot</span>(fit)</code></pre>
 <p><img src="Fish-Forecast_files/figure-html/unnamed-chunk-73-1.png" width="672" style="display: block; margin: auto;" /></p>
 <hr />

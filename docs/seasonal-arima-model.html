@@ -47,6 +47,7 @@
 
 
 
+<link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
 
 
 <style type="text/css">
@@ -270,8 +271,8 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <p>We will redefine the training data to be the longest segment with no missing values.</p>
 <pre class="sourceCode r"><code class="sourceCode r">traindat &lt;-<span class="st"> </span><span class="kw">window</span>(chinookts, <span class="kw">c</span>(<span class="dv">1990</span>,<span class="dv">10</span>), <span class="kw">c</span>(<span class="dv">1995</span>,<span class="dv">12</span>))
 testdat &lt;-<span class="st"> </span><span class="kw">window</span>(chinookts, <span class="kw">c</span>(<span class="dv">1996</span>,<span class="dv">1</span>), <span class="kw">c</span>(<span class="dv">1996</span>,<span class="dv">12</span>))
-fit &lt;-<span class="st"> </span><span class="kw">auto.arima</span>(traindat)
-fr &lt;-<span class="st"> </span><span class="kw">forecast</span>(fit, <span class="dt">h=</span><span class="dv">12</span>)
+fit &lt;-<span class="st"> </span>forecast<span class="op">::</span><span class="kw">auto.arima</span>(traindat)
+fr &lt;-<span class="st"> </span>forecast<span class="op">::</span><span class="kw">forecast</span>(fit, <span class="dt">h=</span><span class="dv">12</span>)
 <span class="kw">plot</span>(fr)
 <span class="kw">points</span>(testdat)</code></pre>
 <p><img src="Fish-Forecast_files/figure-html/unnamed-chunk-74-1.png" width="672" style="display: block; margin: auto;" /></p>

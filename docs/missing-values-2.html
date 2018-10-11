@@ -47,6 +47,7 @@
 
 
 
+<link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
 
 
 <style type="text/css">
@@ -268,8 +269,8 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <h2><span class="header-section-number">7.3</span> Missing values</h2>
 <p>Unlike for an exponential smoothing model, missing values are ok when fitting a seasonal ARIMA model</p>
 <pre class="sourceCode r"><code class="sourceCode r">fulldat &lt;-<span class="st"> </span><span class="kw">window</span>(chinookts, <span class="kw">c</span>(<span class="dv">1990</span>,<span class="dv">1</span>), <span class="kw">c</span>(<span class="dv">1999</span>,<span class="dv">12</span>))
-fit &lt;-<span class="st"> </span><span class="kw">auto.arima</span>(fulldat)
-fr &lt;-<span class="st"> </span><span class="kw">forecast</span>(fit, <span class="dt">h=</span><span class="dv">12</span>)
+fit &lt;-<span class="st"> </span>forecast<span class="op">::</span><span class="kw">auto.arima</span>(fulldat)
+fr &lt;-<span class="st"> </span>forecast<span class="op">::</span><span class="kw">forecast</span>(fit, <span class="dt">h=</span><span class="dv">12</span>)
 <span class="kw">plot</span>(fr)</code></pre>
 <p><img src="Fish-Forecast_files/figure-html/unnamed-chunk-75-1.png" width="672" style="display: block; margin: auto;" /></p>
 </div>

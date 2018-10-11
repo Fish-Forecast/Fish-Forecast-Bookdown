@@ -47,6 +47,7 @@
 
 
 
+<link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
 
 
 <style type="text/css">
@@ -267,12 +268,12 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <div id="forecast-evaluation" class="section level2">
 <h2><span class="header-section-number">7.4</span> Forecast evaluation</h2>
 <p>We can compute the forecast performance metrics as usual.</p>
-<pre class="sourceCode r"><code class="sourceCode r">fit.ets &lt;-<span class="st"> </span><span class="kw">ets</span>(traindat, <span class="dt">model=</span><span class="st">&quot;AAA&quot;</span>)
-fr &lt;-<span class="st"> </span><span class="kw">forecast</span>(fit.ets, <span class="dt">h=</span><span class="dv">12</span>)</code></pre>
+<pre class="sourceCode r"><code class="sourceCode r">fit.ets &lt;-<span class="st"> </span>forecast<span class="op">::</span><span class="kw">ets</span>(traindat, <span class="dt">model=</span><span class="st">&quot;AAA&quot;</span>)
+fr &lt;-<span class="st"> </span>forecast<span class="op">::</span><span class="kw">forecast</span>(fit.ets, <span class="dt">h=</span><span class="dv">12</span>)</code></pre>
 <p>Look at the forecast so you know what years and months to include in your test data. Pull those 12 months out of your data using the <code>window()</code> function.</p>
 <pre class="sourceCode r"><code class="sourceCode r">testdat &lt;-<span class="st"> </span><span class="kw">window</span>(chinookts, <span class="kw">c</span>(<span class="dv">1996</span>,<span class="dv">1</span>), <span class="kw">c</span>(<span class="dv">1996</span>,<span class="dv">12</span>))</code></pre>
 <p>Use <code>accuracy()</code> to get the forecast error metrics.</p>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">accuracy</span>(fr, testdat)</code></pre>
+<pre class="sourceCode r"><code class="sourceCode r">forecast<span class="op">::</span><span class="kw">accuracy</span>(fr, testdat)</code></pre>
 <pre><code>##                         ME      RMSE       MAE       MPE     MAPE
 ## Training set -0.0001825075 0.5642326 0.4440532 -9.254074 25.40106
 ## Test set      0.3143200919 0.7518660 0.6077172 65.753096 81.38568
@@ -280,9 +281,9 @@ fr &lt;-<span class="st"> </span><span class="kw">forecast</span>(fit.ets, <span
 ## Training set 0.7364593 0.07490341        NA
 ## Test set     1.0078949 0.05504107 0.4178409</code></pre>
 <p>We can do the same for the ARIMA model.</p>
-<pre class="sourceCode r"><code class="sourceCode r">fit &lt;-<span class="st"> </span><span class="kw">auto.arima</span>(traindat)
-fr &lt;-<span class="st"> </span><span class="kw">forecast</span>(fit, <span class="dt">h=</span><span class="dv">12</span>)
-<span class="kw">accuracy</span>(fr, testdat)</code></pre>
+<pre class="sourceCode r"><code class="sourceCode r">fit &lt;-<span class="st"> </span>forecast<span class="op">::</span><span class="kw">auto.arima</span>(traindat)
+fr &lt;-<span class="st"> </span>forecast<span class="op">::</span><span class="kw">forecast</span>(fit, <span class="dt">h=</span><span class="dv">12</span>)
+forecast<span class="op">::</span><span class="kw">accuracy</span>(fr, testdat)</code></pre>
 <pre><code>##                       ME      RMSE       MAE        MPE     MAPE      MASE
 ## Training set 0.009977889 0.5677655 0.3965956  0.4645923 27.40975 0.6577511
 ## Test set     0.819202544 0.9458134 0.8192025 22.0199537 55.91641 1.3586419
