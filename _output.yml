@@ -12,15 +12,15 @@ bookdown::gitbook:
         <li><a href="./index.html"><img src="./images/fish-forecast.jpg" width=50></a></li>
       after: |
         <li><a href="https://github.com/rstudio/bookdown" target="blank">Published with bookdown</a></li>
-    download: null 
+    download: null
     # change to download: ["pdf"] or ["pdf", "epub"] to download these
+    # change to download: null
 # uncomment these lines to add a link to github source and links to download
-  # edit: https://github.com/<yourname>/bookdown-demo/edit/master/%s
 # Uncomment these lines if you want to make a pdf
-# bookdown::pdf_book:
-#   includes:
-#     in_header: preamble.tex
-#   latex_engine: xelatex
+#bookdown::pdf_book:
+#  includes:
+#    in_header: preamble.tex
+#  latex_engine: xelatex
 
 # To see the config options for HTML go to
 # https://bookdown.org/yihui/bookdown/html.html

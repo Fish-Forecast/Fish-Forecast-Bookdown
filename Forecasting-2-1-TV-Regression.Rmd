@@ -7,7 +7,7 @@ The error term ( $e_t$ ) was treated as an independent Normal error ( $\sim N(0,
 
 #### Order of the time polynomial {-}
 
-The order of the polynomial of $t$ determines how the time axis (x-axis) relates to the overall trend in the data.  A 1st order polynomial (\beta $t$) will allow a linear relationship only.  A 2nd order polynomial(\beta_1 $t$ + \beta_2 $t^2$) will allow a convex or concave relationship with one peak.  3rd and 4th orders will allow more flexible relationships with more peaks.
+The order of the polynomial of $t$ determines how the time axis (x-axis) relates to the overall trend in the data.  A 1st order polynomial ($\beta t$) will allow a linear relationship only.  A 2nd order polynomial($\beta_1 t + \beta_2 t^2$) will allow a convex or concave relationship with one peak.  3rd and 4th orders will allow more flexible relationships with more peaks.
 
 ```{r poly.plot, echo=FALSE,fig.height=4,fig.width=8,fig.align="center"}
 par(mfrow=c(1,4))

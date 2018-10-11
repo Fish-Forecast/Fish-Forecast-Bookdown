@@ -4,3 +4,4 @@ language:
     chapter_name: "Chapter "
 delete_merged_file: false
 output_dir: "docs"
+edit: https://github.com/fish-forecast/Fish-Forecast-Bookdown/edit/master/%s

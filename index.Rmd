@@ -1,5 +1,5 @@
 --- 
-title: "Forecasting Catch Time Series"
+title: "Fisheries Catch Forecasting"
 author: "Elizabeth Holmes"
 date: "`r Sys.Date()`"
 site: bookdown::bookdown_site
@@ -8,8 +8,9 @@ documentclass: book
 bibliography: [book.bib, packages.bib]
 biblio-style: apalike
 link-citations: yes
-github-repo: fish-forecast/Fish-Forecast-Bookdown/
-description: "Forecasting from catch time series using R."
+github-repo: "fish-forecast/Fish-Forecast-Bookdown/"
+description: "This book will show you how to model and forecast annual and seasonal fisheries catches using R and its time-series analysis functions and packages. Forecasting using time-varying regression, ARIMA (Box-Jenkins) models, and expoential smoothing models is demonstrated using real catch time series.  The entire process from data evaluation and diagnostics, model fitting, model selection and forecast evaluation is shown. The focus of the book is on univariate time series (annual or seasonal), however multivariate regression with autocorrelated errors and multivariate autoregressive models (MAR) are covered briefly.  For multivariate autoregressive models and multivariate autoregressive state-space models for fisheries and environmental sciences, see Holmes, Ward and Scheuerell (2018)."
+cover-image: "images/cover.png"
 ---
 
 ```{r setup, include=FALSE, message=FALSE}
@@ -24,14 +25,23 @@ library(tseries)
 
 # Preface {-}
 
-In this course, you will learn how to use R to model and forecast catch time series using a variety of different forecasting models. 
+This book will show you how to use R to model and forecast catch time series using a variety of standard forecasting models. 
 
 <img style="float: right" src="https://rverse-tutorials.github.io/Fish-Forecast-Training-Course/images/fish-forecast.jpg" width=20%>
 
 - Time-varying regression
-- Box-Jenkins (ARMA) Models
+- Box-Jenkins (ARIMA) models
 - Exponential smoothing
-- Modelling time series with seasonality
 - Multivaritate regression with ARMA errors
 - ARMA models with covariates (ARMAX)
-- Forecast diagnostics and accuracy metrics
+- Seasonal ARIMA models
+- Seasonal exponential smoothing models
+
+In addition to model fitting, model diagnostics, forecast diagnostics and accuracy metrics will be covered along with uncertainty metrics.
+
+The focus of this book is on analysis of univariate time series. However multivariate regression with autocorrelated errors and multivariate autoregressive models (MAR) will be covered more briefly.  For an indepth discussion of multivariate autoregressive models and multivariate autoregressive state-space models, see Holmes, Ward and Scheuerell (2018).
+
+---
+
+<a rel="license" href="http://unlicense.org/"><img alt="Unicense" style="border-width:0" src="http://unlicense.org/pd-icon.png" /></a><br />As a work of the [United States government](https://www.usa.gov/), this project is in the public domain within the United States of America.  Additionally, we waive copyright and related rights in the work worldwide through the Unlicense public domain dedication. <a rel="license" href="http://unlicense.org/">Unlicense public domain dedication</a>.
+
