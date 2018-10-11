@@ -32,8 +32,8 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black">
   
   
-<link rel="prev" href="1-3-ts-objects.html">
-<link rel="next" href="1-5-references.html">
+<link rel="prev" href="references-1.html">
+<link rel="next" href="B-downloading-icoads-covariates.html">
 <script src="libs/jquery-2.2.3/jquery.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
@@ -267,30 +267,64 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
           <div class="page-inner">
 
             <section class="normal" id="section-">
-<div id="packages" class="section level2">
-<h2><span class="header-section-number">1.4</span> Packages</h2>
-<p>We will be using the forecast <span class="citation">(Hyndman et al. <a href="references-1.html#ref-R-forecast">2018</a>)</span> and tseries <span class="citation">(Trapletti and Hornik <a href="references-1.html#ref-R-tseries">2018</a>)</span> packages, with the MARSS <span class="citation">(Holmes et al. <a href="references-1.html#ref-R-MARSS">2018</a>)</span> package to implement ARMAX models. However we will also use a variety of other packages. So that you can keep track of what package a function come from, I will use the <code>::</code> notation for functions that are <em>not</em> from the following standard packages:</p>
-<ul>
-<li>base R</li>
-<li>stats</li>
-<li>ggplot2</li>
-</ul>
-<p>Thus to call function fun1 from package pack1, I will use <code>pack1::fun1()</code>. This will make the code more verbose but you will be able to keep track of function comes from what package.</p>
-<p>Make sure you have the following packages installed. All are available on CRAN.</p>
-<ul>
-<li>ggplot2, gridExtra, grid</li>
-<li>forecast</li>
-<li>tseries</li>
-<li>urca</li>
-<li>MARSS</li>
-</ul>
-<div id="tidyverse-and-piping" class="section level4 unnumbered">
-<h4>tidyverse and piping</h4>
-<p>I will minimize the use of tidyverse and piping. Although the latter can create much more concise code, for beginner R users and programmers, I think it will interfere with learning. I may add the piped versions of the code later. I am not going to be doing much ‘data-wrangling’. I will assume that your data are in the tidyverse format, though I will not be using tibbles explicitly. Our data are quite simple, so this is not hard. See the chapter on inputting your data.</p>
+<div id="inputting-data" class="section level1">
+<h1><span class="header-section-number">A</span> Inputting data</h1>
+<p>This chapter will illustrate how to input data that is stored in csv files in various common formats.</p>
+<div id="one-response-variable" class="section level3 unnumbered">
+<h3>one response variable</h3>
+<p>If your data look like this:</p>
+<pre><code>  Year Species metric.tons
+ 2018,   Fish1,           1
+ 2019,   Fish1,           2
+ 2018,   Fish2,           3
+ 2019,   Fish2,           4
+ 2018,   Fish3,           6
+ 2019,   Fish4,          NA</code></pre>
+<p>with this code:</p>
+<pre><code>test &lt;- read.csv(&quot;Data/test.csv&quot;, stringsAsFactors = FALSE)
+save(test, file=&quot;test.RData&quot;)</code></pre>
+<hr />
 </div>
-<div id="plotting-packages" class="section level4 unnumbered">
-<h4>plotting packages</h4>
-<p>I will use a combination of base plotting and ggplot2 <span class="citation">(Wickham et al. <a href="references-1.html#ref-R-ggplot2">2018</a>)</span> plotting. Doing a tutorial on basic plotting with ggplot2 may be helpful for the material.</p>
+<div id="many-response-variables" class="section level3 unnumbered">
+<h3>Many response variables</h3>
+<p>Read in a file where the data are in columns. If your data look like this with each species (or site) across the columns:</p>
+<pre><code>Year,Anchovy,Sardine,Chub mackerel,Horse mackerel,Mackerel,Jack Mackerel
+1964,5449.2,12984.4,1720.7,4022.4,NA,NA
+1965,4263.5,10611.1,1278.5,4158.3,NA,NA
+1966,5146.4,11437.8,802.6,3012.1,NA,NA</code></pre>
+<p>Use this code:</p>
+<pre><code>library(reshape2)
+test &lt;- read.csv(&quot;Data/test.csv&quot;, stringsAsFactors = FALSE)
+melt(test, id=&quot;Year&quot;, value.name=&quot;metric.tons&quot;, variable.name=&quot;Species&quot;)
+save(test, file=&quot;test.RData&quot;)</code></pre>
+<hr />
+</div>
+<div id="many-response-variables-two-time-variables" class="section level3 unnumbered">
+<h3>Many response variables, two time variables</h3>
+<p>If your data also have, say, a month (or qtr) column, use this code:</p>
+<pre><code>Year,Month,Anchovy,Sardine,Chub mackerel,Horse mackerel,Mackerel,Jack Mackerel
+1964,1,5449.2,12984.4,1720.7,4022.4,NA,NA
+1964,2,4263.5,10611.1,1278.5,4158.3,NA,NA
+1964,3,5146.4,11437.8,802.6,3012.1,NA,NA</code></pre>
+<p>Use this code:</p>
+<pre><code>library(reshape2)
+test &lt;- read.csv(&quot;Data/test.csv&quot;, stringsAsFactors = FALSE)
+melt(test, id=c(&quot;Year&quot;,&quot;Month&quot;), value.name=&quot;metric.tons&quot;, variable.name=&quot;Species&quot;)
+save(test, file=&quot;test.RData&quot;)</code></pre>
+<hr />
+</div>
+<div id="one-response-variable-multiple-explanatory-variables" class="section level3 unnumbered">
+<h3>One response variable, multiple explanatory variables</h3>
+<pre><code>Year, Anchovy, SST,  Mackerel
+1964, 5449.2,  24.4, 1720.7
+1965, 4263.5,  30.1, 1278.5
+1966, 5146.4,  23.8,  802.6</code></pre>
+<p>Use this code:</p>
+<pre><code>test &lt;- read.csv(&quot;Data/test.csv&quot;, stringsAsFactors = FALSE)
+save(test, file=&quot;test.RData&quot;)</code></pre>
+<p>Use this <code>lm()</code> model (or gam() etc):</p>
+<pre><code>fit &lt;- lm(Anchovy ~ SST + Mackerel, data=test)</code></pre>
+
 </div>
 </div>
             </section>
@@ -298,8 +332,8 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
           </div>
         </div>
       </div>
-<a href="1-3-ts-objects.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
-<a href="1-5-references.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+<a href="references-1.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="B-downloading-icoads-covariates.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
     </div>
   </div>
 <script src="libs/gitbook-2.6.7/js/app.min.js"></script>

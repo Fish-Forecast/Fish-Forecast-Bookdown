@@ -1,4 +1,6 @@
-# Appendix: Inputting data {-}
+# (APPENDIX) Appendix {-}
+
+# Inputting data
 
 This chapter will illustrate how to input data that is stored in csv files in various common formats.
 
@@ -38,9 +40,8 @@ Year,Anchovy,Sardine,Chub mackerel,Horse mackerel,Mackerel,Jack Mackerel
 Use this code:
 
 ```
-library(reshape2)
 test <- read.csv("Data/test.csv", stringsAsFactors = FALSE)
-melt(test, id="Year", value.name="metric.tons", variable.name="Species")
+reshape2::melt(test, id="Year", value.name="metric.tons", variable.name="Species")
 save(test, file="test.RData")
 ```
 
@@ -59,9 +60,8 @@ Year,Month,Anchovy,Sardine,Chub mackerel,Horse mackerel,Mackerel,Jack Mackerel
 Use this code:
 
 ```
-library(reshape2)
 test <- read.csv("Data/test.csv", stringsAsFactors = FALSE)
-melt(test, id=c("Year","Month"), value.name="metric.tons", variable.name="Species")
+reshape2::melt(test, id=c("Year","Month"), value.name="metric.tons", variable.name="Species")
 save(test, file="test.RData")
 ```
 

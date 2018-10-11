@@ -6,20 +6,20 @@
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <title>Forecasting Catch Time Series</title>
-  <meta name="description" content="Forecasting catch time series using R.">
+  <meta name="description" content="Forecasting from catch time series using R.">
   <meta name="generator" content="bookdown  and GitBook 2.6.7">
 
   <meta property="og:title" content="Forecasting Catch Time Series" />
   <meta property="og:type" content="book" />
   
   
-  <meta property="og:description" content="Forecasting catch time series using R." />
-  <meta name="github-repo" content="rstudio/bookdown-demo" />
+  <meta property="og:description" content="Forecasting from catch time series using R." />
+  <meta name="github-repo" content="fish-forecast/Fish-Forecast-Bookdown/" />
 
   <meta name="twitter:card" content="summary" />
   <meta name="twitter:title" content="Forecasting Catch Time Series" />
   
-  <meta name="twitter:description" content="Forecasting catch time series using R." />
+  <meta name="twitter:description" content="Forecasting from catch time series using R." />
   
 
 <meta name="author" content="Elizabeth Holmes">
@@ -238,6 +238,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="7.3" data-path="7-3-missing-values-2.html"><a href="7-3-missing-values-2.html"><i class="fa fa-check"></i><b>7.3</b> Missing values</a></li>
 <li class="chapter" data-level="7.4" data-path="7-4-forecast-evaluation.html"><a href="7-4-forecast-evaluation.html"><i class="fa fa-check"></i><b>7.4</b> Forecast evaluation</a></li>
 </ul></li>
+<li class="chapter" data-level="" data-path="references-1.html"><a href="references-1.html"><i class="fa fa-check"></i>References</a></li>
 <li class="chapter" data-level="" data-path="appendix-inputting-data.html"><a href="appendix-inputting-data.html"><i class="fa fa-check"></i>Appendix: Inputting data</a><ul>
 <li class="chapter" data-level="" data-path="appendix-inputting-data.html"><a href="appendix-inputting-data.html#one-response-variable"><i class="fa fa-check"></i>one response variable</a></li>
 <li class="chapter" data-level="" data-path="appendix-inputting-data.html"><a href="appendix-inputting-data.html#many-response-variables"><i class="fa fa-check"></i>Many response variables</a></li>
@@ -300,6 +301,20 @@ covsmean.year &lt;-<span class="st"> </span><span class="kw">data.frame</span>(<
 <span class="cf">for</span>(j <span class="cf">in</span> <span class="dv">2</span><span class="op">:</span>(<span class="kw">dim</span>(covsmean)[<span class="dv">2</span>]<span class="op">-</span><span class="dv">1</span>)) covsmean.year &lt;-<span class="st"> </span><span class="kw">cbind</span>(covsmean.year, <span class="kw">tapply</span>(covsmean[,j], covsmean<span class="op">$</span>Year, mean, <span class="dt">na.rm=</span><span class="ot">TRUE</span>))
 <span class="kw">colnames</span>(covsmean.year) &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;Year&quot;</span>,<span class="kw">colnames</span>(covsmean)[<span class="dv">2</span><span class="op">:</span>(<span class="kw">dim</span>(covsmean)[<span class="dv">2</span>]<span class="op">-</span><span class="dv">1</span>)])</code></pre>
 
+<div id="refs" class="references">
+<div id="ref-R-MARSS">
+<p>Holmes, Eli, Eric Ward, Mark Scheuerell, Kellie Wills, NOAA, Seattle, and USA. 2018. <em>MARSS: Multivariate Autoregressive State-Space Modeling</em>. <a href="https://CRAN.R-project.org/package=MARSS" class="uri">https://CRAN.R-project.org/package=MARSS</a>.</p>
+</div>
+<div id="ref-R-forecast">
+<p>Hyndman, Rob, George Athanasopoulos, Christoph Bergmeir, Gabriel Caceres, Leanne Chhay, Mitchell O’Hara-Wild, Fotios Petropoulos, Slava Razbash, Earo Wang, and Farah Yasmeen. 2018. <em>Forecast: Forecasting Functions for Time Series and Linear Models</em>. <a href="https://CRAN.R-project.org/package=forecast" class="uri">https://CRAN.R-project.org/package=forecast</a>.</p>
+</div>
+<div id="ref-R-tseries">
+<p>Trapletti, Adrian, and Kurt Hornik. 2018. <em>Tseries: Time Series Analysis and Computational Finance</em>. <a href="https://CRAN.R-project.org/package=tseries" class="uri">https://CRAN.R-project.org/package=tseries</a>.</p>
+</div>
+<div id="ref-R-ggplot2">
+<p>Wickham, Hadley, Winston Chang, Lionel Henry, Thomas Lin Pedersen, Kohske Takahashi, Claus Wilke, and Kara Woo. 2018. <em>Ggplot2: Create Elegant Data Visualisations Using the Grammar of Graphics</em>. <a href="https://CRAN.R-project.org/package=ggplot2" class="uri">https://CRAN.R-project.org/package=ggplot2</a>.</p>
+</div>
+</div>
 </div>
             </section>
 

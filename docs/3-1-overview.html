@@ -6,20 +6,20 @@
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <title>Forecasting Catch Time Series</title>
-  <meta name="description" content="Forecasting catch time series using R.">
+  <meta name="description" content="Forecasting from catch time series using R.">
   <meta name="generator" content="bookdown  and GitBook 2.6.7">
 
   <meta property="og:title" content="Forecasting Catch Time Series" />
   <meta property="og:type" content="book" />
   
   
-  <meta property="og:description" content="Forecasting catch time series using R." />
-  <meta name="github-repo" content="rstudio/bookdown-demo" />
+  <meta property="og:description" content="Forecasting from catch time series using R." />
+  <meta name="github-repo" content="fish-forecast/Fish-Forecast-Bookdown/" />
 
   <meta name="twitter:card" content="summary" />
   <meta name="twitter:title" content="Forecasting Catch Time Series" />
   
-  <meta name="twitter:description" content="Forecasting catch time series using R." />
+  <meta name="twitter:description" content="Forecasting from catch time series using R." />
   
 
 <meta name="author" content="Elizabeth Holmes">
@@ -238,13 +238,15 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="7.3" data-path="7-3-missing-values-2.html"><a href="7-3-missing-values-2.html"><i class="fa fa-check"></i><b>7.3</b> Missing values</a></li>
 <li class="chapter" data-level="7.4" data-path="7-4-forecast-evaluation.html"><a href="7-4-forecast-evaluation.html"><i class="fa fa-check"></i><b>7.4</b> Forecast evaluation</a></li>
 </ul></li>
-<li class="chapter" data-level="" data-path="appendix-inputting-data.html"><a href="appendix-inputting-data.html"><i class="fa fa-check"></i>Appendix: Inputting data</a><ul>
-<li class="chapter" data-level="" data-path="appendix-inputting-data.html"><a href="appendix-inputting-data.html#one-response-variable"><i class="fa fa-check"></i>one response variable</a></li>
-<li class="chapter" data-level="" data-path="appendix-inputting-data.html"><a href="appendix-inputting-data.html#many-response-variables"><i class="fa fa-check"></i>Many response variables</a></li>
-<li class="chapter" data-level="" data-path="appendix-inputting-data.html"><a href="appendix-inputting-data.html#many-response-variables-two-time-variables"><i class="fa fa-check"></i>Many response variables, two time variables</a></li>
-<li class="chapter" data-level="" data-path="appendix-inputting-data.html"><a href="appendix-inputting-data.html#one-response-variable-multiple-explanatory-variables"><i class="fa fa-check"></i>One response variable, multiple explanatory variables</a></li>
+<li class="chapter" data-level="" data-path="references-1.html"><a href="references-1.html"><i class="fa fa-check"></i>References</a></li>
+<li class="appendix"><span><b>Appendix</b></span></li>
+<li class="chapter" data-level="A" data-path="A-inputting-data.html"><a href="A-inputting-data.html"><i class="fa fa-check"></i><b>A</b> Inputting data</a><ul>
+<li class="chapter" data-level="" data-path="A-inputting-data.html"><a href="A-inputting-data.html#one-response-variable"><i class="fa fa-check"></i>one response variable</a></li>
+<li class="chapter" data-level="" data-path="A-inputting-data.html"><a href="A-inputting-data.html#many-response-variables"><i class="fa fa-check"></i>Many response variables</a></li>
+<li class="chapter" data-level="" data-path="A-inputting-data.html"><a href="A-inputting-data.html#many-response-variables-two-time-variables"><i class="fa fa-check"></i>Many response variables, two time variables</a></li>
+<li class="chapter" data-level="" data-path="A-inputting-data.html"><a href="A-inputting-data.html#one-response-variable-multiple-explanatory-variables"><i class="fa fa-check"></i>One response variable, multiple explanatory variables</a></li>
 </ul></li>
-<li class="chapter" data-level="" data-path="appendix-downloading-icoads-covariates.html"><a href="appendix-downloading-icoads-covariates.html"><i class="fa fa-check"></i>Appendix: Downloading ICOADS covariates</a></li>
+<li class="chapter" data-level="B" data-path="B-downloading-icoads-covariates.html"><a href="B-downloading-icoads-covariates.html"><i class="fa fa-check"></i><b>B</b> Downloading ICOADS covariates</a></li>
 <li class="divider"></li>
 <li><a href="https://github.com/rstudio/bookdown" target="blank">Published with bookdown</a></li>
 
@@ -322,9 +324,9 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <p><img src="Fish-Forecast_files/figure-html/acf-1.png" width="672" style="display: block; margin: auto;" /></p>
 <p>The ACF simply shows the correlation between all the data points that are lag <span class="math inline">\(p\)</span> apart. Here are the correlations for points lag 1 and lag 10 apart. <code>cor()</code> is the correlation function.</p>
 <pre class="sourceCode r"><code class="sourceCode r"><span class="kw">cor</span>(dat[<span class="dv">2</span><span class="op">:</span>TT], dat[<span class="dv">1</span><span class="op">:</span>(TT<span class="dv">-1</span>)])</code></pre>
-<pre><code>## [1] 0.770045</code></pre>
+<pre><code>## [1] 0.6997968</code></pre>
 <pre class="sourceCode r"><code class="sourceCode r"><span class="kw">cor</span>(dat[<span class="dv">11</span><span class="op">:</span>TT], dat[<span class="dv">1</span><span class="op">:</span>(TT<span class="dv">-10</span>)])</code></pre>
-<pre><code>## [1] 0.3036358</code></pre>
+<pre><code>## [1] 0.159927</code></pre>
 <p>The values match what we see in the ACF plot.</p>
 <p><img src="Fish-Forecast_files/figure-html/acf2-1.png" width="672" style="display: block; margin: auto;" /></p>
 </div>
