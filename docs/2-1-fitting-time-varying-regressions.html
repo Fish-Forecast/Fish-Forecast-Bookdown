@@ -361,7 +361,7 @@ model &lt;-<span class="st"> </span><span class="kw">lm</span>(log.metric.tons <
 ##  Box-Ljung test
 ## 
 ## data:  rnorm(100)
-## X-squared = 1.0801, df = 1, p-value = 0.2987</code></pre>
+## X-squared = 1.3924, df = 1, p-value = 0.238</code></pre>
 <p>The null hypothesis is not rejected. These are not serially correlated.</p>
 <p>Stergio and Christou appear to use a lag of 14 for the test (this is a bit large for 24 data points). The degrees of freedom is lag minus the number of estimated parameters in the model. So for the Anchovy data, <span class="math inline">\(df = 14 - 2\)</span>.</p>
 <pre class="sourceCode r"><code class="sourceCode r">x &lt;-<span class="st"> </span><span class="kw">resid</span>(model)

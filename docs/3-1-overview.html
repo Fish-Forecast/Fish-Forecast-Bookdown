@@ -322,9 +322,9 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <p><img src="Fish-Forecast_files/figure-html/acf-1.png" width="672" style="display: block; margin: auto;" /></p>
 <p>The ACF simply shows the correlation between all the data points that are lag <span class="math inline">\(p\)</span> apart. Here are the correlations for points lag 1 and lag 10 apart. <code>cor()</code> is the correlation function.</p>
 <pre class="sourceCode r"><code class="sourceCode r"><span class="kw">cor</span>(dat[<span class="dv">2</span><span class="op">:</span>TT], dat[<span class="dv">1</span><span class="op">:</span>(TT<span class="dv">-1</span>)])</code></pre>
-<pre><code>## [1] 0.6864663</code></pre>
+<pre><code>## [1] 0.770045</code></pre>
 <pre class="sourceCode r"><code class="sourceCode r"><span class="kw">cor</span>(dat[<span class="dv">11</span><span class="op">:</span>TT], dat[<span class="dv">1</span><span class="op">:</span>(TT<span class="dv">-10</span>)])</code></pre>
-<pre><code>## [1] 0.05988053</code></pre>
+<pre><code>## [1] 0.3036358</code></pre>
 <p>The values match what we see in the ACF plot.</p>
 <p><img src="Fish-Forecast_files/figure-html/acf2-1.png" width="672" style="display: block; margin: auto;" /></p>
 </div>
