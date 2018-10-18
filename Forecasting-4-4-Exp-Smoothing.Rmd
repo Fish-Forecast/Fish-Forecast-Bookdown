@@ -1,0 +1,138 @@
+## Forecast performance
+
+We can evaluate the forecast performance with forecasts of our test data or we can use all the data and use time-series cross-validation.
+
+Let's start with the former.
+
+```{r echo=FALSE}
+spp <- "Anchovy"
+training = subset(landings, Year <= 1987)
+test = subset(landings, Year >= 1988 & Year <= 1989)
+
+traindat <- subset(training, Species==spp)$log.metric.tons
+testdat <- subset(test, Species==spp)$log.metric.tons
+```
+
+---
+
+### Test forecast performance
+
+#### Test against a test data set {-}
+
+We will fit an an exponential smoothing model with trend to the training data and make a forecast for the years that we 'held out'. 
+
+```{r fig.height=4}
+fit1 <- forecast::ets(traindat, model="AAN")
+h=length(testdat)
+fr <- forecast::forecast(fit1, h=h)
+plot(fr)
+points(length(traindat)+1:h, testdat, pch=2, col="red")
+legend("topleft", c("forecast","actual"), pch=c(20,2), col=c("blue","red"))
+```
+
+
+We can calculate a variety of forecast error metrics with
+
+```{r}
+forecast::accuracy(fr, testdat)
+```
+
+We would now repeat this for all the models in our candidate set and choose the model with the best forecast performance.
+
+
+#### Test using time-series cross-validation {-}
+
+Another approach is to use all the data and test a series of forecasts made by fitting the model to different lengths of the data.
+
+In this approach, we don't have test data.  Instead we will use all the data for fitting and for forecast testing.
+
+We will redefine `traindat` as all our Anchovy data.
+
+```{r subset.anch, echo=FALSE}
+spp <- "Anchovy"
+training = subset(landings, Year <= 1989)
+traindat <- subset(training, Species==spp)$log.metric.tons
+```
+
+#### tsCV() function {-}
+
+We will use the `tsCV()` function.  We need to define a function that returns a forecast.
+
+```{r def.far2}
+far2 <- function(x, h, model){
+  fit <- ets(x, model=model)
+  forecast(fit, h=h)
+  }
+```
+
+Now we can use `tsCV()` to run our `far2()` function to a series of training data sets.  We will specify that a NEW ets model be estimated for each training set.  We are not using the weighting estimated for the whole data set but estimating the weighting new for each set.
+
+The `e` are our forecast errors for all the forecasts that we did with the data.
+
+```{r}
+e <- forecast::tsCV(traindat, far2, h=1, model="AAN")
+e
+```
+
+Let's look at the first few `e` so we see exactly with `tsCV()` is doing.
+
+```{r}
+e[2]
+```
+
+This uses training data from $t=1$ to $t=2$ so fits an ets to the first two data points alone.  Then it creates a forecast for $t=3$ and compares that forecast to the actual value observed for $t=3$.
+
+```{r}
+TT <- 2 # end of the temp training data
+temp <- traindat[1:TT]
+fit.temp <- forecast::ets(temp, model="AAN")
+fr.temp <- forecast::forecast(fit.temp, h=1)
+traindat[TT+1] - fr.temp$mean
+```
+
+```{r}
+e[3]
+```
+
+This uses training data from $t=1$ to $t=2$ so fits an ets to the first two data points alone.  Then it creates a forecast for $t=3$ and compares that forecast to the actual value observed for $t=3$.
+
+```{r}
+TT <- 3 # end of the temp training data
+temp <- traindat[1:TT]
+fit.temp <- forecast::ets(temp, model="AAN")
+fr.temp <- forecast::forecast(fit.temp, h=1)
+traindat[TT+1] - fr.temp$mean
+```
+
+---
+
+### Testing a specific ets model
+
+By specifying `model="AAN"`, we estimated a new ets model (meaning new weighting) for each training set used.  We might want to specify that we use only the weighting we estimated for the full data set.
+
+We do this by passing in a fit to `model`.
+
+The `e` are our forecast errors for all the forecasts that we did with the data. `fit1` below is the ets estimated from all the data 1964 to 1989.  Note, the code will produce a warning that it is estimating the initial value and just using the weighting.  That is what we want.
+
+```{r, message=FALSE, warning=FALSE}
+fit1 <- forecast::ets(traindat, model="AAN")
+e <- forecast::tsCV(traindat, far2, h=1, model=fit1)
+e
+```
+
+---
+
+### Forecast accuracy metrics
+
+Now we can compute forecast accuracy metrics from the forecast errors (`e`).
+
+RMSE: root mean squared error
+```{r rmse}
+rmse <- sqrt(mean(e^2, na.rm=TRUE))
+```
+
+MAE: mean absolute error
+```{r mae}
+mae <- mean(abs(e), na.rm=TRUE)
+```
+

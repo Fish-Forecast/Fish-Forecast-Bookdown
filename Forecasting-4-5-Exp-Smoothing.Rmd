@@ -1,0 +1,4 @@
+## Further Reading
+
+Rob J Hyndman (lead on the forecast package)  and George Athanasopoulos have an excellent online text on practical forecasting and exponential smoothing. Read [their chapter](https://otexts.org/fpp2/expsmooth.html) on exponential smoothing to learn more about these models and how to use them.
+

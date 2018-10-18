@@ -1,16 +1,20 @@
 # Exponential Smoothing Models
 
-Reference.  Rob J Hyndman (lead on the forecast package)  and George Athanasopoulos have an excellent online text on practical forecasting and exponential smoothing. Read [their chapter](https://otexts.org/fpp2/expsmooth.html) on exponential smoothing to learn more about these models and how to use them.
+The basic idea with an exponential smoothing model is that your forecast of $x$ at time $t$, as opposed to the actual value of $x$ at time $t$, is a smoothed function of past $x$ values.
 
-## Naive forecast
+$$\hat{x}_{t} = \alpha x_{t-1} + \alpha (1-\alpha)^2 x_{t-2} + \alpha (1-\alpha)^3 x_{t-3} + \dots$$
+Although this looks similar to an AR model with a constraint on the $\beta$ terms, it is fundamentally different.  There is no process model and one is **not** assuming that
+$$x_{t} = \alpha x_{t-1} + \alpha (1-\alpha)^2 x_{t-2} + \alpha (1-\alpha)^3 x_{t-3} + \dots + e_t$$
+The goal is to find the $\alpha$ that minimizes $x_t - \hat{x}_t$, i.e. the forecast error.  The issues regarding stationarity do not arise because we are not fitting a stationary process model.  We are not fitting a process model at all.
 
-For a naive forecast of the anchovy landings in 1988, we just use the 1987 landings.
+### Naive model
 
+Let's start with a simple example, an exponential smoothing model with $\alpha=1$.  This is called the Naive model:
+$$\hat{x}_{t} = x_{t-1}$$
+For the naive model, our forecast is simply the value in the previous time step.  For example, a naive forecast of the anchovy landings in 1988 is the anchovy landings in 1987.
 $$\hat{x}_{1988} = x_{1987}$$
-Which is the same as saying that we put 100% of the 'weight' on the most recent value and no weight on any value prior to that.
-
+This is the same as saying that we put 100% of the 'weight' on the most recent value and no weight on any value prior to that.
 $$\hat{x}_{1988} = 1 \times x_{1987} + 0 \times x_{1986} + 0 \times x_{1985} + \dots$$
-
 Past values in the time series have information about the current state, but only the most recent past value.
 
 ```{r echo=FALSE}
@@ -18,360 +22,25 @@ plot(1987:1964, c(1,rep(0,23)), lwd=2, ylab="weight", xlab="", type="l")
 title("weight put on past values for 1988 forecast")
 ```
 
-
-
 That's a bit extreme.  Often the values prior to the last value also have some information about future states.  But the 'information content' should decrease the farther in the past that we go.
 
 ```{r echo=FALSE}
-alpha <- 0.8
-plot(1987:1964, alpha^(1:24), lwd=2, ylab="weight", xlab="", type="l")
-title("more weight put on more recent values\nfor 1988 forecast")
-```
-
-## Simple ETS
-
-Simple exponential smoothing uses this type of weighting that falls off exponentially and the objective to estimate the best weighting ( $\alpha$ ):
-
-```{r echo=FALSE}
-alpha <- 1
-wts <- alpha*(1-alpha)^(0:23)
-plot(1987:1964, wts/sum(wts), lwd=2, ylab="weight", xlab="", type="l")
 alpha <- 0.5
-wts <- alpha*(1-alpha)^(0:23)
-lines(1987:1964, wts/sum(wts), lwd=2, col="blue")
-alpha <- 0.05
-wts <- alpha*(1-alpha)^(0:23)
-lines(1987:1964, wts/sum(wts), lwd=2, col="red")
-legend("topleft", c("alpha=1 like naive","alpha=0.5","alpha=0.05 like mean"),lwd=2, col=c("black","blue","red"))
+plot(1987:1964, alpha*(1-alpha)^(1:24-1), lwd=2, ylab="weight", xlab="", type="l")
 title("more weight put on more recent values\nfor 1988 forecast")
 ```
 
-## Fitting with `ets()`
+### Exponential Smoothing
 
-The forecast package will fit a wide variety of exponential smoothing models.  The main fitting function is `ets()`:
+A *Smoother* is another word for a filter, which in time series parlance means a weighted sum of sequential values in a time series:
+$$w_1 x_t + w_2 x_{t-1} + w_3 x_{t-2} + \dots$$
+An exponential smoother is a filter where the weights decline exponentially.
 
-```
-ets(y, model = "ZZZ", < + many other arguments >)
-```
-
-* y : your data.  A time series of responses.
-
-* model: what type of exponential smoothing model.
-
-
-We are going to use `ets()` to fit three simple types of exponential smoothing models:
-
-model  | "ZZZ" | alternate function |
-------------- | ------------- | --------- |
-exponential smoothing no trend | "ANN" | `ses()` |
-exponential smoothing with trend  | "AAN" | `holt()` |
-exponential smoothing choose trend  | "AZN" | NA |
-
-The alternate function does exactly the same fitting.  It is just a 'shortcut'.
-
----
-
-### Exponential smoothing with no trend
-
-This is like the naive model that just uses the last value to make the forecast, but instead of only using the last value it will use values farther in the past also. The weighting fall off exponentially.
-
-Load the data and forecast package.
-
-```{r load_data_exp_smoothing}
-load("landings.RData")
-```
-
-```{r fit.ann}
-fit <- forecast::ets(anchovy87ts, model="ANN")
-fr <- forecast::forecast(fit, h=5)
-```
-
----
-
-```{r}
-plot(fr)
-```
-
-
-Look at the estimates
-
-```{r}
-fit
-```
-
----
-
-### The weighting function
-
-```{r ann.weighting, echo=FALSE}
-alpha <- coef(fit)[1]
-wts <- alpha*(1-alpha)^(0:23)
-plot(1987:1964, wts/sum(wts), lwd=2, ylab="weight", xlab="", type="l")
-title("Weighting for simple exp. smooth of anchovy")
-```
-
----
-
-### Produce forecast using a previous fit
-
-Say you want to estimate a forecasting model from one dataset and use that model to forecast another dataset or another area.  Here is how to do that.
-
-This is the fit to the 1964-1987 data:
-
-```{r}
-fit1 <- forecast::ets(anchovy87ts, model="ANN")
-```
-
-Use that model with the 2000-2007 data and produce a forecast:
-
-```{r fit.new.ann}
-dat <- subset(landings, Species=="Anchovy" & Year>=2000 & Year<=2007)
-dat <- ts(dat$log.metric.tons, start=2000)
-fit2 <- forecast::ets(dat, model=fit1)
-fr2 <- forecast::forecast(fit2, h=5)
-```
-
-
-```{r}
-plot(fr2)
-```
-
---- 
-
-### Naive model with drift
-
-Fit a model that uses the last observation as the forecast but includes a trend estimated from ALL the data.  This is what the naive model with drift does.
-
-```{r fig.height=4.5}
-fit.rwf <- forecast::Arima(anchovy87ts, order=c(0,1,0), include.drift=TRUE)
-fr.rwf <- forecast::forecast(fit.rwf, h=5)
-plot(fr.rwf)
-```
-
-The trend seen in the blue line is estimated from the overall trend in ALL the data.
-
-```{r}
-coef(fit.rwf)
-```
-
-The trend from all the data is (last-first)/(number of steps).
-
-```{r}
-mean(diff(anchovy87ts))
-```
-
-So we only use the latest data to choose the level for our forecast but use all the data to choose the trend?  It would make more sense to weight the more recent trends more heavily.
-
----
-
-### Exponential smoothing model with trend
-
-The exponential smoothing model with trend does this.  The one-year trend is 
-$$x_t - x_{t-1}$$
-That is how much the data increased or decreased.  
-
-
-```{r}
-plot(diff(anchovy87ts),ylim=c(-0.3,.3))
-abline(h=0, col="blue")
-abline(h=mean(diff(anchovy87ts)),col="red")
-title("0 means no change")
-```
-
-
-If we take the average of all $x_t - x_{t-1}$ we are using the average trend like the naive model with drift.  We put an equal weighting on all trends.
-
-But we could use a weighting that falls off exponentially so that we more recent trends affect the forecast more than trends in the distant past.  That is what an exponential smoothing model with trend does.
-
-```{r echo=FALSE}
-alpha <- 1
-wts <- alpha*(1-alpha)^(0:23)
-plot(1987:1964, wts/sum(wts), lwd=2, ylab="weight", xlab="", type="l")
+```{r exp.smoother, echo=FALSE}
 alpha <- 0.5
-wts <- alpha*(1-alpha)^(0:23)
-lines(1987:1964, wts/sum(wts), lwd=2, col="blue")
-alpha <- 0.05
-wts <- alpha*(1-alpha)^(0:23)
-lines(1987:1964, wts/sum(wts), lwd=2, col="red")
-legend("topleft", c("beta=1","beta=0.5","beta=0.05 like naive"),lwd=2, col=c("black","blue","red"))
-title("more weight put on more recent values\nfor 1988 forecast")
+plot(-1:-24, alpha*(1-alpha)^(1:24-1), lwd=2, ylab="weight", xlab="lag", type="l")
+title("weight on x at t + lag")
 ```
 
----
-
-### Naive model with trend
-
-If your training data are length $T$, then a forecast for $T+h$ is
-
-$$\hat{x}_{T+h} = l_T + h \bar{b}$$
-
-where $\hat{b}$ is the mean of the the yearly changes in $x$, so the mean of $x_t - x_{t-1}$.
-
-$$\hat{b} = \sum_{t=2}^T (x_t - x_{t-1})$$
-
-### Exponential smoothing model with trend
-
-$$\hat{x}_{T+h} = l_T + h b_T$$
-
-where $b_T$ is a weighted average with the more recent trends given more weight.
-
-$$b_t = \sum_{t=2}^T \beta (1-\beta)^{t-2}(x_t - x_{t-1})$$
-
-#### Fit exponential smoothing with trend {-}
-
-```{r}
-fit <- forecast::ets(anchovy87ts, model="AAN")
-fr <- forecast::forecast(fit, h=5)
-plot(fr)
-```
-
----
-
-### Decomposing your model fit
-
-Sometimes you would like to see the smoothed level and smoothed trend that the model estimated. You can see that with `plot(fit)` or `autoplot(fit)`.
-
-```{r fig.height=4}
-autoplot(fit)
-```
-
----
-
-### Forecast performance
-
-We can evaluate the forecast performance with forecasts of our test data or we can use all the data and use time-series cross-validation.
-
-Let's start with the former.
-
-```{r echo=FALSE}
-spp <- "Anchovy"
-training = subset(landings, Year <= 1987)
-test = subset(landings, Year >= 1988 & Year <= 1989)
-
-traindat <- subset(training, Species==spp)$log.metric.tons
-testdat <- subset(test, Species==spp)$log.metric.tons
-```
-
----
-
-### Test forecast performance
-
-#### Test against a test data set {-}
-
-We will fit an an exponential smoothing model with trend to the training data and make a forecast for the years that we 'held out'. 
-
-```{r fig.height=4}
-fit1 <- forecast::ets(traindat, model="AAN")
-h=length(testdat)
-fr <- forecast::forecast(fit1, h=h)
-plot(fr)
-points(length(traindat)+1:h, testdat, pch=2, col="red")
-legend("topleft", c("forecast","actual"), pch=c(20,2), col=c("blue","red"))
-```
-
-
-We can calculate a variety of forecast error metrics with
-
-```{r}
-forecast::accuracy(fr, testdat)
-```
-
-We would now repeat this for all the models in our candidate set and choose the model with the best forecast performance.
-
-
-#### Test using time-series cross-validation {-}
-
-Another approach is to use all the data and test a series of forecasts made by fitting the model to different lengths of the data.
-
-In this approach, we don't have test data.  Instead we will use all the data for fitting and for forecast testing.
-
-We will redefine `traindat` as all our Anchovy data.
-
-```{r subset.anch, echo=FALSE}
-spp <- "Anchovy"
-training = subset(landings, Year <= 1989)
-traindat <- subset(training, Species==spp)$log.metric.tons
-```
-
-#### tsCV() function {-}
-
-We will use the `tsCV()` function.  We need to define a function that returns a forecast.
-
-```{r def.far2}
-far2 <- function(x, h, model){
-  fit <- ets(x, model=model)
-  forecast(fit, h=h)
-  }
-```
-
-Now we can use `tsCV()` to run our `far2()` function to a series of training data sets.  We will specify that a NEW ets model be estimated for each training set.  We are not using the weighting estimated for the whole data set but estimating the weighting new for each set.
-
-The `e` are our forecast errors for all the forecasts that we did with the data.
-
-```{r}
-e <- forecast::tsCV(traindat, far2, h=1, model="AAN")
-e
-```
-
-Let's look at the first few `e` so we see exactly with `tsCV()` is doing.
-
-```{r}
-e[2]
-```
-
-This uses training data from $t=1$ to $t=2$ so fits an ets to the first two data points alone.  Then it creates a forecast for $t=3$ and compares that forecast to the actual value observed for $t=3$.
-
-```{r}
-TT <- 2 # end of the temp training data
-temp <- traindat[1:TT]
-fit.temp <- forecast::ets(temp, model="AAN")
-fr.temp <- forecast::forecast(fit.temp, h=1)
-traindat[TT+1] - fr.temp$mean
-```
-
-```{r}
-e[3]
-```
-
-This uses training data from $t=1$ to $t=2$ so fits an ets to the first two data points alone.  Then it creates a forecast for $t=3$ and compares that forecast to the actual value observed for $t=3$.
-
-```{r}
-TT <- 3 # end of the temp training data
-temp <- traindat[1:TT]
-fit.temp <- forecast::ets(temp, model="AAN")
-fr.temp <- forecast::forecast(fit.temp, h=1)
-traindat[TT+1] - fr.temp$mean
-```
-
----
-
-### Testing a specific ets model
-
-By specifying `model="AAN"`, we estimated a new ets model (meaning new weighting) for each training set used.  We might want to specify that we use only the weighting we estimated for the full data set.
-
-We do this by passing in a fit to `model`.
-
-The `e` are our forecast errors for all the forecasts that we did with the data. `fit1` below is the ets estimated from all the data 1964 to 1989.  Note, the code will produce a warning that it is estimating the initial value and just using the weighting.  That is what we want.
-
-```{r, message=FALSE, warning=FALSE}
-fit1 <- forecast::ets(traindat, model="AAN")
-e <- forecast::tsCV(traindat, far2, h=1, model=fit1)
-e
-```
-
----
-
-### Forecast accuracy metrics
-
-Now we can compute forecast accuracy metrics from the forecast errors (`e`).
-
-RMSE: root mean squared error
-```{r rmse}
-rmse <- sqrt(mean(e^2, na.rm=TRUE))
-```
-
-MAE: mean absolute error
-```{r mae}
-mae <- mean(abs(e), na.rm=TRUE)
-```
+Our goal when fitting an exponential smoothing model is to find the weighting, the $\alpha$, that minimizes the forecast errors.
 
