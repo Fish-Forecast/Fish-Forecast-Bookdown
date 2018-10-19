@@ -1,6 +1,10 @@
-# Exponential Smoothing Models
+```{r echo=FALSE}
+load("landings.RData")
+```
 
-The basic idea with an exponential smoothing model is that your forecast of $x$ at time $t$, as opposed to the actual value of $x$ at time $t$, is a smoothed function of past $x$ values.
+# Exponential smoothing models
+
+The basic idea with an exponential smoothing model is that your forecast of $x$ at time $t$ is a smoothed function of past $x$ values.
 
 $$\hat{x}_{t} = \alpha x_{t-1} + \alpha (1-\alpha)^2 x_{t-2} + \alpha (1-\alpha)^3 x_{t-3} + \dots$$
 Although this looks similar to an AR model with a constraint on the $\beta$ terms, it is fundamentally different.  There is no process model and one is **not** assuming that
@@ -22,7 +26,31 @@ plot(1987:1964, c(1,rep(0,23)), lwd=2, ylab="weight", xlab="", type="l")
 title("weight put on past values for 1988 forecast")
 ```
 
-That's a bit extreme.  Often the values prior to the last value also have some information about future states.  But the 'information content' should decrease the farther in the past that we go.
+We can fit this with `forecast::Arima()`.
+
+```{r rwf.fit}
+fit.rwf <- forecast::Arima(anchovy87ts, order=c(0,1,0))
+fr.rwf <- forecast::forecast(fit.rwf, h=5)
+```
+
+Alternatively we can fit with `rwf()` or `naive()` which are shortcuts for the above lines.  All fit the same model.
+
+```{r rwf.fit2}
+fr.rwf <- forecast::rwf(anchovy87ts, h=5)
+fr.rwf <- forecast::naive(anchovy87ts, h=5)
+```
+
+A plot of the forecast shows the forecast and the prediction intervals.
+
+```{r fig.height=4.5}
+plot(fr.rwf)
+```
+
+---
+
+### Exponential smoothing
+
+The naive model is a bit extreme.  Often the values prior to the last value also have some information about future states.  But the 'information content' should decrease the farther in the past that we go.
 
 ```{r echo=FALSE}
 alpha <- 0.5
@@ -30,7 +58,6 @@ plot(1987:1964, alpha*(1-alpha)^(1:24-1), lwd=2, ylab="weight", xlab="", type="l
 title("more weight put on more recent values\nfor 1988 forecast")
 ```
 
-### Exponential Smoothing
 
 A *Smoother* is another word for a filter, which in time series parlance means a weighted sum of sequential values in a time series:
 $$w_1 x_t + w_2 x_{t-1} + w_3 x_{t-2} + \dots$$
@@ -42,5 +69,5 @@ plot(-1:-24, alpha*(1-alpha)^(1:24-1), lwd=2, ylab="weight", xlab="lag", type="l
 title("weight on x at t + lag")
 ```
 
-Our goal when fitting an exponential smoothing model is to find the weighting, the $\alpha$, that minimizes the forecast errors.
+Our goal when fitting an exponential smoothing model is to find the the $\alpha$, which determines the shape of the weighting function, that minimizes the forecast errors.
 

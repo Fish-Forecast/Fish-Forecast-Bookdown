@@ -5,12 +5,8 @@ We can evaluate the forecast performance with forecasts of our test data or we c
 Let's start with the former.
 
 ```{r echo=FALSE}
-spp <- "Anchovy"
-training = subset(landings, Year <= 1987)
-test = subset(landings, Year >= 1988 & Year <= 1989)
-
-traindat <- subset(training, Species==spp)$log.metric.tons
-testdat <- subset(test, Species==spp)$log.metric.tons
+traindat <- window(anchovyts,1964,1987)
+testdat <- window(anchovyts,1988,1989)
 ```
 
 ---
@@ -26,7 +22,7 @@ fit1 <- forecast::ets(traindat, model="AAN")
 h=length(testdat)
 fr <- forecast::forecast(fit1, h=h)
 plot(fr)
-points(length(traindat)+1:h, testdat, pch=2, col="red")
+points(testdat, pch=2, col="red")
 legend("topleft", c("forecast","actual"), pch=c(20,2), col=c("blue","red"))
 ```
 
@@ -49,9 +45,7 @@ In this approach, we don't have test data.  Instead we will use all the data for
 We will redefine `traindat` as all our Anchovy data.
 
 ```{r subset.anch, echo=FALSE}
-spp <- "Anchovy"
-training = subset(landings, Year <= 1989)
-traindat <- subset(training, Species==spp)$log.metric.tons
+traindat <- window(anchovyts,1964,1989)
 ```
 
 #### tsCV() function {-}
@@ -104,6 +98,20 @@ fr.temp <- forecast::forecast(fit.temp, h=1)
 traindat[TT+1] - fr.temp$mean
 ```
 
+#### Forecast accuracy metrics {-}
+
+Once we have the errors from `tsCV()`, we can compute forecast accuracy metrics.
+
+RMSE: root mean squared error
+```{r rmse}
+rmse <- sqrt(mean(e^2, na.rm=TRUE))
+```
+
+MAE: mean absolute error
+```{r mae}
+mae <- mean(abs(e), na.rm=TRUE)
+```
+
 ---
 
 ### Testing a specific ets model
@@ -118,21 +126,5 @@ The `e` are our forecast errors for all the forecasts that we did with the data.
 fit1 <- forecast::ets(traindat, model="AAN")
 e <- forecast::tsCV(traindat, far2, h=1, model=fit1)
 e
-```
-
----
-
-### Forecast accuracy metrics
-
-Now we can compute forecast accuracy metrics from the forecast errors (`e`).
-
-RMSE: root mean squared error
-```{r rmse}
-rmse <- sqrt(mean(e^2, na.rm=TRUE))
-```
-
-MAE: mean absolute error
-```{r mae}
-mae <- mean(abs(e), na.rm=TRUE)
 ```
 

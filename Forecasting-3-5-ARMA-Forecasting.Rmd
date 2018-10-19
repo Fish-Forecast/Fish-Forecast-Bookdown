@@ -11,10 +11,6 @@ library(forecast)
 
 ```{r f35-load_data2, message=FALSE, warning=FALSE, echo=FALSE}
 load("landings.RData")
-landings$log.metric.tons = log(landings$metric.tons)
-landings = subset(landings, Year <= 1987)
-anchovy = subset(landings, Species=="Anchovy")$log.metric.tons
-sardine = subset(landings, Species=="Sardine")$log.metric.tons
 ```
 
 
@@ -25,10 +21,10 @@ $$y_t = \beta_1 y_{t-1} + \beta_2 y_{t-2} + e_t$$
 where $y_t$ is the first difference of our anchovy data.
 
 
-Let's estimate the $\beta$'s:
+Let's estimate the $\beta$'s for this model from the 1964-1987 anchovy data.
 
 ```{r}
-fit <- Arima(anchovy, order=c(2,1,0))
+fit <- Arima(anchovy87ts, order=c(2,1,0))
 coef(fit)
 ```
 
@@ -47,8 +43,8 @@ $$y_{1988} = y_{1987}-0.3348 (y_{1987}-y_{1986}) - 0.1454 (y_{1986}-y_{1985})$$
 Here is R code to do that:
 
 ```{r}
-anchovy[24]+coef(fit)[1]*(anchovy[24]-anchovy[23])+
-  coef(fit)[2]*(anchovy[23]-anchovy[22])
+anchovy87ts[24]+coef(fit)[1]*(anchovy87ts[24]-anchovy87ts[23])+
+  coef(fit)[2]*(anchovy87ts[23]-anchovy87ts[22])
 ```
 
 ---
@@ -74,10 +70,7 @@ plot(fr, xlab="Year")
 #### Forecast for anchovy {-}
 
 ```{r}
-spp="Anchovy"
-dat <- subset(landings, Species==spp & Year<=1987)$log.metric.tons
-dat <- ts(dat, start=1964)
-fit <- forecast::auto.arima(dat)
+fit <- forecast::auto.arima(anchovy87ts)
 fr <- forecast::forecast(fit, h=5)
 plot(fr)
 ```
@@ -86,7 +79,7 @@ plot(fr)
 
 #### Forecasts for chub mackerel {-}
 
-We can repeat for other species using the same code.
+We can repeat for other species.
 
 ```{r}
 spp="Chub.mackerel"
@@ -145,7 +138,7 @@ $$x_t = \mu + x_{t-1} + e_t$$
 
 
 ```{r}
-fit.rwf <- forecast::rwf(anchovy, drift=TRUE)
+fit.rwf <- forecast::rwf(anchovy87ts, drift=TRUE)
 fr.rwf <- forecast::forecast(fit.rwf, h=5)
 plot(fr.rwf)
 ```
@@ -161,7 +154,7 @@ $$x_t = e_t$$
 where $e_t \sim N(\mu, \sigma)$.
 
 ```{r}
-fit.mean <- forecast::Arima(anchovy, order=c(0,0,0))
+fit.mean <- forecast::Arima(anchovy87ts, order=c(0,0,0))
 fr.mean <- forecast::forecast(fit.mean, h=5)
 plot(fr.mean)
 ```

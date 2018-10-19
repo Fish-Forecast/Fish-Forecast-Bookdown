@@ -7,7 +7,7 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <title>Fisheries Catch Forecasting</title>
   <meta name="description" content="This book will show you how to model and forecast annual and seasonal fisheries catches using R and its time-series analysis functions and packages. Forecasting using time-varying regression, ARIMA (Box-Jenkins) models, and expoential smoothing models is demonstrated using real catch time series. The entire process from data evaluation and diagnostics, model fitting, model selection and forecast evaluation is shown. The focus of the book is on univariate time series (annual or seasonal), however multivariate regression with autocorrelated errors and multivariate autoregressive models (MAR) are covered briefly. For multivariate autoregressive models and multivariate autoregressive state-space models for fisheries and environmental sciences, see Holmes, Ward and Scheuerell (2018).">
-  <meta name="generator" content="bookdown  and GitBook 2.6.7">
+  <meta name="generator" content="bookdown 0.7 and GitBook 2.6.7">
 
   <meta property="og:title" content="Fisheries Catch Forecasting" />
   <meta property="og:type" content="book" />
@@ -25,7 +25,7 @@
 <meta name="author" content="Elizabeth Holmes">
 
 
-<meta name="date" content="2018-10-11">
+<meta name="date" content="2018-10-19">
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -51,67 +51,41 @@
 
 
 <style type="text/css">
-a.sourceLine { display: inline-block; line-height: 1.25; }
-a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
-a.sourceLine:empty { height: 1.2em; }
-.sourceCode { overflow: visible; }
-code.sourceCode { white-space: pre; position: relative; }
-div.sourceCode { margin: 1em 0; }
-pre.sourceCode { margin: 0; }
-@media screen {
-div.sourceCode { overflow: auto; }
-}
-@media print {
-code.sourceCode { white-space: pre-wrap; }
-a.sourceLine { text-indent: -1em; padding-left: 1em; }
-}
-pre.numberSource a.sourceLine
-  { position: relative; left: -4em; }
-pre.numberSource a.sourceLine::before
-  { content: attr(data-line-number);
-    position: relative; left: -1em; text-align: right; vertical-align: baseline;
-    border: none; pointer-events: all; display: inline-block;
-    -webkit-touch-callout: none; -webkit-user-select: none;
-    -khtml-user-select: none; -moz-user-select: none;
-    -ms-user-select: none; user-select: none;
-    padding: 0 4px; width: 4em;
-    color: #aaaaaa;
-  }
-pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
-div.sourceCode
-  {  }
-@media screen {
-a.sourceLine::before { text-decoration: underline; }
-}
-code span.al { color: #ff0000; font-weight: bold; } /* Alert */
-code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
-code span.at { color: #7d9029; } /* Attribute */
-code span.bn { color: #40a070; } /* BaseN */
-code span.bu { } /* BuiltIn */
-code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
-code span.ch { color: #4070a0; } /* Char */
-code span.cn { color: #880000; } /* Constant */
-code span.co { color: #60a0b0; font-style: italic; } /* Comment */
-code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
-code span.do { color: #ba2121; font-style: italic; } /* Documentation */
-code span.dt { color: #902000; } /* DataType */
-code span.dv { color: #40a070; } /* DecVal */
-code span.er { color: #ff0000; font-weight: bold; } /* Error */
-code span.ex { } /* Extension */
-code span.fl { color: #40a070; } /* Float */
-code span.fu { color: #06287e; } /* Function */
-code span.im { } /* Import */
-code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
-code span.kw { color: #007020; font-weight: bold; } /* Keyword */
-code span.op { color: #666666; } /* Operator */
-code span.ot { color: #007020; } /* Other */
-code span.pp { color: #bc7a00; } /* Preprocessor */
-code span.sc { color: #4070a0; } /* SpecialChar */
-code span.ss { color: #bb6688; } /* SpecialString */
-code span.st { color: #4070a0; } /* String */
-code span.va { color: #19177c; } /* Variable */
-code span.vs { color: #4070a0; } /* VerbatimString */
-code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
 </style>
 
 <link rel="stylesheet" href="style.css" type="text/css" />
@@ -159,7 +133,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="3" data-path="3-arima-models.html"><a href="3-arima-models.html"><i class="fa fa-check"></i><b>3</b> ARIMA Models</a><ul>
 <li class="chapter" data-level="3.1" data-path="3-1-overview.html"><a href="3-1-overview.html"><i class="fa fa-check"></i><b>3.1</b> Overview</a><ul>
 <li class="chapter" data-level="3.1.1" data-path="3-1-overview.html"><a href="3-1-overview.html#components-of-an-arima-model"><i class="fa fa-check"></i><b>3.1.1</b> Components of an ARIMA model</a></li>
-<li class="chapter" data-level="3.1.2" data-path="3-1-overview.html"><a href="3-1-overview.html#box-jenkins-method"><i class="fa fa-check"></i><b>3.1.2</b> Box-Jenkins Method</a></li>
+<li class="chapter" data-level="3.1.2" data-path="3-1-overview.html"><a href="3-1-overview.html#box-jenkins-method"><i class="fa fa-check"></i><b>3.1.2</b> Box-Jenkins method</a></li>
 <li class="chapter" data-level="3.1.3" data-path="3-1-overview.html"><a href="3-1-overview.html#acf-and-pacf-functions"><i class="fa fa-check"></i><b>3.1.3</b> ACF and PACF functions</a></li>
 </ul></li>
 <li class="chapter" data-level="3.2" data-path="3-2-stationarity.html"><a href="3-2-stationarity.html"><i class="fa fa-check"></i><b>3.2</b> Stationarity</a><ul>
@@ -169,21 +143,21 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="3.2.4" data-path="3-2-stationarity.html"><a href="3-2-stationarity.html#differencing-the-data"><i class="fa fa-check"></i><b>3.2.4</b> Differencing the data</a></li>
 <li class="chapter" data-level="3.2.5" data-path="3-2-stationarity.html"><a href="3-2-stationarity.html#summary-2"><i class="fa fa-check"></i><b>3.2.5</b> Summary</a></li>
 </ul></li>
-<li class="chapter" data-level="3.3" data-path="3-3-model-structure.html"><a href="3-3-model-structure.html"><i class="fa fa-check"></i><b>3.3</b> Model Structure</a><ul>
+<li class="chapter" data-level="3.3" data-path="3-3-model-structure.html"><a href="3-3-model-structure.html"><i class="fa fa-check"></i><b>3.3</b> Model structure</a><ul>
 <li class="chapter" data-level="3.3.1" data-path="3-3-model-structure.html"><a href="3-3-model-structure.html#ar-and-ma-lags"><i class="fa fa-check"></i><b>3.3.1</b> AR and MA lags</a></li>
 <li class="chapter" data-level="3.3.2" data-path="3-3-model-structure.html"><a href="3-3-model-structure.html#model-order"><i class="fa fa-check"></i><b>3.3.2</b> Model order</a></li>
 <li class="chapter" data-level="3.3.3" data-path="3-3-model-structure.html"><a href="3-3-model-structure.html#choosing-the-ar-and-ma-levels"><i class="fa fa-check"></i><b>3.3.3</b> Choosing the AR and MA levels</a></li>
 <li class="chapter" data-level="3.3.4" data-path="3-3-model-structure.html"><a href="3-3-model-structure.html#trace-true"><i class="fa fa-check"></i><b>3.3.4</b> Trace = TRUE</a></li>
-<li class="chapter" data-level="3.3.5" data-path="3-3-model-structure.html"><a href="3-3-model-structure.html#stepwisefalse"><i class="fa fa-check"></i><b>3.3.5</b> stepwise=FALSE</a></li>
+<li class="chapter" data-level="3.3.5" data-path="3-3-model-structure.html"><a href="3-3-model-structure.html#stepwise-false"><i class="fa fa-check"></i><b>3.3.5</b> stepwise = FALSE</a></li>
 <li class="chapter" data-level="3.3.6" data-path="3-3-model-structure.html"><a href="3-3-model-structure.html#summary-3"><i class="fa fa-check"></i><b>3.3.6</b> Summary</a></li>
 </ul></li>
-<li class="chapter" data-level="3.4" data-path="3-4-fitting-arima-models.html"><a href="3-4-fitting-arima-models.html"><i class="fa fa-check"></i><b>3.4</b> Fitting ARIMA Models</a><ul>
+<li class="chapter" data-level="3.4" data-path="3-4-fitting-arima-models.html"><a href="3-4-fitting-arima-models.html"><i class="fa fa-check"></i><b>3.4</b> Fitting ARIMA models</a><ul>
 <li class="chapter" data-level="3.4.1" data-path="3-4-fitting-arima-models.html"><a href="3-4-fitting-arima-models.html#fitting-with-auto.arima"><i class="fa fa-check"></i><b>3.4.1</b> Fitting with <code>auto.arima()</code></a></li>
 <li class="chapter" data-level="3.4.2" data-path="3-4-fitting-arima-models.html"><a href="3-4-fitting-arima-models.html#outputting-the-models-tested"><i class="fa fa-check"></i><b>3.4.2</b> Outputting the models tested</a></li>
 <li class="chapter" data-level="3.4.3" data-path="3-4-fitting-arima-models.html"><a href="3-4-fitting-arima-models.html#repeat-with-the-sardine-data"><i class="fa fa-check"></i><b>3.4.3</b> Repeat with the sardine data</a></li>
 <li class="chapter" data-level="3.4.4" data-path="3-4-fitting-arima-models.html"><a href="3-4-fitting-arima-models.html#missing-values"><i class="fa fa-check"></i><b>3.4.4</b> Missing values</a></li>
 <li class="chapter" data-level="3.4.5" data-path="3-4-fitting-arima-models.html"><a href="3-4-fitting-arima-models.html#fit-a-specific-arima-model"><i class="fa fa-check"></i><b>3.4.5</b> Fit a specific ARIMA model</a></li>
-<li class="chapter" data-level="3.4.6" data-path="3-4-fitting-arima-models.html"><a href="3-4-fitting-arima-models.html#model-checking"><i class="fa fa-check"></i><b>3.4.6</b> Model Checking</a></li>
+<li class="chapter" data-level="3.4.6" data-path="3-4-fitting-arima-models.html"><a href="3-4-fitting-arima-models.html#model-checking"><i class="fa fa-check"></i><b>3.4.6</b> Model checking</a></li>
 <li class="chapter" data-level="3.4.7" data-path="3-4-fitting-arima-models.html"><a href="3-4-fitting-arima-models.html#workflow-for-non-seasonal-data"><i class="fa fa-check"></i><b>3.4.7</b> Workflow for non-seasonal data</a></li>
 <li class="chapter" data-level="3.4.8" data-path="3-4-fitting-arima-models.html"><a href="3-4-fitting-arima-models.html#stepwise-vs-exhaustive-model-selection"><i class="fa fa-check"></i><b>3.4.8</b> Stepwise vs exhaustive model selection</a></li>
 <li class="chapter" data-level="3.4.9" data-path="3-4-fitting-arima-models.html"><a href="3-4-fitting-arima-models.html#summary-4"><i class="fa fa-check"></i><b>3.4.9</b> Summary</a></li>
@@ -194,32 +168,37 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="3.5.3" data-path="3-5-forecasting.html"><a href="3-5-forecasting.html#null-forecast-models"><i class="fa fa-check"></i><b>3.5.3</b> Null forecast models</a></li>
 </ul></li>
 </ul></li>
-<li class="chapter" data-level="4" data-path="4-exponential-smoothing-models.html"><a href="4-exponential-smoothing-models.html"><i class="fa fa-check"></i><b>4</b> Exponential Smoothing Models</a><ul>
-<li class="chapter" data-level="4.1" data-path="4-1-naive-forecast.html"><a href="4-1-naive-forecast.html"><i class="fa fa-check"></i><b>4.1</b> Naive forecast</a></li>
-<li class="chapter" data-level="4.2" data-path="4-2-simple-ets.html"><a href="4-2-simple-ets.html"><i class="fa fa-check"></i><b>4.2</b> Simple ETS</a></li>
-<li class="chapter" data-level="4.3" data-path="4-3-fitting-with-ets.html"><a href="4-3-fitting-with-ets.html"><i class="fa fa-check"></i><b>4.3</b> Fitting with <code>ets()</code></a><ul>
-<li class="chapter" data-level="4.3.1" data-path="4-3-fitting-with-ets.html"><a href="4-3-fitting-with-ets.html#exponential-smoothing-with-no-trend"><i class="fa fa-check"></i><b>4.3.1</b> Exponential smoothing with no trend</a></li>
-<li class="chapter" data-level="4.3.2" data-path="4-3-fitting-with-ets.html"><a href="4-3-fitting-with-ets.html#the-weighting-function"><i class="fa fa-check"></i><b>4.3.2</b> The weighting function</a></li>
-<li class="chapter" data-level="4.3.3" data-path="4-3-fitting-with-ets.html"><a href="4-3-fitting-with-ets.html#produce-forecast-using-a-previous-fit"><i class="fa fa-check"></i><b>4.3.3</b> Produce forecast using a previous fit</a></li>
-<li class="chapter" data-level="4.3.4" data-path="4-3-fitting-with-ets.html"><a href="4-3-fitting-with-ets.html#naive-model-with-drift"><i class="fa fa-check"></i><b>4.3.4</b> Naive model with drift</a></li>
-<li class="chapter" data-level="4.3.5" data-path="4-3-fitting-with-ets.html"><a href="4-3-fitting-with-ets.html#exponential-smoothing-model-with-trend"><i class="fa fa-check"></i><b>4.3.5</b> Exponential smoothing model with trend</a></li>
-<li class="chapter" data-level="4.3.6" data-path="4-3-fitting-with-ets.html"><a href="4-3-fitting-with-ets.html#naive-model-with-trend"><i class="fa fa-check"></i><b>4.3.6</b> Naive model with trend</a></li>
-<li class="chapter" data-level="4.3.7" data-path="4-3-fitting-with-ets.html"><a href="4-3-fitting-with-ets.html#exponential-smoothing-model-with-trend-1"><i class="fa fa-check"></i><b>4.3.7</b> Exponential smoothing model with trend</a></li>
-<li class="chapter" data-level="4.3.8" data-path="4-3-fitting-with-ets.html"><a href="4-3-fitting-with-ets.html#decomposing-your-model-fit"><i class="fa fa-check"></i><b>4.3.8</b> Decomposing your model fit</a></li>
-<li class="chapter" data-level="4.3.9" data-path="4-3-fitting-with-ets.html"><a href="4-3-fitting-with-ets.html#forecast-performance"><i class="fa fa-check"></i><b>4.3.9</b> Forecast performance</a></li>
-<li class="chapter" data-level="4.3.10" data-path="4-3-fitting-with-ets.html"><a href="4-3-fitting-with-ets.html#test-forecast-performance"><i class="fa fa-check"></i><b>4.3.10</b> Test forecast performance</a></li>
-<li class="chapter" data-level="4.3.11" data-path="4-3-fitting-with-ets.html"><a href="4-3-fitting-with-ets.html#testing-a-specific-ets-model"><i class="fa fa-check"></i><b>4.3.11</b> Testing a specific ets model</a></li>
-<li class="chapter" data-level="4.3.12" data-path="4-3-fitting-with-ets.html"><a href="4-3-fitting-with-ets.html#forecast-accuracy-metrics"><i class="fa fa-check"></i><b>4.3.12</b> Forecast accuracy metrics</a></li>
+<li class="chapter" data-level="4" data-path="4-exponential-smoothing-models.html"><a href="4-exponential-smoothing-models.html"><i class="fa fa-check"></i><b>4</b> Exponential smoothing models</a><ul>
+<li class="chapter" data-level="4.0.1" data-path="4-exponential-smoothing-models.html"><a href="4-exponential-smoothing-models.html#naive-model"><i class="fa fa-check"></i><b>4.0.1</b> Naive model</a></li>
+<li class="chapter" data-level="4.0.2" data-path="4-exponential-smoothing-models.html"><a href="4-exponential-smoothing-models.html#exponential-smoothing"><i class="fa fa-check"></i><b>4.0.2</b> Exponential smoothing</a></li>
+<li class="chapter" data-level="4.0.3" data-path="4-exponential-smoothing-models.html"><a href="4-exponential-smoothing-models.html#exponential-smoothing-with-no-trend"><i class="fa fa-check"></i><b>4.0.3</b> Exponential smoothing with no trend</a></li>
+<li class="chapter" data-level="4.0.4" data-path="4-exponential-smoothing-models.html"><a href="4-exponential-smoothing-models.html#fit-a-ets-model"><i class="fa fa-check"></i><b>4.0.4</b> Fit a ETS model</a></li>
+<li class="chapter" data-level="4.0.5" data-path="4-exponential-smoothing-models.html"><a href="4-exponential-smoothing-models.html#decomposing-your-model-fit"><i class="fa fa-check"></i><b>4.0.5</b> Decomposing your model fit</a></li>
+<li class="chapter" data-level="4.1" data-path="4-1-simple-exponential-smoothing-with-trend.html"><a href="4-1-simple-exponential-smoothing-with-trend.html"><i class="fa fa-check"></i><b>4.1</b> Simple Exponential Smoothing with Trend</a><ul>
+<li class="chapter" data-level="4.1.1" data-path="4-1-simple-exponential-smoothing-with-trend.html"><a href="4-1-simple-exponential-smoothing-with-trend.html#exponential-smoothing-model-with-trend"><i class="fa fa-check"></i><b>4.1.1</b> Exponential smoothing model with trend</a></li>
+<li class="chapter" data-level="4.1.2" data-path="4-1-simple-exponential-smoothing-with-trend.html"><a href="4-1-simple-exponential-smoothing-with-trend.html#simple-ets-models-with-ets"><i class="fa fa-check"></i><b>4.1.2</b> Simple ETS models with <code>ets()</code></a></li>
+<li class="chapter" data-level="4.1.3" data-path="4-1-simple-exponential-smoothing-with-trend.html"><a href="4-1-simple-exponential-smoothing-with-trend.html#produce-forecast-using-a-previous-fit"><i class="fa fa-check"></i><b>4.1.3</b> Produce forecast using a previous fit</a></li>
 </ul></li>
+<li class="chapter" data-level="4.2" data-path="4-2-forecast-performance.html"><a href="4-2-forecast-performance.html"><i class="fa fa-check"></i><b>4.2</b> Forecast performance</a><ul>
+<li class="chapter" data-level="4.2.1" data-path="4-2-forecast-performance.html"><a href="4-2-forecast-performance.html#test-forecast-performance"><i class="fa fa-check"></i><b>4.2.1</b> Test forecast performance</a></li>
+<li class="chapter" data-level="4.2.2" data-path="4-2-forecast-performance.html"><a href="4-2-forecast-performance.html#testing-a-specific-ets-model"><i class="fa fa-check"></i><b>4.2.2</b> Testing a specific ets model</a></li>
+</ul></li>
+<li class="chapter" data-level="4.3" data-path="4-3-further-reading.html"><a href="4-3-further-reading.html"><i class="fa fa-check"></i><b>4.3</b> Further Reading</a></li>
 </ul></li>
 <li class="chapter" data-level="5" data-path="5-testing-forecast-accuracy.html"><a href="5-testing-forecast-accuracy.html"><i class="fa fa-check"></i><b>5</b> Testing forecast accuracy</a><ul>
-<li class="chapter" data-level="5.1" data-path="5-1-measures-of-forecast-accuracy.html"><a href="5-1-measures-of-forecast-accuracy.html"><i class="fa fa-check"></i><b>5.1</b> Measures of forecast accuracy</a><ul>
-<li class="chapter" data-level="5.1.1" data-path="5-1-measures-of-forecast-accuracy.html"><a href="5-1-measures-of-forecast-accuracy.html#metrics"><i class="fa fa-check"></i><b>5.1.1</b> Metrics</a></li>
-<li class="chapter" data-level="5.1.2" data-path="5-1-measures-of-forecast-accuracy.html"><a href="5-1-measures-of-forecast-accuracy.html#test-multiple-models"><i class="fa fa-check"></i><b>5.1.2</b> Test multiple models</a></li>
-<li class="chapter" data-level="5.1.3" data-path="5-1-measures-of-forecast-accuracy.html"><a href="5-1-measures-of-forecast-accuracy.html#cross-validation"><i class="fa fa-check"></i><b>5.1.3</b> Cross-Validation</a></li>
+<li class="chapter" data-level="5.0.1" data-path="5-testing-forecast-accuracy.html"><a href="5-testing-forecast-accuracy.html#training-settest-set"><i class="fa fa-check"></i><b>5.0.1</b> Training set/test set</a></li>
+<li class="chapter" data-level="5.0.2" data-path="5-testing-forecast-accuracy.html"><a href="5-testing-forecast-accuracy.html#cross-validation"><i class="fa fa-check"></i><b>5.0.2</b> Cross-Validation</a></li>
+<li class="chapter" data-level="5.1" data-path="5-1-metrics.html"><a href="5-1-metrics.html"><i class="fa fa-check"></i><b>5.1</b> Metrics</a><ul>
+<li class="chapter" data-level="5.1.1" data-path="5-1-metrics.html"><a href="5-1-metrics.html#accuracy-function"><i class="fa fa-check"></i><b>5.1.1</b> <code>accuracy()</code> function</a></li>
+<li class="chapter" data-level="5.1.2" data-path="5-1-metrics.html"><a href="5-1-metrics.html#test-multiple-models"><i class="fa fa-check"></i><b>5.1.2</b> Test multiple models</a></li>
+<li class="chapter" data-level="5.1.3" data-path="5-1-metrics.html"><a href="5-1-metrics.html#cross-validation-1"><i class="fa fa-check"></i><b>5.1.3</b> Cross-validation</a></li>
 </ul></li>
-<li class="chapter" data-level="5.2" data-path="5-2-testing-multiple-models.html"><a href="5-2-testing-multiple-models.html"><i class="fa fa-check"></i><b>5.2</b> Testing multiple models</a><ul>
-<li class="chapter" data-level="5.2.1" data-path="5-2-testing-multiple-models.html"><a href="5-2-testing-multiple-models.html#example-candidate-model-set-for-anchovy"><i class="fa fa-check"></i><b>5.2.1</b> Example candidate model set for anchovy</a></li>
+<li class="chapter" data-level="5.2" data-path="5-2-candidate-model-set.html"><a href="5-2-candidate-model-set.html"><i class="fa fa-check"></i><b>5.2</b> Candidate model set</a></li>
+<li class="chapter" data-level="5.3" data-path="5-3-testing-the-candidate-model-set.html"><a href="5-3-testing-the-candidate-model-set.html"><i class="fa fa-check"></i><b>5.3</b> Testing the candidate model set</a><ul>
+<li class="chapter" data-level="5.3.1" data-path="5-3-testing-the-candidate-model-set.html"><a href="5-3-testing-the-candidate-model-set.html#fit-each-of-our-candidate-models"><i class="fa fa-check"></i><b>5.3.1</b> Fit each of our candidate models</a></li>
+</ul></li>
+<li class="chapter" data-level="5.4" data-path="5-4-models-fit.html"><a href="5-4-models-fit.html"><i class="fa fa-check"></i><b>5.4</b> Models fit</a><ul>
+<li class="chapter" data-level="5.4.1" data-path="5-4-models-fit.html"><a href="5-4-models-fit.html#metrics-for-each-model"><i class="fa fa-check"></i><b>5.4.1</b> Metrics for each model</a></li>
 </ul></li>
 </ul></li>
 <li class="chapter" data-level="6" data-path="6-covariates.html"><a href="6-covariates.html"><i class="fa fa-check"></i><b>6</b> Covariates</a><ul>
@@ -270,12 +249,12 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <div id="forecast-evaluation" class="section level2">
 <h2><span class="header-section-number">7.4</span> Forecast evaluation</h2>
 <p>We can compute the forecast performance metrics as usual.</p>
-<pre class="sourceCode r"><code class="sourceCode r">fit.ets &lt;-<span class="st"> </span>forecast<span class="op">::</span><span class="kw">ets</span>(traindat, <span class="dt">model=</span><span class="st">&quot;AAA&quot;</span>)
-fr &lt;-<span class="st"> </span>forecast<span class="op">::</span><span class="kw">forecast</span>(fit.ets, <span class="dt">h=</span><span class="dv">12</span>)</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">fit.ets &lt;-<span class="st"> </span>forecast<span class="op">::</span><span class="kw">ets</span>(traindat, <span class="dt">model=</span><span class="st">&quot;AAA&quot;</span>)
+fr &lt;-<span class="st"> </span>forecast<span class="op">::</span><span class="kw">forecast</span>(fit.ets, <span class="dt">h=</span><span class="dv">12</span>)</code></pre></div>
 <p>Look at the forecast so you know what years and months to include in your test data. Pull those 12 months out of your data using the <code>window()</code> function.</p>
-<pre class="sourceCode r"><code class="sourceCode r">testdat &lt;-<span class="st"> </span><span class="kw">window</span>(chinookts, <span class="kw">c</span>(<span class="dv">1996</span>,<span class="dv">1</span>), <span class="kw">c</span>(<span class="dv">1996</span>,<span class="dv">12</span>))</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">testdat &lt;-<span class="st"> </span><span class="kw">window</span>(chinookts, <span class="kw">c</span>(<span class="dv">1996</span>,<span class="dv">1</span>), <span class="kw">c</span>(<span class="dv">1996</span>,<span class="dv">12</span>))</code></pre></div>
 <p>Use <code>accuracy()</code> to get the forecast error metrics.</p>
-<pre class="sourceCode r"><code class="sourceCode r">forecast<span class="op">::</span><span class="kw">accuracy</span>(fr, testdat)</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">forecast<span class="op">::</span><span class="kw">accuracy</span>(fr, testdat)</code></pre></div>
 <pre><code>##                         ME      RMSE       MAE       MPE     MAPE
 ## Training set -0.0001825075 0.5642326 0.4440532 -9.254074 25.40106
 ## Test set      0.3143200919 0.7518660 0.6077172 65.753096 81.38568
@@ -283,15 +262,15 @@ fr &lt;-<span class="st"> </span>forecast<span class="op">::</span><span class="
 ## Training set 0.7364593 0.07490341        NA
 ## Test set     1.0078949 0.05504107 0.4178409</code></pre>
 <p>We can do the same for the ARIMA model.</p>
-<pre class="sourceCode r"><code class="sourceCode r">fit &lt;-<span class="st"> </span>forecast<span class="op">::</span><span class="kw">auto.arima</span>(traindat)
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">fit &lt;-<span class="st"> </span>forecast<span class="op">::</span><span class="kw">auto.arima</span>(traindat)
 fr &lt;-<span class="st"> </span>forecast<span class="op">::</span><span class="kw">forecast</span>(fit, <span class="dt">h=</span><span class="dv">12</span>)
-forecast<span class="op">::</span><span class="kw">accuracy</span>(fr, testdat)</code></pre>
+forecast<span class="op">::</span><span class="kw">accuracy</span>(fr, testdat)</code></pre></div>
 <pre><code>##                       ME      RMSE       MAE        MPE     MAPE      MASE
-## Training set 0.009977889 0.5677655 0.3965956  0.4645923 27.40975 0.6577511
-## Test set     0.819202544 0.9458134 0.8192025 22.0199537 55.91641 1.3586419
+## Training set 0.009978349 0.5677654 0.3965957  0.4645938 27.40972 0.6577514
+## Test set     0.819203922 0.9458144 0.8192039 22.0202435 55.91631 1.3586442
 ##                     ACF1 Theil&#39;s U
-## Training set -0.06137508        NA
-## Test set     -0.02803914 0.6046339</code></pre>
+## Training set -0.06137474        NA
+## Test set     -0.02804232 0.6046341</code></pre>
 
 </div>
 <!-- </div> -->
@@ -347,7 +326,7 @@ gitbook.start({
   (function () {
     var script = document.createElement("script");
     script.type = "text/javascript";
-    var src = "true";
+    var src = "";
     if (src === "" || src === "true") src = "https://cdn.bootcss.com/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML";
     if (location.protocol !== "file:" && /^https?:/.test(src))
       src = src.replace(/^https?:/, '');

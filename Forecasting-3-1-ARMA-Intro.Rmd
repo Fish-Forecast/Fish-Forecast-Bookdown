@@ -64,7 +64,7 @@ title("random normal")
 
 ---
 
-### Box-Jenkins Method
+### Box-Jenkins method
 
 This refers to a step-by-step process of selecting a forecasting model.  You need to go through the steps otherwise you could end up fitting a nonsensical model or using fitting a sensible model with an algorithm that will not work on your data.
 

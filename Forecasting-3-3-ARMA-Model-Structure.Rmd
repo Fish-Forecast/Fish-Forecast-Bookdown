@@ -1,4 +1,4 @@
-## Model Structure
+## Model structure
 
 ```{r f33-load_data, echo=FALSE, message=FALSE, warning=FALSE}
 load("landings.RData")
@@ -199,7 +199,7 @@ forecast::auto.arima(anchovy87ts, trace=TRUE)
 ```
 ---
 
-### stepwise=FALSE
+### stepwise = FALSE
 
 By default, step-wise selection is used and an approximation is used for the models tried in the model selection step.  For a final model selection, you should turn these off.
 

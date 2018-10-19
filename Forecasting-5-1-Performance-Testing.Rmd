@@ -1,5 +1,99 @@
 # Testing forecast accuracy
 
 Once you have found a set of possible forecast models, you are ready to compare forecasts from a variety of models and choose a forecast model.  
+```{r f36-load_data, message=FALSE, warning=FALSE, echo=FALSE}
+library(ggplot2)
+load("landings.RData")
+```
 
-The are multiple metric you can use to quantify forecast accuracy and different approaches you can take for creating the forecasts that you test.
+To quantify the forecast performance, we need to create forecasts for data that we have so that we can compare the forecast to actual data.  There are two approaches to this.
+
+---
+
+### Training set/test set
+
+One approach is to 'hold out' some of your data as the test data and did not use it at all in your fitting.  To measure the forecast performance, you fit to your training data and test the forecast against the data in the test set.  This is the approach that Stergiou and Christou used.
+
+Stergiou and Christou used 1964-1987 as their training data and tested their forecasts against 1988 and 1989.  
+
+```{r echo=FALSE}
+traindat <- window(anchovyts, 1964, 1987)
+testdat <- window(anchovyts, 1988, 1989)
+```
+
+#### Forecast versus actual {-}
+
+We will fit to the training data and make a forecast for the test data.  We can then compare the forecast to the actual values in the test data.
+
+```{r}
+fit1 <- forecast::auto.arima(traindat)
+fr <- forecast::forecast(fit1, h=2)
+fr
+```
+
+Plot the forecast and compare to the actual values in 1988 and 1989.
+
+```{r}
+plot(fr)
+points(testdat, pch=2, col="red")
+legend("topleft", c("forecast","actual"), pch=c(20,2), col=c("blue","red"))
+```
+
+---
+
+### Cross-Validation
+
+An alternate approach to is to use cross-validation.  This approach uses windows or shorter segments of the whole time series to make a series of single forecasts.  We can use either a variable length or a fixed length window.
+
+#### Variable window {-}
+
+For the variable length window approach applied to  the Anchovy time series, we would fit the model 1964-1973 and forecast 1974, then 1964-1974 and forecast 1975, then 1964-1975 and forecast 1976, and continue up to 1964-1988 and forecast 1989.  This would create 16 forecasts which we would compare to the actual landings.  The window is 'variable' because the length of the time series used for fitting the model, keeps increasing by 1.
+
+```{r cv.sliding, echo=FALSE}
+p <- list()
+for(i in 1:9){
+  p[[i]]<-ggplot(subset(landings, Species=="Anchovy"&Year<1974+i), aes(x=Year, y=log.metric.tons))+geom_point()+ylab("landings")+xlab("")+xlim(1964,1990)+ylim(8,12)+
+    geom_point(data=subset(landings, Species=="Anchovy"&Year==1974+i),aes(x=Year,y=log.metric.tons),color="red") +
+    ggtitle(paste0("forecast ",i))
+}
+gridExtra::grid.arrange(
+  p[[1]],p[[2]],p[[3]],p[[4]],p[[5]],p[[6]],p[[7]],p[[8]],p[[9]],nrow=3,
+  top = grid::textGrob("Cross-validation: sliding window", gp=grid::gpar(fontsize=20,font=3))
+)
+```
+
+#### Fixed window {-}
+
+Another approach uses a fixed window.  For example, a 10-year window.
+
+```{r cv.fixed, echo=FALSE}
+p <- list()
+for(i in 1:9){
+  p[[i]]<-ggplot(subset(landings, Species=="Anchovy"&Year>=1964+i-1&Year<1974+i), aes(x=Year, y=log.metric.tons))+geom_point()+ylab("landings")+xlab("")+xlim(1964,1990)+ylim(8,12)+
+    geom_point(data=subset(landings, Species=="Anchovy"&Year==1974+i),aes(x=Year,y=log.metric.tons),color="red") +
+    ggtitle(paste0("forecast ",i))
+}
+gridExtra::grid.arrange(
+  p[[1]],p[[2]],p[[3]],p[[4]],p[[5]],p[[6]],p[[7]],p[[8]],p[[9]],nrow=3,
+  top = grid::textGrob("Cross-validation: fixed window", gp=grid::gpar(fontsize=20,font=3))
+)
+```
+
+#### Cross-validation farther in future {-}
+
+Sometimes it makes more sense to test the performance for forecasts that are farther in the future.  For example, if the data from your catch surveys takes some time to process, then you might need to make forecasts that are farther than 1 year from your last data point.
+
+In that case, there is a gap between your training data and your test data point.
+
+```{r cv.sliding.4plot, echo=FALSE}
+p <- list()
+for(i in 1:9){
+  p[[i]]<-ggplot(subset(landings, Species=="Anchovy"&Year<1974+i), aes(x=Year, y=log.metric.tons))+geom_point()+ylab("landings")+xlab("")+xlim(1964,1990)+ylim(8,12)+
+    geom_point(data=subset(landings, Species=="Anchovy"&Year==1974+i+3),aes(x=Year,y=log.metric.tons),color="red") +
+    ggtitle(paste0("forecast ",i))
+}
+gridExtra::grid.arrange(
+  p[[1]],p[[2]],p[[3]],p[[4]],p[[5]],p[[6]],p[[7]],p[[8]],p[[9]],nrow=3,
+  top = grid::textGrob("Cross-validation: 4 step ahead forecast", gp=grid::gpar(fontsize=20,font=3))
+)
+```

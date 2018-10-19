@@ -1,4 +1,4 @@
-## Fitting ARIMA Models
+## Fitting ARIMA models
 
 We are now at step B of the Box-Jenkins Method.  
 
@@ -207,7 +207,7 @@ fit.AR2
 
 ---
 
-### Model Checking
+### Model checking
 
 * Plot your data
 

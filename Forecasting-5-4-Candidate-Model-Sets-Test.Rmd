@@ -1,0 +1,177 @@
+## Testing the candidate model set
+
+With a set of candidate models, we can prepare tables showing the forecast performance for each model.
+
+For each model, we will do the same steps:
+
+1. Fit the model
+
+2. Create forecasts for a test data set or use cross-validation
+
+3. Compute forecast accuracy metrics for the forecasts
+
+Note when you compare models, you can use both 'training data/test data' and use time-series cross-validation, but report the metrics in separate columns.  Example, 'RMSE from tsCV' and 'RMSE from test data'.
+
+---
+
+### Fit each of our candidate models
+
+We will define the training data as 1964 to 1987 and the test data as 1988 and 1989. The full data is 1964 to 1989.
+
+```{r read_data}
+fulldat <- window(anchovyts, 1964, 1989)
+traindat <- window(anchovyts, 1964, 1987)
+testdat <- window(anchovyts, 1988, 1989)
+```
+
+We will store our fits and forecasts in a list for easy access. `fun.list` is the function to pass to `tsCV()`.
+
+```{r}
+fit.list <- list()
+fr.list <- list()
+fun.list <- list()
+n.fr <- length(testdat)
+```
+
+For each model, we will fit, forecast, and define a forecast function.
+
+* Exponential smoothing model with trend
+
+```{r}
+modelname <- "ETS w trend"
+fit <- ets(traindat, model="AAN")
+fit.list[[modelname]] <- fit
+fr.list[[modelname]] <- forecast(fit, h=n.fr)
+fun.list[[modelname]] <- function(x, h){ forecast(ets(x, model="AAN"), h=h) }
+```
+
+* Exponential smoothing model no trend
+
+```{r}
+modelname <- "ETS no trend"
+fit <- ets(traindat, model="ANN")
+fit.list[[modelname]] <- fit
+fr.list[[modelname]] <- forecast(fit, h=n.fr)
+fun.list[[modelname]] <- function(x, h){ forecast(ets(x, model="ANN"), h=h) }
+```
+
+* ARIMA(0,1,1) with drift (best)
+
+```{r}
+modelname <- "ARIMA(0,1,1) w drift"
+fit <- Arima(traindat, order=c(0,1,1), include.drift=TRUE)
+fit.list[[modelname]] <- fit
+fr.list[[modelname]] <- forecast(fit, h=n.fr)
+fun.list[[modelname]] <- function(x, h){ forecast(Arima(x, order=c(0,1,1), include.drift=TRUE),h=h) }
+```
+
+* ARIMA(2,1,0) with drift (within 2 AIC of best)
+
+```{r}
+modelname <- "ARIMA(2,1,0) w drift"
+fit <- Arima(traindat, order=c(2,1,0), include.drift=TRUE)
+fit.list[[modelname]] <- fit
+fr.list[[modelname]] <- forecast(fit, h=n.fr)
+fun.list[[modelname]] <- function(x, h){ forecast(Arima(x, order=c(2,1,0), include.drift=TRUE),h=h) }
+```
+
+* Time-varying regression with linear time
+
+```{r}
+TT <- length(traindat)
+#make a data.frame for lm
+dat <- data.frame(log.metric.tons=traindat, t=1:TT)
+modelname <- "TV linear regression"
+fit <- lm(log.metric.tons ~ t, data=dat)
+fit.list[[modelname]] <- fit
+fr.list[[modelname]] <- forecast(fit, newdata=data.frame(t=TT+1:n.fr))
+fun.list[[modelname]] <- function(x, h){ 
+  TT <- length(x)
+  dat <- data.frame(log.metric.tons=x, t=1:TT)
+  ft <- lm(log.metric.tons ~ t, data=dat)
+  forecast(ft, newdata=data.frame(t=TT+h))
+  }
+```
+
+* Naive no trend
+
+```{r}
+modelname <- "Naive"
+fit <- Arima(traindat, order=c(0,1,0))
+fit.list[[modelname]] <- fit
+fr.list[[modelname]] <- forecast(fit, h=n.fr)
+fun.list[[modelname]] <- function(x, h){ rwf(x,h=h) }
+```
+
+* Naive with trend
+
+```{r}
+modelname <- "Naive w trend"
+fit <- Arima(traindat, order=c(0,1,0), include.drift=TRUE)
+fit.list[[modelname]] <- fit
+fr.list[[modelname]] <- forecast(fit, h=n.fr)
+fun.list[[modelname]] <- function(x, h){ rwf(x, drift=TRUE, h=h) }
+```
+
+* Average or mean
+
+```{r}
+modelname <- "Average"
+fit <- Arima(traindat, order=c(0,0,0))
+fit.list[[modelname]] <- fit
+fr.list[[modelname]] <- forecast(fit, h=n.fr)
+fun.list[[modelname]] <- function(x, h){ forecast(Arima(x, order=c(0,0,0)),h=h) }
+```
+
+## Models fit
+
+Now we can use `names()` to see the models that we have fit.  If we want to add more, we use the code above as a template.
+
+```{r}
+modelnames <- names(fit.list)
+modelnames
+```
+
+---
+
+### Metrics for each model
+
+We will run the models and compute the forecast metrics for each and put in a table.
+
+```{r}
+restab <- data.frame(model=modelnames, RMSE=NA, ME=NA, tsCV.RMSE=NA, AIC=NA, BIC=NA, stringsAsFactors = FALSE)
+for(i in modelnames){
+  fit <- fit.list[[i]]
+  fr <- fr.list[[i]]
+  restab$RMSE[restab$model==i] <- accuracy(fr, testdat)["Test set","RMSE"]
+  restab$ME[restab$model==i] <- accuracy(fr, testdat)["Test set","ME"]
+  e <- tsCV(traindat, fun.list[[i]], h=1)
+  restab$tsCV.RMSE[restab$model==i] <- sqrt(mean(e^2, na.rm=TRUE))
+  restab$AIC[restab$model==i] <- AIC(fit)
+  restab$BIC[restab$model==i] <- BIC(fit)
+}
+```
+
+Add on $\Delta$AIC and $\Delta$BIC.  Sort by $\Delta$AIC and format to have 3 digits.
+```{r}
+restab$DeltaAIC <- restab$AIC-min(restab$AIC)
+restab$DeltaBIC <- restab$BIC-min(restab$BIC)
+restab <- restab[order(restab$DeltaAIC),]
+resfor <- format(restab, digits=3, trim=TRUE)
+```
+
+Bold the minimum values in each column so they are easy to spot.
+```{r}
+for(i in colnames(resfor)){
+  if(class(restab[,i])=="character") next
+  if(i!="ME") testval <- restab[,i] else testval <- abs(restab[,i])
+  theminrow <- which(testval==min(testval))
+  resfor[theminrow, i] <- paste0("**",resfor[theminrow,i],"**")
+}
+```
+
+This is the table of FORECAST performance metrics.  Not how well it fits the data, but how well it forecasts out of the data.  RSME and ME are for the 2 data points in 1988 and 1989 that were held out for testing.  tsCV.RMSE is the RSME for the time-series crossvalidation that makes a series of forecasts for each point in the data.  AIC and BIC are information criteria, which are a measure of data support for each model.
+
+```{r}
+knitr::kable(resfor)
+```

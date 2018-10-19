@@ -1,14 +1,31 @@
-## Simple Exponential Smoothing with Drift
+## Simple Exponential Smoothing with Trend
 
---- 
+The simple exponential model has a level that evolves over time, but there is no trend, a tendency to go up or down.  If a time series has a trend then we might want to include this in our forecast.
 
-### Naive model with drift
+#### Naive model with drift {-}
 
-Fit a model that uses the last observation as the forecast but includes a trend estimated from ALL the data.  This is what the naive model with drift does.
+The naive model with drift is a simple example of a model with level and trend.  This model uses the last observation as the forecast but includes a trend estimated from ALL the data. 
 
-```{r fig.height=4.5}
+$$\hat{x}_{T+1} = x_T + \bar{b}$$
+where $\bar{b}$ is the mean trend or change from one time step to the next ($x_t-x_{t-1}$).
+$$\bar{b} = \frac{1}{1-T}\sum_{t=2}^T (x_t - x_{t-1})$$
+
+We can fit this with `forecast::Arima()`.
+
+```{r rwf.fit.w.drift}
 fit.rwf <- forecast::Arima(anchovy87ts, order=c(0,1,0), include.drift=TRUE)
 fr.rwf <- forecast::forecast(fit.rwf, h=5)
+```
+
+Alternatively we can fit with `rwf()` which is a shortcut for the above lines.
+
+```{r rwf.fit2.w.drift}
+fr.rwf <- forecast::rwf(anchovy87ts, h=5, drift=TRUE)
+```
+
+A plot of the forecast shows the forecast and the prediction intervals.
+
+```{r fig.height=4.5}
 plot(fr.rwf)
 ```
 
@@ -24,28 +41,19 @@ The trend from all the data is (last-first)/(number of steps).
 mean(diff(anchovy87ts))
 ```
 
-So we only use the latest data to choose the level for our forecast but use all the data to choose the trend?  It would make more sense to weight the more recent trends more heavily.
+The naive model with drift only use the latest data to choose the level for our forecast but uses all the data to choose the trend.  It would make more sense to weight the more recent trends more heavily.  
 
 ---
 
 ### Exponential smoothing model with trend
 
-The exponential smoothing model with trend does this.  The one-year trend is 
-$$x_t - x_{t-1}$$
-That is how much the data increased or decreased.  
+The exponential smoothing model has a level term which is an exponential weighting of past $x$ and a trend term  which is an exponential weighting of past trends $x_t - x_{t-1}$.
 
+$$\hat{x}_{T+1} = l_T + b_T$$
+where $b_T$ is a weighted average with the more recent trends given more weight.
 
-```{r}
-plot(diff(anchovy87ts),ylim=c(-0.3,.3))
-abline(h=0, col="blue")
-abline(h=mean(diff(anchovy87ts)),col="red")
-title("0 means no change")
-```
-
-
-If we take the average of all $x_t - x_{t-1}$ we are using the average trend like the naive model with drift.  We put an equal weighting on all trends.
-
-But we could use a weighting that falls off exponentially so that we more recent trends affect the forecast more than trends in the distant past.  That is what an exponential smoothing model with trend does.
+$$b_T = \sum_{t=2}^T \beta (1-\beta)^{t-2}(x_t - x_{t-1})$$
+The value of $\beta$ determines how much past trends affect the trend we use in our forecast. 
 
 ```{r echo=FALSE}
 alpha <- 1
@@ -61,27 +69,9 @@ legend("topleft", c("beta=1","beta=0.5","beta=0.05 like naive"),lwd=2, col=c("bl
 title("more weight put on more recent values\nfor 1988 forecast")
 ```
 
----
+#### Fit with `ets()` {-}
 
-### Naive model with trend
-
-If your training data are length $T$, then a forecast for $T+h$ is
-
-$$\hat{x}_{T+h} = l_T + h \bar{b}$$
-
-where $\hat{b}$ is the mean of the the yearly changes in $x$, so the mean of $x_t - x_{t-1}$.
-
-$$\hat{b} = \sum_{t=2}^T (x_t - x_{t-1})$$
-
-### Exponential smoothing model with trend
-
-$$\hat{x}_{T+h} = l_T + h b_T$$
-
-where $b_T$ is a weighted average with the more recent trends given more weight.
-
-$$b_t = \sum_{t=2}^T \beta (1-\beta)^{t-2}(x_t - x_{t-1})$$
-
-#### Fit exponential smoothing with trend {-}
+To fit an exponential smoothing model with trend, we use `model="AAN".
 
 ```{r}
 fit <- forecast::ets(anchovy87ts, model="AAN")
@@ -91,10 +81,52 @@ plot(fr)
 
 ---
 
-### Decomposing your model fit
+### Simple ETS models with `ets()`
 
-Sometimes you would like to see the smoothed level and smoothed trend that the model estimated. You can see that with `plot(fit)` or `autoplot(fit)`.
+The forecast package will fit a wide variety of exponential smoothing models.
 
-```{r fig.height=4}
-autoplot(fit)
 ```
+ets(y, model = "ZZZ", < + many other arguments >)
+```
+
+* y : your data.  A time series of responses.
+
+* model: what type of exponential smoothing model.
+
+
+We have used `ets()` to fit simple exponential smoothing models with and without trend.  We can also let `ets()` choose whether or not to include a trend.
+
+model  | "ZZZ" | alternate function |
+------------- | ------------- | --------- |
+exponential smoothing no trend | "ANN" | `ses()` |
+exponential smoothing with trend  | "AAN" | `holt()` |
+exponential smoothing choose trend  | "AZN" | NA |
+
+The alternate function does exactly the same fitting.  It is just a 'shortcut'.
+
+---
+
+### Produce forecast using a previous fit
+
+Say you want to estimate a forecasting model from one dataset and use that model to forecast another dataset or another area.  Here is how to do that.
+
+This is the fit to the 1964-1987 data:
+
+```{r}
+fit1 <- forecast::ets(anchovy87ts, model="ANN")
+```
+
+Use that model with the 2000-2007 data and produce a forecast:
+
+```{r fit.new.ann}
+dat <- subset(landings, Species=="Anchovy" & Year>=2000 & Year<=2007)
+dat <- ts(dat$log.metric.tons, start=2000)
+fit2 <- forecast::ets(dat, model=fit1)
+fr2 <- forecast::forecast(fit2, h=5)
+```
+
+```{r}
+plot(fr2)
+```
+
+
