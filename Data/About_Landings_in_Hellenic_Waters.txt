@@ -6,6 +6,7 @@ Special Publications
 http://dlib.statistics.gr/portal/page/portal/ESYE/categoryyears?p_cat=10007977&p_topic=10007977
 
 Table IV in the publications, total column, units are metric tons
+Trawler, Purse seiners, Beach seiners (marked seiners) and other from Table I
 
 In the table, sardine is denoted ' Pilchard'
 
@@ -15,6 +16,7 @@ To create landings do the following and then add on the covariates (code in abou
 
 library(reshape2)
 test <- read.csv("Data/Landings_in_Hellenic_Waters.csv", stringsAsFactors = FALSE)
+fish.cov <- test[,!(colnames(test)%in%c("Anchovy","Sardine","Chub.mackerel","Horse.mackerel","Mackerel","Jack.mackerel"))]
 test <- melt(test, id="Year", value.name="metric.tons", variable.name="Species")
 test$log.metric.tons <- log(test$metric.tons)
 landings <- test
