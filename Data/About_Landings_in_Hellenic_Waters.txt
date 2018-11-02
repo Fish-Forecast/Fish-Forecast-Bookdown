@@ -30,4 +30,4 @@ anchovy87ts <- ts(anchovy87$log.metric.tons, start=1964)
 sardine87ts <- ts(anchovy87$log.metric.tons, start=1964)
 
 # run the covariate code or load in a landings.RData with on it
-save(landings, anchovy, anchovyts, anchovy87, anchovy87ts, sardine, sardinets, sardine87, sardine87ts, covs, covsmean.mon, covsmean.year, file="landings.RData")
+save(landings, anchovy, anchovyts, anchovy87, anchovy87ts, sardine, sardinets, sardine87, sardine87ts, covs, covsmean.mon, covsmean.year, fish.cov, file="landings.RData")
