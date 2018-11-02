@@ -18,20 +18,45 @@ e_t \sim N(0,\sigma)
 \end{equation}
 where `xreg` is  matrix with $c_{t,1}$ in column 1, $c_{t-2}$ in column 2, etc.  $z_t$ are the ARMA errors.
 
-### Example: anchovy
+### Covariates used in Stergiou and Christou
 
-Load in the data which has the covariates.  The covariates are those in Stergiou and Christou with the following differenced. I used the ICOADS data not the COADSs.  The boxes are 1 degree but on 1 degree centers not 0.5 centers.  Thus box is 39.5-40.5 not 39-40.  ICOADS does not include 'vertical wind'.  I used NS winds which may be different.  The code to download the ICOADS data is in the appendix.
+Stergiou and Christou used five environmental covariates: air temperature (air), sea-level pressure (slp), sea surface temperature (sst), vertical wind speed (vwnd), and wind speed cubed (wspd3).  Monthly values for these covariates in three 1 degree boxes were taken from the COADS database, and then a yearly average over all months in the three boxes was used to compute a yearly average.
 
-```{r f37-load_data, message=FALSE, warning=FALSE}
+These yearly average environmental covariates are in `covsmean.year`, which is part of `landings.RData`.
+
+```{r f37-load_data}
 load("landings.RData")
+colnames(covsmean.year)
 ```
 
-Stergiou and Chritou used MREG models with covariates lagged by one year.  This means that the catch in year $t$ is regressed against the covariates in year $t-1$.   The covariate to include were selected with stepwise variable selection.
+The covariates are those in Stergiou and Christou with the following differences. I used the ICOADS data not the COADSs.  The boxes are 1 degree but on 1 degree centers not 0.5 centers.  Thus box is 39.5-40.5 not 39-40.  ICOADS does not include 'vertical wind'.  I used NS winds which may be different.  The code to download the ICOADS data is in the appendix.
 
-We will start by creating a dataframe with our response variable and independent variables.
+In addition to the environmental covariates, Stergiou and Christou used many covariates of fishing effort for trawlers, purse seiners, beach seiners, other coastal boats and demersal (sum of trawlers, beach seiners and other coastal boats).  For each fishery type, they used data on number of fishers, number of boats, total engine horse power, total boat tonnage.  They also used an economic variable: value of catch for trawlers, purse seiners, beach seiners, other coastal boats.
 
-```{r mreg.df}
-df <- data.frame(resp=anchovy$log.metric.tons)
+In the MREG models, the covariates were lagged by one year.  This means that the catch in year $t$ is regressed against the covariates in year $t-1$. 
+
+#### Prepare the data
+
+We will start by creating a dataframe with our response variable and independent variables.  We will model anchovy landings as the response variable.
+
+```{r cov.dataframe}
+df <- data.frame(catch=anchovy$log.metric.tons)
+df <- cbind(df, 
+            subset(covsmean.year, Year<=2007)[,-1], 
+            fish.cov[,-1])
+```
+
+
+### Model selection
+
+In total, they had 26 covariates, many of which were highly correlated.  The covariate to include were selected with stepwise variable selection.  Stepwise variable selection is a type of automatic variable selection.  Note stepwise variable selection has many problems and the problems are worse when the covariates are collinear as they are in this example (see this [link](https://www.stata.com/support/faqs/statistics/stepwise-regression-problems/) for a review). However I use it here to replicate Stergiou and Christou.
+
+```{r stepwise.reg}
+step(null, scope=list(upper=full), data=df, direction="both")
+```
+
+#### A better approach to model selection in multivariate regresson {-}
+
 
 ### MREG of first or second differences
 
