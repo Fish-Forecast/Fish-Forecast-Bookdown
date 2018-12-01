@@ -31,14 +31,14 @@ colnames(covsmean.year)
 
 The covariates are those in Stergiou and Christou with the following differences. I used the ICOADS data not the COADS.  The boxes are 1 degree but on 1 degree centers not 0.5 centers.  Thus box is 39.5-40.5 not 39-40.  ICOADS does not include 'vertical wind'.  I used NS winds which may be different.  The code to download the ICOADS data is in the appendix.
 
-In addition to the environmental covariates, Stergiou and Christou used many covariates of fishing effort for trawlers, purse seiners, beach seiners, other coastal boats and demersal (sum of trawlers, beach seiners and other coastal boats).  For each fishery type, they used data on number of fishers, number of boats, total engine horse power, total boat tonnage.  They also used an economic variable: value of catch for trawlers, purse seiners, beach seiners, other coastal boats.
+In addition to the environmental covariates, Stergiou and Christou used many covariates of fishing effort for trawlers, purse seiners, beach seiners, other coastal boats and demersal (sum of trawlers, beach seiners and other coastal boats).  For each fishery type, they used data on number of fishers (FI), number of boats (BO), total engine horse power (HP), total boat tonnage (TO).  They also used an economic variable: value (VA) of catch for trawlers, purse seiners, beach seiners, other coastal boats.
 
 ```{r fish.cov}
 colnames(fish.cov)
 ```
 For anchovy, the fishery effort metrics from the purse seine fishery were used.  
 
-Lastly, *Trachurus*, presumably Mediterranean horse mackerel, is used as a covariate for anchovy, at least.
+Lastly, *Trachurus*, presumably Mediterranean horse mackerel, was used as a covariate for anchovy and sardine.
 
 ### Prepare the data
 
@@ -84,135 +84,12 @@ a$Out
 
 This suggests removing TOP and HPP.  I will save the full data frame with all variables in `df.full`.
 
-```{r pairs.cov}
+```{r pairs.cov2}
 df.full <- df
 col.rm <- which(colnames(df) %in% c("TOP", "HPP"))
 df <- df[,-1*col.rm]
 ```
 
-### Model selection with stepwise variable selection
-
-<!--
-http://www.sthda.com/english/articles/37-model-selection-essentials-in-r/154-stepwise-regression-essentials-in-r/
--->
-
-Stergiou and Christou state that the covariates to include were selected with stepwise variable selection.  Stepwise variable selection is a type of automatic variable selection.  Stepwise variable selection has many statistical problems and the problems are worse when the covariates are collinear as they are in our case  (see this [link](https://www.stata.com/support/faqs/statistics/stepwise-regression-problems/) for a review of the problems with stepwise variable selection). However I use it here to replicate Stergiou and Christou.  I will follow this with an example of other more robust approaches to model selection for linear regression.
-
-Stergiou and Christou do not give specifics on how they implemented stepwise variable selection. Stepwise variable selection refers to a forward-backward search, however there are many ways we can implement this and different approaches give different answers.  I will illustrate a number of approaches to do this in R.
-
-#### step() {-}
-
-When using the stepAIC() function, we specify the starting model, the smallest model and the largest model.  The latter two are the scope of our search. We set direction equal to "both" to specify stepwise variable selection. The default is to use AIC for the selection criteria.
-
-Let's start with a search that starts with a full model which has all the explanatory variables. The first argument to `step()` is the starting model.
-
-```{r stepAIC}
-library(MASS)
-null <- lm(anchovy ~ 1, data=df)
-full <- lm(anchovy ~ ., data=df)
-stepAIC.model1 <- step(full, 
-                       scope=list(lower=null, upper=full),
-                       direction="both", trace = 0)
-stepAIC.model1
-```
-
-The AIC for this model is `r round(AIC(stepAIC.model1),digits=1)`. This is a much larger model than that reported in Table 3 of Stergiou and Christou. The model in their Table 3 includes only Year, *Trachurus* catch, SST, and FIP.  The model selected by `stepAIC()` starting from the full model includes Year, *Trachurus* catch, air temperature, vertical wind, BOP, and HPP.
-
-Let's repeat but start the search with the smallest model.
-
-```{r stepAIC2}
-stepAIC.model2 <- step(null, 
-                       scope=list(lower=null, upper=full),
-                       direction="both", trace = 0)
-stepAIC.model2
-```
-
-This model has an AIC of `r round(AIC(stepAIC.model2),digits=1)`. This AIC is smaller (better), which illustrates that you need to be careful how you set up the search. This selected model is very similar to that in Table 3 except that air temperature instead of SST is selected.  Air temperature and SST are highly correlated, however.
-
-The air temperature is removed from the best model if we use BIC as the model selection criteria. This is done by setting `k=log(n)` where $n$ is sample size.
-
-```{r stepBIC}
-stepAIC.model3 <- step(null, 
-                       scope=list(lower=null, upper=full),
-                       direction="both", trace = 0, k=log(nrow(df)))
-stepAIC.model3
-```
-
-For sardines, the selected model is also similar to that in Table 3 with the addition of vertical wind to the model.  However, the p-value for vertical wind is large and Stergiou and Christou may have dropped it.
-
-```{r stepAIC2.sardine}
-null <- lm(sardine ~ 1, data=df)
-full <- lm(sardine ~ ., data=df)
-stepAIC.model3 <- step(null, 
-                       scope=list(lower=null, upper=full),
-                       direction="both", trace = 0)
-summary(stepAIC.model3)
-```
-
-If we select using BIC, then only FIP is included which is the same model in their Table 3.
-```{r stepBIC.sardine}
-stepAIC.model4 <- step(null, 
-                       scope=list(lower=null, upper=full),
-                       direction="both", trace = 0, k=log(nrow(df)))
-stepAIC.model4
-```
-
-#### leaps() {-}
-
-We can use the leaps package to do a full search of the model space. The function `regsubsets()` will find the `nbest` models of size (number of explanatory variables) 1 to `nvmax`.  We can then plot these against a criteria.  leaps allows us to plot against BIC, Cp (asymptotically the same as AIC), $R^2$ and adjusted $R^2$.  Each row in the plot is a model. The dark shading shows which variables are in the model. On the y-axis, farther away from the x-axis is better, so the models (rows) at the top of the plot are the best models.
-
-```{r leaps}
-library(leaps)
-models <- regsubsets(anchovy~., data = df, nvmax = 11,
-                     method = "seqrep", nbest=1)
-plot(models, scale="bic")
-```
-This plot shows that the best model under BIC has an intercept, Year, FIP and *Trachurus*.
-
-`stepAIC()` uses AIC instead of the AICc (corrected for small sample size).  In our case, $n=23$ which is fairly small.  Using AICc would be better suited for such a small dataset.  leaps does not return AIC or AICc, but we can compute them.  Note that Cp asymptotically has the same ordering as AIC, but $n=23$ is small and it does not have the same ordering as AIC in our case.
-
-First we use `summary()` to get a matrix showing the best model of each size.  This matrix shows what variable is in the best model of each size.
-```{r summary.leaps}
-smodels <- summary(models)
-smodels$which
-```
-
-Next we compute AICc from BIC and find the line of the matrix above where AICc is the smallest. `k` is the number of parameters.
-```{r summary.leaps}
-k <- apply(smodels$which,1,sum)
-AICc <- smodels$bic+k*(2+(2*k+2)/(23-k-1)-log(23))
-rmin <- which(AICc==min(AICc))
-smodels$which[rmin,]
-```
-This shows that AICc would pick the same model as BIC; one with an intercept, Year, FIP and *Trachurus*.
-
-```{r leaps}
-library(leaps)
-models <- regsubsets(anchovy~., data = df, nvmax = 4,
-                     method = "seqrep", nbest=3)
-plot(models, scale="bic")
-```
-
-
-### Model selection with cross-validation
-
-The problems with model selection using searching and selecting with some model fit criteria is that the selected model tends to be over-fit.  The p-values are not correct and the predictive value of the model is not optimal because of over-fitting.
-
-```{r}
-library(caret)
-# Set seed for reproducibility
-#set.seed(123)
-# Set up repeated k-fold cross-validation
-train.control <- trainControl(method = "cv", number = 5)
-# Train the model
-step.model <- train(anchovy~., data = df,
-                    method = "leapSeq", 
-                    tuneGrid = data.frame(nvmax = 1:8),
-                    trControl = train.control
-                    )
-step.model$results
-summary(step.model$finalModel)
-```
 
 ### Collinearity
 

@@ -1,0 +1,931 @@
+--- 
+title: "Fisheries Catch Forecasting"
+author: "Elizabeth Holmes"
+date: "`r Sys.Date()`"
+site: bookdown::bookdown_site
+output: bookdown::gitbook
+documentclass: book
+bibliography: [book.bib, packages.bib]
+biblio-style: apalike
+link-citations: yes
+github-repo: "fish-forecast/Fish-Forecast-Bookdown/"
+description: "This book will show you how to model and forecast annual and seasonal fisheries catches using R and its time-series analysis functions and packages. Forecasting using time-varying regression, ARIMA (Box-Jenkins) models, and expoential smoothing models is demonstrated using real catch time series.  The entire process from data evaluation and diagnostics, model fitting, model selection and forecast evaluation is shown. The focus of the book is on univariate time series (annual or seasonal), however multivariate regression with autocorrelated errors and multivariate autoregressive models (MAR) are covered briefly.  For multivariate autoregressive models and multivariate autoregressive state-space models for fisheries and environmental sciences, see Holmes, Ward and Scheuerell (2018)."
+cover-image: "images/cover.png"
+---
+
+# devtools::install_github("rstudio/fontawesome")
+
+Placeholder
+
+
+
+<!--chapter:end:index.Rmd-->
+
+
+# Introduction
+
+Placeholder
+
+
+## Stergiou and Christou 1996
+### Hellenic landings data
+## The landings data, landings.RData
+## ts objects
+### `ts()` function
+#### Examples {-}
+### ggplot and ts objects
+#### `autoplot()` {-}
+### Plotting using a data frame
+
+<!--chapter:end:Forecasting-1-1-Introduction.Rmd-->
+
+
+# automatically create a bib database for R packages
+
+Placeholder
+
+
+## Packages
+#### tidyverse and piping {-}
+#### plotting packages {-}
+## References
+
+<!--chapter:end:Forecasting-1-2-Packages.Rmd-->
+
+# Time-varying regression
+
+Time-varying regression is simply a linear regression where time is the explanatory variable:
+
+$$log(catch) = \alpha + \beta t + \beta_2 t^2 + \dots + e_t$$
+The error term ( $e_t$ ) was treated as an independent Normal error ( $\sim N(0, \sigma)$ ) in Stergiou and Christou (1996).  If that is not a reasonable assumption, then it is simple to fit a non-Gausian error model in R.
+
+#### Order of the time polynomial {-}
+
+The order of the polynomial of $t$ determines how the time axis (x-axis) relates to the overall trend in the data.  A 1st order polynomial ($\beta t$) will allow a linear relationship only.  A 2nd order polynomial($\beta_1 t + \beta_2 t^2$) will allow a convex or concave relationship with one peak.  3rd and 4th orders will allow more flexible relationships with more peaks.
+
+```{r poly.plot, echo=FALSE,fig.height=4,fig.width=8,fig.align="center"}
+par(mfrow=c(1,4))
+tt=seq(-5,5,.01)
+plot(tt,type="l",ylab="",xlab="")
+title("1st order")
+plot(tt^2,type="l",ylab="",xlab="")
+title("2nd order")
+plot(tt^3-3*tt^2-tt+3,ylim=c(-100,50),type="l",ylab="",xlab="")
+title("3rd order")
+plot(tt^4+2*tt^3-12*tt^2-2*tt+6,ylim=c(-100,100),type="l",ylab="",xlab="")
+title("4th order")
+```
+
+
+
+<!--chapter:end:Forecasting-2-1-TV-Regression.Rmd-->
+
+
+
+## Fitting time-varying regressions
+### Orthogonal polynomials
+#### `poly()` function
+#### Using `poly()` to fit the anchovy data {-}
+### Residual diagnostics
+#### Example of the Ljung-Box test {-}
+#### Breusch-Godfrey test {-}
+### Compare to Stergiou and Christou
+#### Compare anchovy fit to Stergiou and Christou {-}
+#### Compare sardine fit to Stergiou and Christou {-}
+### Summary
+#### Why use time-varying regression? {-}
+#### Why not to use time-varying regression? {-}
+#### Is time-varying regression used? {-}
+
+<!--chapter:end:Forecasting-2-2-TV-Regression.Rmd-->
+
+
+
+## Forecasting with a time-varying regression model
+### The forecast package
+### Summary
+
+<!--chapter:end:Forecasting-2-3-TV-Regression.Rmd-->
+
+
+# ARIMA Models
+
+Placeholder
+
+
+## Overview
+### Components of an ARIMA model
+#### Create some data from an AR(2) Model {-}
+#### AR(2) is auto-correlated {-}
+### Box-Jenkins method
+### ACF and PACF functions
+#### The ACF function {-}
+#### ACF for independent data {-}
+#### PACF function {-}
+#### Partial ACF for AR(2) {-}
+#### Partial ACF for AR(1) {-}
+
+<!--chapter:end:Forecasting-3-1-ARMA-Intro.Rmd-->
+
+
+# or tseries::adf.test(anchovy87$log.metric.tons, k=0)
+
+Placeholder
+
+
+## Stationarity
+### Definition
+#### Stationarity around a trend {-}
+### Non-stationarity
+#### Non-stationarity with a trend {-}
+### Stationarity tests
+#### Visual test {-}
+#### Dickey-Fuller test {-}
+#### Example: Dickey-Fuller test using adf.test() {-}
+#### Example: Dickey-Fuller test using ur.df() {-}
+#### Augmented Dickey-Fuller test {-}
+#### Example: Augmented Dickey-Fuller tests with adf.test() {-}
+#### Example: Augmented Dickey-Fuller tests with ur.df() {-}
+#### KPSS test {-}
+#### Example: KPSS tests {-}
+### Differencing the data
+### Summary
+
+<!--chapter:end:Forecasting-3-2-ARMA-Stationarity.Rmd-->
+
+
+
+## Model structure
+### AR and MA lags
+### Model order
+### Choosing the AR and MA levels
+#### Method #1 use the ACF and PACF functions {-}
+#### Method #2 Use formal model selection {-}
+#### More examples {-}
+#### How often is the 'true' model is chosen? {-}
+### Trace = TRUE
+### stepwise = FALSE
+### Summary
+
+<!--chapter:end:Forecasting-3-3-ARMA-Model-Structure.Rmd-->
+
+
+
+## Fitting ARIMA models
+### Fitting with `auto.arima()`
+#### Load the data {-}
+#### Fit to the anchovy data using `auto.arima()` {-}
+#### The parameter estimates {-}
+#### Computing R2 {-}
+#### Ljung-Box statistic {-}
+#### BIC {-}
+### Outputting the models tested
+### Repeat with the sardine data
+#### Repeat using `test='adf'` {-}
+### Missing values
+### Fit a specific ARIMA model
+### Model checking
+### Workflow for non-seasonal data
+### Stepwise vs exhaustive model selection
+### Summary
+
+<!--chapter:end:Forecasting-3-4-ARMA-Fitting.Rmd-->
+
+
+
+## Forecasting
+### Forecasting with `forecast()`
+#### Forecast for anchovy {-}
+#### Forecasts for chub mackerel {-}
+### Missing values
+### Null forecast models
+#### The "Naive" forecast {-}
+#### The "Naive" forecast with drift {-}
+#### The "mean" forecast {-}
+
+<!--chapter:end:Forecasting-3-5-ARMA-Forecasting.Rmd-->
+
+
+# Exponential smoothing models
+
+Placeholder
+
+
+### Naive model
+### Exponential smoothing
+
+<!--chapter:end:Forecasting-4-1-Exp-Smoothing.Rmd-->
+
+
+
+### Exponential smoothing with no trend
+### Fit a ETS model
+#### The weighting function {-}
+### Decomposing your model fit
+
+<!--chapter:end:Forecasting-4-2-Exp-Smoothing.Rmd-->
+
+
+
+## Simple Exponential Smoothing with Trend
+#### Naive model with drift {-}
+### Exponential smoothing model with trend
+#### Fit with `ets()` {-}
+### Simple ETS models with `ets()`
+### Produce forecast using a previous fit
+
+<!--chapter:end:Forecasting-4-3-Exp-Smoothing.Rmd-->
+
+
+
+## Forecast performance
+### Test forecast performance
+#### Test against a test data set {-}
+#### Test using time-series cross-validation {-}
+#### tsCV() function {-}
+#### Forecast accuracy metrics {-}
+### Testing a specific ets model
+
+<!--chapter:end:Forecasting-4-4-Exp-Smoothing.Rmd-->
+
+## Further Reading
+
+Rob J Hyndman (lead on the forecast package)  and George Athanasopoulos have an excellent online text on practical forecasting and exponential smoothing. Read [their chapter](https://otexts.org/fpp2/expsmooth.html) on exponential smoothing to learn more about these models and how to use them.
+
+
+<!--chapter:end:Forecasting-4-5-Exp-Smoothing.Rmd-->
+
+
+# Testing forecast accuracy
+
+Placeholder
+
+
+### Training set/test set
+#### Forecast versus actual {-}
+### Cross-Validation
+#### Variable window {-}
+#### Fixed window {-}
+#### Cross-validation farther in future {-}
+
+<!--chapter:end:Forecasting-5-1-Performance-Testing.Rmd-->
+
+
+# The model picked by auto.arima
+
+Placeholder
+
+
+## Metrics
+### `accuracy()` function
+#### ME Mean err {-}
+#### RMSE Root mean squared error {-}
+#### MAE Mean absolute error {-}
+#### MPE Mean percentage error {-}
+#### MAPE Mean absolute percentage error {-}
+### Test multiple models
+#### Show a summary {-}
+### Cross-validation
+#### Cross-validation farther in future {-}
+#### Cross-validation with a fixed window {-}
+#### All the forecasts tests together {-}
+
+<!--chapter:end:Forecasting-5-2-Metrics.Rmd-->
+
+
+# or simply
+
+Placeholder
+
+
+## Candidate model set
+#### Null models {-}
+
+<!--chapter:end:Forecasting-5-3-Candidate-Model-Sets.Rmd-->
+
+
+
+## Testing the candidate model set
+### Fit each of our candidate models
+## Models fit
+### Metrics for each model
+
+<!--chapter:end:Forecasting-5-4-Candidate-Model-Sets-Test.Rmd-->
+
+
+```{r f61-load_packages, echo=FALSE, message=FALSE, warning=FALSE}
+library(ggplot2)
+```
+
+# Covariates
+
+Often we want to explain the variability in our data using covariates or exogenous variables.  We may want to do this in order to create forecasts using information from the covariates in time step $t-1$ or $t$ to help forecast at time $t$.  Or we may want to understand what causes variability in our data in order to help understand the underlying process.
+
+We can include covariates in the time-varying regression model and the ARIMA models.  We cannot include covariates in an exponential smoothing model.  That doesn't make sense as a exponential model is a type of filter of the data not a 'process' model.
+
+<!--chapter:end:Forecasting-6-1-Covariates.Rmd-->
+
+
+
+## Multivariate linear regression with ARMA errors
+### Covariates used in Stergiou and Christou
+### Prepare the data
+### Removing collinear variables
+### Collinearity
+### Penalized regression: ridge regression
+### Penalized regression: Lasso
+### Penalized regression: Elastic net
+### Model selection with prior knowledge
+## Comparing model prediction accuracy
+### MREG of first or second differences
+
+<!--chapter:end:Forecasting-6-2-Covariates-ARMA.Rmd-->
+
+## Multivariate linear regression
+
+In this chapter, I will illustrate developing a forecasting model using a multivariate regression (MREG).  I will show the approach the Stergiou and Christou used to develop MREG models and then compare to other approaches.  Fitting multivariate linear regressions with ARMA errors and fitting ARMAX models will be covered in separate chapters.
+
+A multivariate linear regression model with Gaussian errors take the form:
+
+\begin{equation}
+\begin{gathered}
+x_t = \alpha + \phi_1 c_{t,1} + \phi_2 c_{t,2} + \dots + e_t \\
+e_t \sim N(0,\sigma)
+\end{gathered}
+\end{equation}
+
+In R, we can fit this model with `lm()`, which uses ordinary least squares (OLS). For model selection (determining what explanatory variables to include), there are a variety of approaches we can take.  I will show approaches that use a few different packages.
+
+```{r f62-load_packages, message=FALSE, warning=FALSE}
+library(ggplot2)
+library(MASS)
+library(car)
+library(glmnet)
+library(Hmisc)
+library(stringr)
+library(caret)
+library(leaps)
+```
+
+### Covariates used in Stergiou and Christou
+
+Stergiou and Christou used five environmental covariates: air temperature (air), sea-level pressure (slp), sea surface temperature (sst), vertical wind speed (vwnd), and wind speed cubed (wspd3).  Monthly values for these covariates in three 1 degree boxes were taken from the COADS database, and then a yearly average over all months in the three boxes was used to compute a yearly average.
+
+These yearly average environmental covariates are in `covsmean.year`, which is part of `landings.RData`.
+
+```{r f37-load_data}
+load("landings.RData")
+colnames(covsmean.year)
+```
+
+The covariates are those in Stergiou and Christou with the following differences. I used the ICOADS data not the COADS.  The boxes are 1 degree but on 1 degree centers not 0.5 centers.  Thus box is 39.5-40.5 not 39-40.  ICOADS does not include 'vertical wind'.  I used NS winds which may be different.  The code to download the ICOADS data is in the appendix.
+
+In addition to the environmental covariates, Stergiou and Christou used many covariates of fishing effort for trawlers, purse seiners, beach seiners, other coastal boats and demersal (sum of trawlers, beach seiners and other coastal boats).  For each fishery type, they used data on number of fishers (FI), number of boats (BO), total engine horse power (HP), total boat tonnage (TO).  They also used an economic variable: value (VA) of catch for trawlers, purse seiners, beach seiners, other coastal boats.
+
+```{r fish.cov}
+colnames(fish.cov)
+```
+For anchovy, the fishery effort metrics from the purse seine fishery were used. Lastly, biological covariates were included which were the landings of other species.  Stergiou and Christou state (page 118) that the other species modelled by VAR (page 114) was included. This would mean sardine was used as an explanatory variable.  However in Table 3 (page 119), it appears that *Trachurus* (Horse mackerel) was included.  Thus I included *Trachurus* and not sardine as the biological explanatory variable.
+
+### Prepare the data
+
+We will start by creating a dataframe with our response variable and independent variables.  We will model anchovy landings as the response variable.  The covariates are lagged by one year, following Stergiou and Christou.  This means that the catch in year $t$ is regressed against the covariates in year $t-1$. 
+
+We set up our data frame as follows. We will use the 1965 to 1987 catch data as the response. We use 1964 to 1986 for all the explanatory variables (following Stergiou and Christou). We use $t$ 1 to 23 as a "year" covariate.
+
+```{r cov.dataframe}
+# response
+df <- data.frame(anchovy=anchovy$log.metric.tons,
+                 Year=sardine$Year)
+df <- subset(df, Year>=1965 & Year<=1987)
+# biological covariates
+df.bio <- subset(landings, Species=="Horse.mackerel")[,c("Year","log.metric.tons")]
+df.bio <- subset(df.bio, Year>=1964 & Year<=1986)[,-1,drop=FALSE] # [,-1] to remove year
+colnames(df.bio) <- "Trachurus"
+# environmental covariates
+covsmean.year[,"vwnd.m/s"]<- abs(covsmean.year[,"vwnd.m/s"])
+df.env <- log(subset(covsmean.year, Year>=1964 & Year<=1986)[,-1])
+# fishing effort
+df.fish <- log(subset(fish.cov, Year>=1964 & Year<=1986)[,-1])
+purse.cols <- stringr::str_detect(colnames(df.fish),"Purse.seiners")
+df.fish <- df.fish[,purse.cols]
+df.fish <- df.fish[!(colnames(df.fish)=="Purse.seiners.VAP")]
+# assemble
+df <- data.frame(
+            df, df.bio, df.env, df.fish
+            )
+df$Year <- df$Year-df$Year[1]+1
+colnames(df) <- sapply(colnames(df), function(x){rev(str_split(x,"Purse.seiners.")[[1]])[1]})
+colnames(df) <- sapply(colnames(df), function(x){str_split(x,"[.]")[[1]][1]})
+df <- df[,colnames(df)!="VAP"]
+```
+In total, there are 12 covariates and 23 years of data---which is not much data per explanatory variable.
+
+### Collinearity
+
+Collinearity is near-linear relationships among the explanatory variables. Collinearity causes many problems such as inflated standard errors of the coefficients and correspondingly unbiased but highly imprecise estimates of the coefficients, false p-values, and poor predictive accuracy of the model. Thus it is important to evaluate the level of collinearity in your explanatory variables.
+
+#### Pairs plot {-}
+
+One way to see this is visually is with the `pairs()` plot.  A pairs plot of fishing effort covariates reveals high correlations between Year, HPP and TOP.
+
+```{r pairs.fish}
+pairs(df[,c(2,9:12)])
+```
+
+The environmental covariates look generally ok.
+```{r pairs.env}
+pairs(df[,c(2,4:8)])
+```
+
+#### Variance inflation factors {-}
+
+Another way is to look for collinearity is to compute the variance inflation factors (VIF). The variance inflation factor is an estimate of how much larger the variance of a coefficient estimate is compared to if the variable were uncorrelated with the other explanatory variables in the model.  If the VIF of variable $i$ is $z$, then the standard error of the $\beta_i$ for variable $i$ is $\sqrt{z}$ times larger than if variable $i$ were uncorrelated with the other variables. For example, if VIF=10, the standard error of the coefficient estimate is 3.16 times larger (inflated).  The rule of thumb is that any of the variables with VIF greater than 10 have collinearity problems.
+
+The `vif()` function in the car package will compute VIFs for us.  
+
+```{r vif.car}
+full <- lm(anchovy ~ ., data=df)
+car::vif(full)
+```
+
+This shows that Year, HPP and TOP have severe collinearity problems, and BOP and *Trachusus* also have collinearity issues, though lesser.
+
+#### redun()
+
+The Hmisc library also has a redundancy function (`redun()`) that can help identify which variables are redundant.  This identifies variables that can be explained with an $R^2>0.9$ by a linear (or non-linear) combination of other variables.  We are fitting a linear model, so we set `nk=0` to force `redun()` to only look at linear combinations.
+
+We use `redun()` only on the explanatory variables and thus remove the first column, which is our response variable (anchovy).
+
+```{r Hmisc.redun}
+a <- Hmisc::redun(~ .,data=df[,-1], nk=0)
+a$Out
+```
+
+This indicates that TOP and HPP can be explained by the other variables.
+
+### Effect of collinearity
+
+One thing that happens when we have collinearity is that we will get "complementary" (negative matched by positive) and very large coefficients in the variables that are collinear. We see this when we fit a linear regression with all the variables. 
+
+```{r coef.full, echo=FALSE}
+fit.full <- lm(anchovy ~ ., data=dfz)
+coef.full <- coef(fit.full)[-1]
+labs <- names(coef(fit.full))[-1]
+op <- par(mar=c(5, 7, 4, 2) + 0.1)
+barplot(rbind(coef.full), names.arg=labs, 
+        horiz=TRUE, las=2, beside=TRUE,
+        col=c("aquamarine3"))
+legend("topright", c("ols"), pch=15, 
+       col=c("aquamarine3"), 
+       bty="n")
+par(op)
+```
+
+The Year coefficients is very large and the TOP and HPP coefficients are negative and very large.
+
+If we look at the fit, we see the at the standard errors for Year, TOP and HPP are very large.  The p-value for Year is significant, however we know that in the presence of severe collinearity, reported p-values should not be trusted.
+
+```{r full.summary}
+summary(fit.full)
+```
+
+Stergiou and Christou do not state how (if at all) they address the collinearity in the explanatory variables, but it is clearly present.
+
+### Model selection with stepwise variable selection
+
+<!--
+http://www.sthda.com/english/articles/37-model-selection-essentials-in-r/154-stepwise-regression-essentials-in-r/
+-->
+
+Stergiou and Christou state that the covariates to include were selected with stepwise variable selection.  Stepwise variable selection is a type of automatic variable selection.  Stepwise variable selection has many statistical problems and the problems are worse when the covariates are collinear as they are in our case  (see this [link](https://www.stata.com/support/faqs/statistics/stepwise-regression-problems/) for a review of the problems with stepwise variable selection). The jist of the problem is one of over-fitting. A stepwise selection procedure will tend to choose variables that, by chance, have large coefficients. With only 23 data points and high collinearity, this is likely to be a rather large problem for our dataset. However I use stepwise variable selection here to replicate Stergiou and Christou.  I will follow this with an example of other more robust approaches to model selection for linear regression.
+
+Stergiou and Christou do not give specifics on how they implemented stepwise variable selection. Stepwise variable selection refers to a forward-backward search, however there are many ways we can implement this and different approaches give different answers.  I will illustrate a number of approaches using R.
+
+#### step() {-}
+
+When using the `step()` function in the stats package, we specify the starting model and the scope of the search (i.e., the smallest model and the largest model).  We set direction equal to "both" to specify stepwise variable selection. We also need to specify the selection criteria.  The default is to use AIC.
+
+Let's start with a search that starts with a full model which has all the explanatory variables. The first argument to `step()` is the starting model and `scope` specifies the maximum and minimum models. `direction="both"` is stepwise variable selection.
+
+```{r stepAIC}
+null <- lm(anchovy ~ 1, data=df)
+full <- lm(anchovy ~ ., data=df)
+step.model1 <- MASS::step(full, 
+                       scope=list(lower=null, upper=full),
+                       direction="both", trace = 0)
+step.model1
+```
+We can also apply `step()` with the caret package:
+```{r stepAIC.caret}
+step.model1c <- caret::train(anchovy ~ ., data = df,
+                    method = "lmStepAIC",
+                    direction = "both",
+                    trace = FALSE
+)
+step.model1c$finalModel
+```
+Note that `method="lmStepAIC" will always start with the full model.
+
+The AIC for this model is `r round(AIC(step.model1),digits=1)`. This is a larger model than that reported in Table 3 (page 119) of Stergiou and Christou. The model in Table 3 includes only Year, *Trachurus* catch, SST, and FIP.  The model selected by `step()` starting from the full model includes Year, *Trachurus* catch, air temperature, vertical wind, BOP, FIP and TOP.
+
+Let's repeat but start the search with the smallest model.
+```{r stepAIC2}
+null <- lm(anchovy ~ 1, data=df)
+full <- lm(anchovy ~ ., data=df)
+step.model <- MASS::step(null, 
+                   scope=list(lower=null, upper=full),
+                   direction="both", trace = 0)
+step.model
+```
+
+This model has an AIC of `r round(AIC(step.model),digits=1)`. This AIC is smaller (better), which illustrates that you need to be careful how you set up the search. This selected model is very similar to that in Table 3 except that air temperature instead of SST is selected.  Air temperature and SST are correlated, however.
+
+The air temperature is removed from the best model if we use BIC as the model selection criteria. This is done by setting `k=log(n)` where $n$ is sample size.
+
+```{r stepBIC}
+step.model.bic <- MASS::step(null, 
+                       scope=list(lower=null, upper=full),
+                       direction="both", trace = 0,
+                       k=log(nrow(df)))
+step.model.bic
+```
+
+We can also do stepwise variable selection using the leaps package.  However, the algorithm or starting model is different than for `step()` and the results are correspondingly different.  The results are similar to `step()` starting from the full model but not identical.  See the next section for a brief introduction to the leaps package.
+```{r leaps.step}
+models <- leaps::regsubsets(anchovy~., data = df, nvmax =11,
+                     method = "seqrep", nbest=1)
+plot(models, scale="bic")
+```
+
+#### leaps() {-}
+
+<!--
+Raftery, A. E. (1995). Bayesian Model Selection in Social Research. Sociological Methodology, 25, 111-163.
+-->
+
+We can use the leaps package to do a full search of the model space. The function `leaps::regsubsets()` will find the `nbest` models of size (number of explanatory variables) 1 to `nvmax` using different types of searches: exhaustive, forward, backward, and stepwise variable selection.  We can then plot these best models of each size against a criteria. such as BIC.  leaps allows us to plot against BIC, Cp (asymptotically the same as AIC and LOOCV), $R^2$ and adjusted $R^2$.  Each row in the plot is a model. The dark shading shows which variables are in the model. On the y-axis, farther away from the x-axis is better, so the models (rows) at the top of the plot are the best models.
+
+Let's start with an exhaustive search and show only the best model of each size, where size is the number of explanatory variables in the model.
+
+```{r leaps, fig.height=5}
+models <- leaps::regsubsets(anchovy~., data = df, 
+                     nvmax = 11, nbest=1,
+                     method = "exhaustive")
+plot(models, scale="bic")
+```
+We see that when we use BIC as the selection criteria, the best model has Year, *Trachurus*, and FIP.  We can set `method="seqrep"` for stepwise variable selection (aka sequential replacement).
+
+Let's look at more than one model for each model size.  Let's take the top 3 models for each model size and look at their BICs.
+
+```{r leaps2, fig.height=8}
+models <- leaps::regsubsets(anchovy~., data = df, 
+                     nvmax = 11, nbest=3,
+                     method = "exhaustive")
+plot(models, scale="bic")
+```
+We can plot the BIC for each size of model also. 
+```{r leaps.bic.plot, fig.height=5}
+smodels = summary(models)
+k <- apply(smodels$which,1,sum)
+plot(k, smodels$bic, xlab = "Number of Variables", ylab = "BIC")
+min.bic <- which.min(smodels$bic)
+points(k[min.bic], smodels$bic[min.bic], pch = 20, col = "red")
+abline(h = smodels$bic[min.bic]+2, lty=2)
+```
+
+These two plots show that there are many models within 2 of the top model.  All the best models have Year and FIP, but there are many different 3rd and 4th variables that can be added and give a similar BIC.  Interesting SST does not appear in any of the top models, while it was selected by Stergiou and Christou.  This suggests that they computed the yearly SST values slightly differently than I did.  My remote sensing data source was slightly different and that might be the cause.
+
+`step()` uses AIC instead of the AICc (corrected for small sample size).  In our case, $n=23$ is fairly small and using AICc would be better suited for such a small dataset.  leaps does not return AIC or AICc, but we can compute them.  Note that Mallow's Cp asymptotically has the same ordering as AIC, but $n=23$ is small and it does not have the same ordering as AIC in our case.
+
+First we use `summary()` to get a matrix showing the best model of each size.  This matrix shows what variable is in the best model of each size.
+```{r summary.leaps}
+smodels <- summary(models)
+head(smodels$which[,1:10])
+```
+
+Next we compute AICc from BIC and find the row of the matrix above where AICc is the smallest. `k` is the number of parameters.
+
+```{r leaps.aicc}
+k <- apply(smodels$which,1,sum)
+AICc <- smodels$bic+k*(2+(2*k+2)/(23-k-1)-log(23))
+rmin <- which(AICc==min(AICc))
+smodels$which[rmin,]
+```
+This shows that AICc would pick the same model as BIC; one with an intercept, Year, FIP and *Trachurus*.
+
+
+### Model selection with cross-validation[^ISLcv]
+
+[^ISLcv]: This section and the R code was adapted from and influenced by Chapter 6 material in Introduction to Statistical Learning by James, Witten, Hastie and Tibshirani. They have an (free) online course and (free) textbook at http://www-bcf.usc.edu/~gareth/ISL/
+
+<!--
+https://lagunita.stanford.edu/courses/HumanitiesSciences/StatLearning/Winter2016/about
+
+Introduction to Statistical Learning
+http://www-bcf.usc.edu/~gareth/ISL/
+
+https://lagunita.stanford.edu/c4x/HumanitiesSciences/StatLearning/asset/ch6.html
+-->
+
+Model selection with cross-validation is a way of estimating the out-of-sample predictive performance of a *process* for building a model. So for example, you could use cross-validation to ask the question, "If I select a best model with AIC does that approach led to models with better predictive performance over selecting a best model with BIC?". 
+
+The basic idea behind cross-validation is that part of the data is used for fitting (training) the model and the left-out data is used for assessing predictions.  You predict the left-out data and compare the actual data to the predictions. There are two common types of cross-validation: leave-one-out cross-validation (LOOCV) and k-fold cross-validationa.
+
+Leave-one-out cross-validation (LOOCV) is a cross-validation where you leave one data point out, fit to the rest of the data, predict the left out data point, and compute the prediction error with prediction minus actual data value.  This is repeated for all data points.  So you will have $n$ prediction errors if you have $n$ data points.  From these errors, you can compute various statistics.  Root mean squared error (RMSE), mean squared error (MSE), and mean absolute error (MAE) are common.
+
+k-fold cross-validation is a cross-validation where you divide the data into k equal fractions.  The model is fit k times: each fraction is treated as a test data set and the other k-1 fractions are used as the training data.  When the model is fit, you predict the data in the test data and compute the prediction errors.  Then you'll compute the statistics (RMSE, MSE, etc) from the errors from all k training sets.  There are many different ways you can split your data into k fractions.  Thus one often repeats this process many times and uses the average.  This is called repeated cross-validation.
+
+#### Example code {-}
+
+Let's see an example of this using models fit via stepwise variable selection using `leaps::regsubsets()`.
+
+Let's start by defining a `predict` function for `regsubsets` objects[^predictfun].
+
+[^predictfun]: This function was copied from the Introduction to Statistical Learning material.
+
+```{r predict.regsubsets}
+predict.regsubsets <- function(object, newdata, id, ...) {
+    form <- as.formula(object$call[[2]])
+    mat <- model.matrix(form, newdata)
+    coefi <- leaps::coef.regsubsets(object, id = id)
+    mat[, names(coefi)] %*% coefi
+}
+```
+
+Next we set up a matrix that defines the folds. Each row has numbers 1 to k (folds) which specify which data points are in the test set.  The other (non-k) data points will be the training set.  Each row of `folds` is a different replicate of the repeated cross-validation.
+
+```{r folds.rows}
+nfolds <- 5
+nreps <- 20
+folds <- matrix(
+         sample(rep(1:nfolds, length = nreps*nrow(df))),
+         nreps, nrow(df))
+```
+
+Now we can use `df[folds[r,]==k]` to specify the test data for the k-th fold of the r-th replicate.  And `df[folds[r,]!=k]` is the training dataset for the k-th fold of the r-th replicate. The **fold** jargon is just another word for group.  We divide the data into k groups and we call each group a **fold**. 
+
+Next we set up a matrix to hold the prediction errors.  We will have prediction errors for each fold, each replicate, and each variable (columns).
+
+```{r cv.err.mat}
+nvmax <- 8
+cv.errors <- matrix(0, nreps*nfolds, nvmax)
+```
+
+Now, we step through each replicate and each fold in each replicate.  We find the best fit with `regsubsets()` applied to the *training set* for that replicate.  Then we predict using that best fit to the test data for that replicate.  We compute the errors (prediction minus data) and store.  When we are done, we compute the RMSE (or whatever metric we want).
+
+```{r cv.code}
+for(r in 1:nreps){
+ for (k in 1:nfolds) {
+  traindat <- df[folds[r,]!=k,]
+  testdat <- df[folds[r,]==k,]
+  best.fit <- leaps::regsubsets(anchovy ~ ., data=traindat, nvmax = nvmax, method = "seqrep")
+  for (i in 1:nvmax) {
+    pred <- predict.regsubsets(best.fit, testdat, id = i)
+    cv.errors[r+(k-1)*nreps, i] <- 
+      mean((testdat$anchovy - pred)^2)
+    }
+ }
+}
+rmse.cv <- sqrt(apply(cv.errors, 2, mean, na.rm=TRUE))
+plot(rmse.cv, pch = 19, type = "b")
+```
+
+#### Cross-validation with caret package {-}
+
+The caret package allows us to do this easily.  `trainControl` specifies the type of cross-validation and `tuneGrid` specifies the parameter over which cross-validation will be done (in this case the size of the model). We use the `train()` function to fit the models and do the cross-validation.
+
+```{r caret.plot}
+library(caret)
+# Set up repeated k-fold cross-validation
+train.control <- trainControl(method = "repeatedcv", number=5, repeats=50)
+# Train the model
+step.model <- train(anchovy~., data = df,
+                    method = "leapSeq",
+                    tuneGrid = data.frame(nvmax = 1:nvmax),
+                    trControl = train.control
+                    )
+plot(step.model$results$RMSE, pch = 19, type = "b", ylab="RMSE")
+```
+The `$results` part of the output shows us the cross-validation metrics. Best depends on the metric we use.  A 2-parameter model is best for all the error metrics except R-squared. 
+
+```{r caret.results}
+step.model$results
+```
+
+The best 2-parameter model has Year and FIP.
+```{r caret.1b}
+coef(step.model$finalModel, id=2)
+```
+
+
+
+### Penalized regression: ridge regression
+
+<!--
+https://www.analyticsvidhya.com/blog/2017/06/a-comprehensive-guide-for-linear-ridge-and-lasso-regression/
+-->
+
+The problems with model selection using searching and selecting with some model fit criteria is that the selected model tends to be over-fit.  The p-values are not correct and the predictive value of the model is not optimal because of over-fitting.
+
+For this part, I am going to use the full data set with TOP and HPP added back in.  This is help show the problems caused by highly collinear variables.  I will z-score (demean and standardize variances to 1) so I can compare the effects of the different explanatory variables using the size of the coefficients.
+
+```{r z.score}
+dfz <- df.full
+for(i in colnames(df)){
+  pop_sd <- sd(df[,i])*sqrt((length(df[,i])-1)/(length(df[,i])))
+  pop_mean <- mean(df[,i])
+  dfz[,i] <- (df[,i]-pop_mean)/pop_sd
+}
+```
+
+One approach to dealing with variance inflation that arises from collinearity and models with many explanatory variable is penalized regression.  First, let's look at ridge regression.  The basic idea with penalized regression is that you penalize coefficient estimates that are far from 0.  The true coefficients are (likely) not 0 so fundamentally this will lead to biased coefficient estimates but the idea is that the inflated variance of the coefficient estimates is the bigger problem.  
+
+With ridge regression, we will assume that the coefficients have a mean of 0 and a variance of $1/\lambda$. This is our prior on the coefficients.  The $\beta_i$ are the most probable values given the data and the prior. Note, there are many other ways to derive ridge regression.  
+
+We will use the glmnet package to fit the anchovy catch with ridge regression.  To fit with a ridge penalty, we set `alpha=0`.
+
+```{r glmnet.ridge}
+library(glmnet)
+resp <- colnames(dfz)!="anchovy"
+x <- as.matrix(dfz[,resp])
+y <- as.matrix(dfz[,"anchovy"])
+fit.ridge <- glmnet(x, y, family="gaussian", alpha=0)
+```
+
+We need to choose a value for the penalty parameter $\lambda$ (called `s` in `coef.glmnet()`). If $\lambda$ is large, then our prior is that the coefficients are very close to 0.  If our $\lambda$ is small, then our prior is less informative.
+
+We can use cross-validation to choose $\lambda$.  This chooses a $\lambda$ that gives us the lowest out of sample errors. `cv.glmnet()` will do k-fold cross-validation and report the MSE.  We pick the $\lambda$ with the lowest MSE (`lambda.min`) or the largest value of $\lambda$ such that error is within 1 s.e. of the minimum (`lambda.1se`).  This value is computed via cross-validation so will vary.  We will take the average over a number of runs; here 20 for speed but 100 is better.
+
+Once we have a best $\lambda$ to use, we can get the coefficients at that value.
+```{r lambda.choice.ridge}
+n <- 20; s <- 0
+for(i in 1:n) s <- s + cv.glmnet(x, y, nfolds=5, alpha=0)$lambda.min
+s.best <- s/n
+coef(fit.ridge, s=s.best)
+```
+
+I will plot the standardized coefficients for the ordinary least squares coefficients against the coefficients using ridge regression.
+
+```{r coef.ridge, echo=FALSE}
+full <- lm(anchovy ~ ., data=dfz)
+coef.ridge <- as.vector(coef(fit.ridge, s=s.best))[-1]
+coef.full <- coef(full)[-1]
+labs <- rownames(coef(fit.ridge, s=s.best))[-1]
+op <- par(mar=c(5, 7, 4, 2) + 0.1)
+barplot(rbind(coef.full,coef.ridge), names.arg=labs, 
+        horiz=TRUE, las=2, beside=TRUE,
+        col=c("aquamarine3","coral"))
+legend("topright", c("ols","ridge"), pch=15, 
+       col=c("aquamarine3","coral"), 
+       bty="n")
+par(op)
+```
+
+This shows the problem caused by the highly collinear TOP and HPP.  They have highly inflated coefficient estimates that are offset by an inflated Year coefficient (in the opposite direction).  This is why we need to evaluate collinearity in our variables before fitting a linear regression.
+
+With ridge regression, all the estimates have shrunk towards 0 (as they should) but the collinear variables still have very large coefficients.
+
+### Penalized regression: Lasso
+
+In ridge regression, the coefficients will be shrunk towards 0 but none will be set to 0 (unless the OLS estimate happens to be 0).  Lasso is a type of regression that uses a penalty function where 0 is an option.  Lasso does a combination of variable selection and shrinkage.
+ 
+We can do lasso with `glmnet()` by setting `alpha=1`.
+
+```{r glmnet.lasso}
+fit.lasso <- glmnet(x, y, family="gaussian", alpha=1)
+```
+We select the best $\lambda$ as we did for ridge regression using cross-validation.
+```{r lambda.choice.lasso}
+n <- 20; s <- 0
+for(i in 1:n) s <- s + cv.glmnet(x, y, nfolds=5, alpha=1)$lambda.min
+s.best <- s/n
+coef.lasso <- as.vector(coef(fit.lasso, s=s.best))[-1]
+```
+
+We can compare to the estimates from ridge and OLS and see that the model is now more similar the models we got from stepwise variable selection.
+The main difference is that slp is included as a variable.
+
+```{r coef.lasso.plot, echo=FALSE}
+op <- par(mar=c(5, 7, 4, 2) + 0.1)
+barplot(rbind(coef.ridge, coef.lasso), 
+        names.arg=labs, xlim=c(-0.2,1.5),
+        horiz=TRUE, las=2, beside=TRUE,
+        col=c("coral", "black"))
+legend("topright", c("ridge", "lasso"), pch=15, 
+       col=c("coral", "black"), 
+       bty="n")
+par(op)
+```
+
+Lasso has estimated a model that is similar to what we got with stepwise variable selection without removing the collinear variables from our data set.  Year, air temperature, slp and FIP are the most important variables.
+
+### Penalized regression: Elastic net
+
+<!--
+https://www.analyticsvidhya.com/blog/2017/06/a-comprehensive-guide-for-linear-ridge-and-lasso-regression/
+-->
+
+Elastic net is uses both L1 and L2 regularization. Elastic regression generally works well when we have a big dataset.  We do not have a big dataset but we will try elastic net.  You can tune the amount of L1 and L2 mixing by adjusting `alpha` but for this example, we will just use `alpha=0.5`.
+
+```{r glmnet.elastic.net}
+fit.en <- glmnet(x, y, family="gaussian", alpha=0.5)
+n <- 20; s <- 0
+for(i in 1:n) s <- s + cv.glmnet(x, y, nfolds=5, alpha=0.5)$lambda.min
+s.best <- s/n
+coef.en <- as.vector(coef(fit.en, s=s.best))[-1]
+```
+
+
+```{r coef.en.plot, echo=FALSE}
+op <- par(mar=c(5, 7, 4, 2) + 0.1)
+barplot(rbind(coef.ridge, coef.lasso, coef.en), 
+        names.arg=labs, xlim=c(-0.2,1.5),
+        horiz=TRUE, las=2, beside=TRUE,
+        col=c("coral", "black", "red"))
+legend("topright", c("ridge", "lasso", "elastic net"), pch=15, 
+       col=c("coral", "black", "red"), 
+       bty="n")
+par(op)
+```
+As we might expect, elastic net is part way between the ridge regression model and the Lasso model.
+
+### Model selection with prior knowledge
+
+In Section 4.7.7 of  (Harrell 2015), a rule of thumb (based on shrinkage) for the number of predictors that can be used without overfitting is given: $(LR-p)/9$ where $LR$ is the likelihood ratio test $\chi^2$ of the full model against the null model with only intercept and $p$ is the number of variables in the full model.
+
+```{r eval.shrinkage}
+null <- lm(anchovy ~ 1, data=df)
+full <- lm(anchovy ~ ., data=df)
+a <- lmtest::lrtest(null, full)
+(a$Chisq[2]-a$Df[2])/9
+```
+
+This rule of thumb suggests that we could include six variables.  Let's try sardine, SST, BOP, HPP, and *Trachurus*.
+
+```{r fit.prior}
+fit.prior <- lm(anchovy ~ sardine+BOP+HPP+Trachurus, data=df.full)
+```
+
+## Comparing model prediction accuracy
+
+### MREG of first or second differences
+
+In the multivariate regression with ARMA errors, the response variable $x_t$ is not necessarily stationary since the covariates $c_t$'s need not be stationary.  If we wish to model the first or second differences of $x_t$, then we are potentially modeling a stationary process if differencing leads to a stationary process.
+We need to think carefully about how we set up a multivariate regression if our response variable is stationary.
+
+One recommendation is if $x_t$ is differenced, the same differencing is applied to the covariates.  The idea is if the response variable is stationary, we want to make sure that the independent variables are also stationary.  However, in a fisheries application $x_t - x_{t-1}$ often has a biological meaning, the yearly (or monthly or hourly) rate of change, and that rate of change is what one is trying explain with a covariate.  One would not necessarily expect the first difference to be stationary and one is trying to explain any trend in the one-step rate of change with some set of covariates.  On the other hand, if the response variable, the raw data or the first or second difference, is stationary then trying to explain its variability via a non-stationary covariate will clearly lead to the effect size of the covariates being zero.  We don't need to fit a model to tell us that.
+
+
+<!--chapter:end:Forecasting-6-2-Covariates-MSEG.Rmd-->
+
+
+# Seasonality
+
+Placeholder
+
+
+## Chinook data
+### Load the chinook salmon data set
+### Plot seasonal data
+## Seasonal Exponential Smoothing Model
+### Force seasonality to evolve more
+## Seasonal ARIMA model
+## Missing values
+## Forecast evaluation
+
+<!--chapter:end:Forecasting-7-1-Seasonality.Rmd-->
+
+`r if (knitr::is_html_output()){ '
+# References {-}
+<div id="refs"></div>
+'}`
+
+<!--chapter:end:Forecasting-9-0-References.Rmd-->
+
+
+# (APPENDIX) Appendix {-}
+
+Placeholder
+
+# Inputting data
+
+Placeholder
+
+
+### one response variable {-}
+### Many response variables {-}
+### Many response variables, two time variables {-}
+### One response variable, multiple explanatory variables {-}
+
+<!--chapter:end:Forecasting-9-1-Inputting-Data.Rmd-->
+
+
+# Downloading ICOADS covariates
+
+Placeholder
+
+
+
+<!--chapter:end:Forecasting-9-2-Downloading-ICOADS.Rmd-->
+
