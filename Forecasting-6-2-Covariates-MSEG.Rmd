@@ -1,5 +1,10 @@
 ## Multivariate linear regression
 
+<!--
+if(file.exists("Fish-Forecast.Rmd")) file.remove("Fish-Forecast.Rmd")
+bookdown::preview_chapter("Forecasting-6-2-Covariates-MSEG.Rmd")
+-->
+
 In this chapter, I will illustrate developing a forecasting model using a multivariate regression (MREG).  I will show the approach the Stergiou and Christou used to develop MREG models and then compare to other approaches.  Fitting multivariate linear regressions with ARMA errors and fitting ARMAX models will be covered in separate chapters.
 
 A multivariate linear regression model with Gaussian errors take the form:
@@ -42,15 +47,11 @@ In addition to the environmental covariates, Stergiou and Christou used many cov
 ```{r fish.cov}
 colnames(fish.cov)
 ```
-For anchovy, the fishery effort metrics from the purse seine fishery were used. Lastly, biological covariates were included which were the landings of other species.  Stergiou and Christou state (page 118) that the other species modelled by VAR (page 114) was included. This would mean sardine was used as an explanatory variable.  However in Table 3 (page 119), it appears that *Trachurus* (Horse mackerel) was included.  Thus I included *Trachurus* and not sardine as the biological explanatory variable.
+For anchovy, the fishery effort metrics from the purse seine fishery were used. Lastly, biological covariates were included which were the landings of other species.  Stergiou and Christou state (page 118) that the other species modelled by VAR (page 114) was included. This would mean sardine was used as an explanatory variable.  However in Table 3 (page 119), it appears that *Trachurus* (Horse mackerel) was included.  It is not clear if sardine was also included but not chosen as an important variable.  I included *Trachurus* and not sardine as the biological explanatory variable.
 
-### Prepare the data
+#### Preparing the data frame {-}
 
-We will start by creating a dataframe with our response variable and independent variables.  We will model anchovy landings as the response variable.  The covariates are lagged by one year, following Stergiou and Christou.  This means that the catch in year $t$ is regressed against the covariates in year $t-1$. 
-
-We set up our data frame as follows. We will use the 1965 to 1987 catch data as the response. We use 1964 to 1986 for all the explanatory variables (following Stergiou and Christou). We use $t$ 1 to 23 as a "year" covariate.
-
-```{r cov.dataframe}
+```{r cov.dataframe, echo=FALSE}
 # response
 df <- data.frame(anchovy=anchovy$log.metric.tons,
                  Year=sardine$Year)
@@ -76,7 +77,23 @@ colnames(df) <- sapply(colnames(df), function(x){rev(str_split(x,"Purse.seiners.
 colnames(df) <- sapply(colnames(df), function(x){str_split(x,"[.]")[[1]][1]})
 df <- df[,colnames(df)!="VAP"]
 ```
-In total, there are 12 covariates and 23 years of data---which is not much data per explanatory variable.
+
+We will model anchovy landings as the response variable.  The covariates are lagged by one year, following Stergiou and Christou.  This means that the catch in year $t$ is regressed against the covariates in year $t-1$. We set up our data frame as follows. We use the 1965 to 1987 catch data as the response. We use 1964 to 1986, so year prior, for all the explanatory variables and we log transform the explanatory variables (following Stergiou and Christou). We use $t$ 1 to 23 as a "year" covariate. Our data frame will have the following columns:
+```{r df.columns}
+colnames(df)
+```
+In total, there are `r ncol(df)-1` covariates and `r nrow(df)` years of data---which is not much data per explanatory variable.  Section \@ref(cov.df) shows the R code to create the `df` data frame with the response variable and all the explanatory variables. 
+
+For most of the analyses, we will use the untransformed variables, however for some analyses, we will want the effect sizes (the estimated $\beta$'s) to be on the same scale.  For these analyses, we will use the z-scored variables, which will be stored in data frame `dfz`.  z-scoring removes the mean and normalizes the variance to 1.
+
+```{r z.score}
+dfz <- df
+for(i in colnames(df)){
+  pop_sd <- sd(df[,i])*sqrt((length(df[,i])-1)/(length(df[,i])))
+  pop_mean <- mean(df[,i])
+  dfz[,i] <- (df[,i]-pop_mean)/pop_sd
+}
+```
 
 ### Collinearity
 
@@ -123,7 +140,7 @@ This indicates that TOP and HPP can be explained by the other variables.
 
 ### Effect of collinearity
 
-One thing that happens when we have collinearity is that we will get "complementary" (negative matched by positive) and very large coefficients in the variables that are collinear. We see this when we fit a linear regression with all the variables. 
+One thing that happens when we have collinearity is that we will get "complementary" (negative matched by positive) and very large coefficients in the variables that are collinear. We see this when we fit a linear regression with all the variables. I use the z-scored data so that the effect sizes (x-axis) are on the same scale.
 
 ```{r coef.full, echo=FALSE}
 fit.full <- lm(anchovy ~ ., data=dfz)
@@ -155,57 +172,57 @@ Stergiou and Christou do not state how (if at all) they address the collinearity
 http://www.sthda.com/english/articles/37-model-selection-essentials-in-r/154-stepwise-regression-essentials-in-r/
 -->
 
-Stergiou and Christou state that the covariates to include were selected with stepwise variable selection.  Stepwise variable selection is a type of automatic variable selection.  Stepwise variable selection has many statistical problems and the problems are worse when the covariates are collinear as they are in our case  (see this [link](https://www.stata.com/support/faqs/statistics/stepwise-regression-problems/) for a review of the problems with stepwise variable selection). The jist of the problem is one of over-fitting. A stepwise selection procedure will tend to choose variables that, by chance, have large coefficients. With only 23 data points and high collinearity, this is likely to be a rather large problem for our dataset. However I use stepwise variable selection here to replicate Stergiou and Christou.  I will follow this with an example of other more robust approaches to model selection for linear regression.
+Stergiou and Christou state that the covariates to include were selected with stepwise variable selection.  Stepwise variable selection is a type of automatic variable selection.  Stepwise variable selection has many statistical problems and the problems are worse when the covariates are collinear as they are in our case  (see this [link](https://www.stata.com/support/faqs/statistics/stepwise-regression-problems/) for a review of the problems with stepwise variable selection). The jist of the problem is one of over-fitting. A stepwise selection procedure will tend to choose variables that, by chance, have large coefficients. With only 23 data points and high collinearity, this is likely to be a rather large problem for our dataset. As we saw, collinearity tends to cause very large positive effect sizes offset by large negative effect sizes. However I use stepwise variable selection here to replicate Stergiou and Christou.  I will follow this with an example of other more robust approaches to model selection for linear regression.
 
-Stergiou and Christou do not give specifics on how they implemented stepwise variable selection. Stepwise variable selection refers to a forward-backward search, however there are many ways we can implement this and different approaches give different answers.  I will illustrate a number of approaches using R.
+Stergiou and Christou do not give specifics on how they implemented stepwise variable selection. Stepwise variable selection refers to a forward-backward search, however there are many ways we can implement this and different approaches give different answers.  The starting model in particular will have a large effect on the ending model. I will illustrate a number of approaches for doing stepwise variable selection using R.
 
 #### step() {-}
 
-When using the `step()` function in the stats package, we specify the starting model and the scope of the search (i.e., the smallest model and the largest model).  We set direction equal to "both" to specify stepwise variable selection. We also need to specify the selection criteria.  The default is to use AIC.
+When using the `step()` function in the stats package (and the related `stepAIC()` function in the MASS package) , we specify the starting model and the scope of the search, i.e., the smallest model and the largest model.  We set direction equal to "both" to specify stepwise variable selection. We also need to specify the selection criteria.  The default is to use AIC.
 
-Let's start with a search that starts with a full model which has all the explanatory variables. The first argument to `step()` is the starting model and `scope` specifies the maximum and minimum models. `direction="both"` is stepwise variable selection.
+Let's start with a search that starts with a full model which has all the explanatory variables. The first argument to `step()` is the starting model and `scope` specifies the maximum and minimum models as a list. `direction="both"` is stepwise variable selection. `trace=0` turns off the reporting.
 
 ```{r stepAIC}
 null <- lm(anchovy ~ 1, data=df)
 full <- lm(anchovy ~ ., data=df)
-step.model1 <- step(full, 
+step.full <- step(full, 
                        scope=list(lower=null, upper=full),
                        direction="both", trace = 0)
-step.model1
+step.full
 ```
 We can also apply `step()` with the caret package:
 ```{r stepAIC.caret}
-step.model1c <- caret::train(anchovy ~ ., data = df,
+step.caret <- caret::train(anchovy ~ ., data = df,
                     method = "lmStepAIC",
                     direction = "both",
                     trace = FALSE
 )
-step.model1c$finalModel
+step.caret$finalModel
 ```
-Note that `method="lmStepAIC" will always start with the full model.
+Note that `method="lmStepAIC"` in the `train()` function will always start with the full model.
 
-The AIC for this model is `r round(AIC(step.model1),digits=1)`. This is a larger model than that reported in Table 3 (page 119) of Stergiou and Christou. The model in Table 3 includes only Year, *Trachurus* catch, SST, and FIP.  The model selected by `step()` starting from the full model includes Year, *Trachurus* catch, air temperature, vertical wind, BOP, FIP and TOP.
+The AIC for this model is `r round(AIC(step.full),digits=1)`. This is a larger model than that reported in Table 3 (page 119) of Stergiou and Christou. The model in Table 3 includes only Year, *Trachurus* catch, SST, and FIP.  The model selected by `step()` starting from the full model includes Year, *Trachurus* catch, air temperature, vertical wind, BOP, FIP and TOP.
 
 Let's repeat but start the search with the smallest model.
 ```{r stepAIC2}
 null <- lm(anchovy ~ 1, data=df)
 full <- lm(anchovy ~ ., data=df)
-step.model <- step(null, 
+step.null <- step(null, 
                    scope=list(lower=null, upper=full),
                    direction="both", trace = 0)
-step.model
+step.null
 ```
 
-This model has an AIC of `r round(AIC(step.model),digits=1)`. This AIC is smaller (better), which illustrates that you need to be careful how you set up the search. This selected model is very similar to that in Table 3 except that air temperature instead of SST is selected.  Air temperature and SST are correlated, however.
+This model has an AIC of `r round(AIC(step.null),digits=1)`. This AIC is larger (worse), which illustrates that you need to be careful how you set up the search. This selected model is very similar to that in Table 3 except that air temperature instead of SST is selected.  Air temperature and SST are correlated, however.
 
 The air temperature is removed from the best model if we use BIC as the model selection criteria. This is done by setting `k=log(n)` where $n$ is sample size.
 
 ```{r stepBIC}
-step.model.bic <- step(null, 
+step.null.bic <- step(null, 
                        scope=list(lower=null, upper=full),
                        direction="both", trace = 0,
                        k=log(nrow(df)))
-step.model.bic
+step.null.bic
 ```
 
 We can also do stepwise variable selection using the leaps package.  However, the algorithm or starting model is different than for `step()` and the results are correspondingly different.  The results are similar to `step()` starting from the full model but not identical.  See the next section for a brief introduction to the leaps package.
@@ -231,7 +248,7 @@ models <- leaps::regsubsets(anchovy~., data = df,
                      method = "exhaustive")
 plot(models, scale="bic")
 ```
-We see that when we use BIC as the selection criteria, the best model has Year, *Trachurus*, and FIP.  We can set `method="seqrep"` for stepwise variable selection (aka sequential replacement).
+We see that when we use BIC as the selection criteria, the best model has Year, *Trachurus*, and FIP.
 
 Let's look at more than one model for each model size.  Let's take the top 3 models for each model size and look at their BICs.
 
@@ -244,33 +261,63 @@ plot(models, scale="bic")
 We can plot the BIC for each size of model also. 
 ```{r leaps.bic.plot, fig.height=5}
 smodels = summary(models)
-k <- apply(smodels$which,1,sum)
-plot(k, smodels$bic, xlab = "Number of Variables", ylab = "BIC")
+nvar <- apply(smodels$which,1,sum)-1
+plot(nvar, smodels$bic, xlab = "Number of Variables", ylab = "BIC")
 min.bic <- which.min(smodels$bic)
-points(k[min.bic], smodels$bic[min.bic], pch = 20, col = "red")
+points(nvar[min.bic], smodels$bic[min.bic], pch = 20, col = "red")
 abline(h = smodels$bic[min.bic]+2, lty=2)
 ```
 
 These two plots show that there are many models within 2 of the top model.  All the best models have Year and FIP, but there are many different 3rd and 4th variables that can be added and give a similar BIC.  Interesting SST does not appear in any of the top models, while it was selected by Stergiou and Christou.  This suggests that they computed the yearly SST values slightly differently than I did.  My remote sensing data source was slightly different and that might be the cause.
 
+#### Comparison of models chosen by AIC, AICc and BIC
+
 `step()` uses AIC instead of the AICc (corrected for small sample size).  In our case, $n=23$ is fairly small and using AICc would be better suited for such a small dataset.  leaps does not return AIC or AICc, but we can compute them.  Note that Mallow's Cp asymptotically has the same ordering as AIC, but $n=23$ is small and it does not have the same ordering as AIC in our case.
 
-First we use `summary()` to get a matrix showing the best model of each size.  This matrix shows what variable is in the best model of each size.
+First we use `summary()` to get a matrix showing the best model of each size.  This matrix shows what variable is in the best model of each size. Note that this best model does not depend on the metric (BIC, AIC, etc) because we are looking at models with the same number of variables.  The metric affects the penalty for different number of variables and thus only affects the models choice when we compare models of different sizes.
 ```{r summary.leaps}
+models <- leaps::regsubsets(anchovy~., data = df, 
+                     nvmax = 11, nbest=1,
+                     method = "exhaustive")
 smodels <- summary(models)
 head(smodels$which[,1:10])
 ```
 
-Next we compute AICc from BIC and find the row of the matrix above where AICc is the smallest. `k` is the number of parameters.
+Next we compute AIC and AICc from BIC. `k` is the number of parameters. We need to add one more parameter for the estimated variance.
 
 ```{r leaps.aicc}
-k <- apply(smodels$which,1,sum)
-AICc <- smodels$bic+k*(2+(2*k+2)/(23-k-1)-log(23))
-rmin <- which(AICc==min(AICc))
-smodels$which[rmin,]
+k <- apply(smodels$which,1,sum)+1
+mod.aicc <- smodels$bic+k*(2+(2*k+2)/(23-k-1))-log(23)*k
+mod.aic <- smodels$bic+k*2-log(23)*k
 ```
-This shows that AICc would pick the same model as BIC; one with an intercept, Year, FIP and *Trachurus*.
+Now we will plot the metrics for each model size. BIC, AICc and Mallow's Cp all chose models with an intercept and 3 variables:  Year, *Trachurus* and FIP.  AIC selects a much larger model, however with $n=23$, AICc would be a better choice. 
+```{r leaps.aicc.plot, echo=FALSE}
+nvar <- k-2
+val <- smodels$bic-min(smodels$bic)
+plot(nvar, val, xlab = "Number of Variables", ylab = "BIC", type="l", lwd=2, ylim=c(0,20))
+min.pt <- which.min(val)
+points(nvar[min.pt], val[min.pt], pch = 19, col = "red")
+val <- mod.aicc-min(mod.aicc)
+lines(nvar, val, lwd=2, lty=2)
+min.pt <- which.min(val)
+points(nvar[min.pt], val[min.pt], pch = 15, col = "red")
+val <- mod.aic-min(mod.aic)
+lines(nvar, val, lwd=2, lty=3)
+min.pt <- which.min(val)
+points(nvar[min.pt], val[min.pt], pch = 17, col = "red")
+val <- smodels$cp-min(smodels$cp)
+lines(nvar, val,lwd=2, lty=4)
+min.pt <- which.min(val)
+points(nvar[min.pt], val[min.pt], pch = 18, col = "red")
+legend("topleft",c("BIC","AICc","AIC","Cp"),lty=c(1,2,3,4),pch=c(19,15,17,18))
+```
 
+To  find the best model, find the row of the `smodels` matrix  where AICc is the smallest.  For example, here is the best model with AICc.
+
+```{r leaps.aicc.best}
+rmin <- which(mod.aicc==min(mod.aicc))
+colnames(smodels$which)[smodels$which[rmin,]]
+```
 
 ### Model selection with cross-validation[^ISLcv]
 
@@ -285,7 +332,9 @@ http://www-bcf.usc.edu/~gareth/ISL/
 https://lagunita.stanford.edu/c4x/HumanitiesSciences/StatLearning/asset/ch6.html
 -->
 
-Model selection with cross-validation is a way of estimating the out-of-sample predictive performance of a *process* for building a model. So for example, you could use cross-validation to ask the question, "If I select a best model with AIC does that approach led to models with better predictive performance over selecting a best model with BIC?". 
+Variable selection (forward, backward, stepwise) is known to overfit models and variables will be chosen that just happen to have high correlation with your response variable for your particular dataset.  The result is models with low out-of-sample predictive accuracy.  Cross-validation is a way to try to deal with that problem.
+
+Model selection with cross-validation estimates the out-of-sample predictive performance of a *process* for building a model. So for example, you could use cross-validation to ask the question, "If I select a best model with AIC does that approach led to models with better predictive performance over selecting a best model with BIC?". 
 
 The basic idea behind cross-validation is that part of the data is used for fitting (training) the model and the left-out data is used for assessing predictions.  You predict the left-out data and compare the actual data to the predictions. There are two common types of cross-validation: leave-one-out cross-validation (LOOCV) and k-fold cross-validationa.
 
@@ -305,7 +354,7 @@ Let's start by defining a `predict` function for `regsubsets` objects[^predictfu
 predict.regsubsets <- function(object, newdata, id, ...) {
     form <- as.formula(object$call[[2]])
     mat <- model.matrix(form, newdata)
-    coefi <- leaps::coef.regsubsets(object, id = id)
+    coefi <- leaps:::coef.regsubsets(object, id = id)
     mat[, names(coefi)] %*% coefi
 }
 ```
@@ -315,9 +364,9 @@ Next we set up a matrix that defines the folds. Each row has numbers 1 to k (fol
 ```{r folds.rows}
 nfolds <- 5
 nreps <- 20
-folds <- matrix(
-         sample(rep(1:nfolds, length = nreps*nrow(df))),
-         nreps, nrow(df))
+a <- matrix(NA, nreps, nrow(df))
+for(i in 1:nreps) 
+  folds[i,] <- sample(rep(1:nfolds, length = nrow(df)))
 ```
 
 Now we can use `df[folds[r,]==k]` to specify the test data for the k-th fold of the r-th replicate.  And `df[folds[r,]!=k]` is the training dataset for the k-th fold of the r-th replicate. The **fold** jargon is just another word for group.  We divide the data into k groups and we call each group a **fold**. 
@@ -345,8 +394,18 @@ for(r in 1:nreps){
  }
 }
 rmse.cv <- sqrt(apply(cv.errors, 2, mean, na.rm=TRUE))
-plot(rmse.cv, pch = 19, type = "b")
+plot(1:nvmax, rmse.cv, pch = 19, type = "b",xlab="Number of Variables", ylab="RMSE")
 ```
+
+The model size with the best predictive performance is smaller, intercept plus 2 variables instead of intercept plus 3 variables.  This suggests that we should constrain our model size to 2 variables (plus intercept).  Note, that with a 5-fold crossvalidation, we were fitting the models to 19 data points instead of 23.  However, even with a 23-fold crossvalidation (Leave One Out CV), a model with 2 variables has the lowest RMSE.
+
+The best fit 2 variable model has Year and FIP.
+```{r best.fit.2}
+best.fit <- leaps::regsubsets(anchovy ~ ., data=traindat, nvmax = 2, method = "seqrep")
+tmp <- summary(best.fit)$which
+colnames(tmp)[tmp[2,]]
+```
+
 
 #### Cross-validation with caret package {-}
 
@@ -355,7 +414,7 @@ The caret package allows us to do this easily.  `trainControl` specifies the typ
 ```{r caret.plot}
 library(caret)
 # Set up repeated k-fold cross-validation
-train.control <- trainControl(method = "repeatedcv", number=5, repeats=50)
+train.control <- trainControl(method = "repeatedcv", number=5, repeats=20)
 # Train the model
 step.model <- train(anchovy~., data = df,
                     method = "leapSeq",
@@ -375,28 +434,15 @@ The best 2-parameter model has Year and FIP.
 coef(step.model$finalModel, id=2)
 ```
 
-
-
 ### Penalized regression: ridge regression
 
 <!--
 https://www.analyticsvidhya.com/blog/2017/06/a-comprehensive-guide-for-linear-ridge-and-lasso-regression/
 -->
 
-The problems with model selection using searching and selecting with some model fit criteria is that the selected model tends to be over-fit.  The p-values are not correct and the predictive value of the model is not optimal because of over-fitting.
+The problem with model selection using searching and selecting with some model fit criteria is that the selected model tends to be over-fit---even when using cross-validation.  The predictive value of the model is not optimal because of over-fitting.
 
-For this part, I am going to use the full data set with TOP and HPP added back in.  This is help show the problems caused by highly collinear variables.  I will z-score (demean and standardize variances to 1) so I can compare the effects of the different explanatory variables using the size of the coefficients.
-
-```{r z.score}
-dfz <- df.full
-for(i in colnames(df)){
-  pop_sd <- sd(df[,i])*sqrt((length(df[,i])-1)/(length(df[,i])))
-  pop_mean <- mean(df[,i])
-  dfz[,i] <- (df[,i]-pop_mean)/pop_sd
-}
-```
-
-One approach to dealing with variance inflation that arises from collinearity and models with many explanatory variable is penalized regression.  First, let's look at ridge regression.  The basic idea with penalized regression is that you penalize coefficient estimates that are far from 0.  The true coefficients are (likely) not 0 so fundamentally this will lead to biased coefficient estimates but the idea is that the inflated variance of the coefficient estimates is the bigger problem.  
+Another approach to dealing with variance inflation that arises from collinearity and models with many explanatory variable is penalized regression.  First, let's look at ridge regression.  The basic idea with penalized regression is that you penalize coefficient estimates that are far from 0.  The true coefficients are (likely) not 0 so fundamentally this will lead to biased coefficient estimates but the idea is that the inflated variance of the coefficient estimates is the bigger problem.  
 
 With ridge regression, we will assume that the coefficients have a mean of 0 and a variance of $1/\lambda$. This is our prior on the coefficients.  The $\beta_i$ are the most probable values given the data and the prior. Note, there are many other ways to derive ridge regression.  
 
@@ -461,7 +507,7 @@ coef.lasso <- as.vector(coef(fit.lasso, s=s.best))[-1]
 ```
 
 We can compare to the estimates from ridge and OLS and see that the model is now more similar the models we got from stepwise variable selection.
-The main difference is that slp is included as a variable.
+The main difference is that slp and air are included as variables.
 
 ```{r coef.lasso.plot, echo=FALSE}
 op <- par(mar=c(5, 7, 4, 2) + 0.1)
@@ -475,7 +521,7 @@ legend("topright", c("ridge", "lasso"), pch=15,
 par(op)
 ```
 
-Lasso has estimated a model that is similar to what we got with stepwise variable selection without removing the collinear variables from our data set.  Year, air temperature, slp and FIP are the most important variables.
+Lasso has estimated a model that is similar to what we got with stepwise variable selection without removing the collinear variables from our data set. 
 
 ### Penalized regression: Elastic net
 
@@ -507,9 +553,15 @@ par(op)
 ```
 As we might expect, elastic net is part way between the ridge regression model and the Lasso model.
 
+### Comparing model prediction accuracy
+
+We can us cross-validation compare prediction accuracy if we have a set of models to compare.  In our case, we do not have a set of models but rather a set of number variables.  We cannot use variable selection with our full dataset to chose the variables and then turn around and use cross-validation, with the same dataset, to test the out-of-sample prediction accuracy.  Anytime you double-use your data like that, you will have severe bias problems.
+
+Instead, we will test our models using the two years that we held out for testing, 1988 and 1989.
+
 ### Model selection with prior knowledge
 
-In Section 4.7.7 of  (Harrell 2015), a rule of thumb (based on shrinkage) for the number of predictors that can be used without overfitting is given: $(LR-p)/9$ where $LR$ is the likelihood ratio test $\chi^2$ of the full model against the null model with only intercept and $p$ is the number of variables in the full model.
+In Section 4.7.7 of  (Harrell 2015), a rule of thumb (based on shrinkage) for the number of predictors that can be used without overfitting is given by: $(LR-p)/9$ where $LR$ is the likelihood ratio test $\chi^2$ of the full model against the null model with only intercept and $p$ is the number of variables in the full model.
 
 ```{r eval.shrinkage}
 null <- lm(anchovy ~ 1, data=df)
@@ -518,18 +570,12 @@ a <- lmtest::lrtest(null, full)
 (a$Chisq[2]-a$Df[2])/9
 ```
 
-This rule of thumb suggests that we could include six variables.  Let's try sardine, SST, BOP, HPP, and *Trachurus*.
+This rule of thumb suggests that we could include six variables. Another approach to model building would be to select environmental and biological variables based on the known biology of anchovy and to select one effort variable or a composite "effort" based on a combination of the effort variables.
 
-```{r fit.prior}
-fit.prior <- lm(anchovy ~ sardine+BOP+HPP+Trachurus, data=df.full)
+### Creating the data frame for model fitting {#cov.df}
+
+Code to make the `df` data frame used in the model fitting functions.
+
+```{r ref.label="cov.dataframe",eval=FALSE}
 ```
-
-## Comparing model prediction accuracy
-
-### MREG of first or second differences
-
-In the multivariate regression with ARMA errors, the response variable $x_t$ is not necessarily stationary since the covariates $c_t$'s need not be stationary.  If we wish to model the first or second differences of $x_t$, then we are potentially modeling a stationary process if differencing leads to a stationary process.
-We need to think carefully about how we set up a multivariate regression if our response variable is stationary.
-
-One recommendation is if $x_t$ is differenced, the same differencing is applied to the covariates.  The idea is if the response variable is stationary, we want to make sure that the independent variables are also stationary.  However, in a fisheries application $x_t - x_{t-1}$ often has a biological meaning, the yearly (or monthly or hourly) rate of change, and that rate of change is what one is trying explain with a covariate.  One would not necessarily expect the first difference to be stationary and one is trying to explain any trend in the one-step rate of change with some set of covariates.  On the other hand, if the response variable, the raw data or the first or second difference, is stationary then trying to explain its variability via a non-stationary covariate will clearly lead to the effect size of the covariates being zero.  We don't need to fit a model to tell us that.
 
