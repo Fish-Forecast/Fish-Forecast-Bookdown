@@ -25,7 +25,7 @@
 <meta name="author" content="Elizabeth Holmes">
 
 
-<meta name="date" content="2018-12-03">
+<meta name="date" content="2018-12-05">
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -189,9 +189,9 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 </ul></li>
 <li class="chapter" data-level="7.3" data-path="7-3-further-reading.html"><a href="7-3-further-reading.html"><i class="fa fa-check"></i><b>7.3</b> Further Reading</a></li>
 </ul></li>
-<li class="chapter" data-level="8" data-path="8-testing-forecast-accuracy.html"><a href="8-testing-forecast-accuracy.html"><i class="fa fa-check"></i><b>8</b> Testing forecast accuracy</a><ul>
-<li class="chapter" data-level="8.0.1" data-path="8-testing-forecast-accuracy.html"><a href="8-testing-forecast-accuracy.html#training-settest-set"><i class="fa fa-check"></i><b>8.0.1</b> Training set/test set</a></li>
-<li class="chapter" data-level="8.0.2" data-path="8-testing-forecast-accuracy.html"><a href="8-testing-forecast-accuracy.html#cross-validation"><i class="fa fa-check"></i><b>8.0.2</b> Cross-Validation</a></li>
+<li class="chapter" data-level="8" data-path="8-perf-testing.html"><a href="8-perf-testing.html"><i class="fa fa-check"></i><b>8</b> Testing forecast accuracy</a><ul>
+<li class="chapter" data-level="8.0.1" data-path="8-perf-testing.html"><a href="8-perf-testing.html#training-settest-set"><i class="fa fa-check"></i><b>8.0.1</b> Training set/test set</a></li>
+<li class="chapter" data-level="8.0.2" data-path="8-perf-testing.html"><a href="8-perf-testing.html#cross-validation"><i class="fa fa-check"></i><b>8.0.2</b> Cross-Validation</a></li>
 </ul></li>
 <li class="chapter" data-level="9" data-path="9-the-model-picked-by-auto-arima.html"><a href="9-the-model-picked-by-auto-arima.html"><i class="fa fa-check"></i><b>9</b> The model picked by auto.arima</a><ul>
 <li class="chapter" data-level="9.1" data-path="9-1-metrics.html"><a href="9-1-metrics.html"><i class="fa fa-check"></i><b>9.1</b> Metrics</a><ul>
@@ -232,10 +232,9 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="11.3.6" data-path="11-3-multivariate-linear-regression.html"><a href="11-3-multivariate-linear-regression.html#penalized-regression-ridge-regression-1"><i class="fa fa-check"></i><b>11.3.6</b> Penalized regression: ridge regression</a></li>
 <li class="chapter" data-level="11.3.7" data-path="11-3-multivariate-linear-regression.html"><a href="11-3-multivariate-linear-regression.html#penalized-regression-lasso-1"><i class="fa fa-check"></i><b>11.3.7</b> Penalized regression: Lasso</a></li>
 <li class="chapter" data-level="11.3.8" data-path="11-3-multivariate-linear-regression.html"><a href="11-3-multivariate-linear-regression.html#penalized-regression-elastic-net-1"><i class="fa fa-check"></i><b>11.3.8</b> Penalized regression: Elastic net</a></li>
-<li class="chapter" data-level="11.3.9" data-path="11-3-multivariate-linear-regression.html"><a href="11-3-multivariate-linear-regression.html#model-selection-with-prior-knowledge-1"><i class="fa fa-check"></i><b>11.3.9</b> Model selection with prior knowledge</a></li>
-<li class="chapter" data-level="11.3.10" data-path="11-3-multivariate-linear-regression.html"><a href="11-3-multivariate-linear-regression.html#comparing-model-prediction-accuracy-1"><i class="fa fa-check"></i><b>11.3.10</b> Comparing model prediction accuracy</a></li>
-<li class="chapter" data-level="11.3.11" data-path="11-3-multivariate-linear-regression.html"><a href="11-3-multivariate-linear-regression.html#mreg-of-first-or-second-differences-1"><i class="fa fa-check"></i><b>11.3.11</b> MREG of first or second differences</a></li>
-<li class="chapter" data-level="11.3.12" data-path="11-3-multivariate-linear-regression.html"><a href="11-3-multivariate-linear-regression.html#cov.df"><i class="fa fa-check"></i><b>11.3.12</b> Creating the data frame for model fitting</a></li>
+<li class="chapter" data-level="11.3.9" data-path="11-3-multivariate-linear-regression.html"><a href="11-3-multivariate-linear-regression.html#comparing-model-prediction-accuracy-1"><i class="fa fa-check"></i><b>11.3.9</b> Comparing model prediction accuracy</a></li>
+<li class="chapter" data-level="11.3.10" data-path="11-3-multivariate-linear-regression.html"><a href="11-3-multivariate-linear-regression.html#model-selection-with-prior-knowledge-1"><i class="fa fa-check"></i><b>11.3.10</b> Model selection with prior knowledge</a></li>
+<li class="chapter" data-level="11.3.11" data-path="11-3-multivariate-linear-regression.html"><a href="11-3-multivariate-linear-regression.html#cov.df"><i class="fa fa-check"></i><b>11.3.11</b> Creating the data frame for model fitting</a></li>
 </ul></li>
 </ul></li>
 <li class="chapter" data-level="12" data-path="12-seasonality.html"><a href="12-seasonality.html"><i class="fa fa-check"></i><b>12</b> Seasonality</a><ul>
@@ -301,7 +300,8 @@ e_t \sim N(0,\sigma)
 <span class="kw">library</span>(Hmisc)
 <span class="kw">library</span>(stringr)
 <span class="kw">library</span>(caret)
-<span class="kw">library</span>(leaps)</code></pre></div>
+<span class="kw">library</span>(leaps)
+<span class="kw">library</span>(forecast)</code></pre></div>
 <div id="covariates-used-in-stergiou-and-christou-1" class="section level3">
 <h3><span class="header-section-number">11.3.1</span> Covariates used in Stergiou and Christou</h3>
 <p>Stergiou and Christou used five environmental covariates: air temperature (air), sea-level pressure (slp), sea surface temperature (sst), vertical wind speed (vwnd), and wind speed cubed (wspd3). Monthly values for these covariates in three 1 degree boxes were taken from the COADS database, and then a yearly average over all months in the three boxes was used to compute a yearly average.</p>
@@ -442,16 +442,8 @@ step.full</code></pre></div>
                     <span class="dt">method =</span> <span class="st">&quot;lmStepAIC&quot;</span>,
                     <span class="dt">direction =</span> <span class="st">&quot;both&quot;</span>,
                     <span class="dt">trace =</span> <span class="ot">FALSE</span>
-)</code></pre></div>
-<pre><code>## Warning: attempting model selection on an essentially perfect fit is
-## nonsense
-
-## Warning: attempting model selection on an essentially perfect fit is
-## nonsense
-
-## Warning: attempting model selection on an essentially perfect fit is
-## nonsense</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">step.caret<span class="op">$</span>finalModel</code></pre></div>
+)
+step.caret<span class="op">$</span>finalModel</code></pre></div>
 <pre><code>## 
 ## Call:
 ## lm(formula = .outcome ~ Year + air + vwnd + BOP + FIP + TOP, 
@@ -550,6 +542,11 @@ mod.aic &lt;-<span class="st"> </span>smodels<span class="op">$</span>bic<span c
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">rmin &lt;-<span class="st"> </span><span class="kw">which</span>(mod.aicc<span class="op">==</span><span class="kw">min</span>(mod.aicc))
 <span class="kw">colnames</span>(smodels<span class="op">$</span>which)[smodels<span class="op">$</span>which[rmin,]]</code></pre></div>
 <pre><code>## [1] &quot;(Intercept)&quot; &quot;Year&quot;        &quot;Trachurus&quot;   &quot;FIP&quot;</code></pre>
+<p>In comparison, the best model with AIC is larger.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">rmin &lt;-<span class="st"> </span><span class="kw">which</span>(mod.aic<span class="op">==</span><span class="kw">min</span>(mod.aic))
+<span class="kw">colnames</span>(smodels<span class="op">$</span>which)[smodels<span class="op">$</span>which[rmin,]]</code></pre></div>
+<pre><code>## [1] &quot;(Intercept)&quot; &quot;Year&quot;        &quot;air&quot;         &quot;vwnd&quot;        &quot;BOP&quot;        
+## [6] &quot;FIP&quot;         &quot;TOP&quot;</code></pre>
 </div>
 </div>
 <div id="model-selection-with-cross-validationislcv" class="section level3">
@@ -626,14 +623,14 @@ step.model &lt;-<span class="st"> </span><span class="kw">train</span>(anchovy<s
 <p><img src="Fish-Forecast_files/figure-html/caret.plot-1.png" width="672" /> The <code>$results</code> part of the output shows us the cross-validation metrics. Best depends on the metric we use. A 2-parameter model is best for all the error metrics except R-squared.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">step.model<span class="op">$</span>results</code></pre></div>
 <pre><code>##   nvmax      RMSE  Rsquared       MAE     RMSESD RsquaredSD      MAESD
-## 1     1 0.2000660 0.8643812 0.1696020 0.06341074 0.10858801 0.05810645
-## 2     2 0.1936095 0.8844205 0.1707378 0.05515394 0.08396911 0.05253262
-## 3     3 0.1977954 0.8473030 0.1660986 0.06592483 0.14851023 0.06005397
-## 4     4 0.2147839 0.8172214 0.1767544 0.06217164 0.16770023 0.05758683
-## 5     5 0.2280267 0.7875699 0.1884736 0.06547948 0.19615580 0.06111186
-## 6     6 0.2189320 0.7847695 0.1810211 0.06757280 0.19858767 0.06147074
-## 7     7 0.2228613 0.7775643 0.1861161 0.07374390 0.21324582 0.06503552
-## 8     8 0.2230425 0.7831957 0.1876751 0.06979281 0.20591050 0.05919506</code></pre>
+## 1     1 0.2052248 0.8477174 0.1723839 0.06519055 0.12890964 0.05769027
+## 2     2 0.1835015 0.8749084 0.1610471 0.05177659 0.09422121 0.04897021
+## 3     3 0.1986207 0.8372976 0.1658382 0.05525063 0.15733094 0.05047484
+## 4     4 0.2053005 0.8241524 0.1713442 0.05364878 0.16361215 0.05008317
+## 5     5 0.2196592 0.7966350 0.1830386 0.05304155 0.17514956 0.05070328
+## 6     6 0.2107198 0.7825103 0.1731511 0.05119960 0.19411410 0.04547738
+## 7     7 0.2094309 0.7988104 0.1754112 0.05507293 0.18529361 0.04833817
+## 8     8 0.2213009 0.7931801 0.1884008 0.05938472 0.19065229 0.05637464</code></pre>
 <p>The best 2-parameter model has Year and FIP.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">coef</span>(step.model<span class="op">$</span>finalModel, <span class="dt">id=</span><span class="dv">2</span>)</code></pre></div>
 <pre><code>## (Intercept)        Year         FIP 
@@ -645,8 +642,8 @@ step.model &lt;-<span class="st"> </span><span class="kw">train</span>(anchovy<s
 <!--
 https://www.analyticsvidhya.com/blog/2017/06/a-comprehensive-guide-for-linear-ridge-and-lasso-regression/
 -->
-<p>The problems with model selection using searching and selecting with some model fit criteria is that the selected model tends to be over-fit—even when using cross-validation The p-values are not correct and the predictive value of the model is not optimal because of over-fitting.</p>
-<p>One approach to dealing with variance inflation that arises from collinearity and models with many explanatory variable is penalized regression. First, let’s look at ridge regression. The basic idea with penalized regression is that you penalize coefficient estimates that are far from 0. The true coefficients are (likely) not 0 so fundamentally this will lead to biased coefficient estimates but the idea is that the inflated variance of the coefficient estimates is the bigger problem.</p>
+<p>The problem with model selection using searching and selecting with some model fit criteria is that the selected model tends to be over-fit—even when using cross-validation. The predictive value of the model is not optimal because of over-fitting.</p>
+<p>Another approach to dealing with variance inflation that arises from collinearity and models with many explanatory variable is penalized regression. First, let’s look at ridge regression. The basic idea with penalized regression is that you penalize coefficient estimates that are far from 0. The true coefficients are (likely) not 0 so fundamentally this will lead to biased coefficient estimates but the idea is that the inflated variance of the coefficient estimates is the bigger problem.</p>
 <p>With ridge regression, we will assume that the coefficients have a mean of 0 and a variance of <span class="math inline">\(1/\lambda\)</span>. This is our prior on the coefficients. The <span class="math inline">\(\beta_i\)</span> are the most probable values given the data and the prior. Note, there are many other ways to derive ridge regression.</p>
 <p>We will use the glmnet package to fit the anchovy catch with ridge regression. To fit with a ridge penalty, we set <code>alpha=0</code>.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(glmnet)
@@ -659,22 +656,22 @@ fit.ridge &lt;-<span class="st"> </span><span class="kw">glmnet</span>(x, y, <sp
 <p>Once we have a best <span class="math inline">\(\lambda\)</span> to use, we can get the coefficients at that value.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">n &lt;-<span class="st"> </span><span class="dv">20</span>; s &lt;-<span class="st"> </span><span class="dv">0</span>
 <span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">1</span><span class="op">:</span>n) s &lt;-<span class="st"> </span>s <span class="op">+</span><span class="st"> </span><span class="kw">cv.glmnet</span>(x, y, <span class="dt">nfolds=</span><span class="dv">5</span>, <span class="dt">alpha=</span><span class="dv">0</span>)<span class="op">$</span>lambda.min
-s.best &lt;-<span class="st"> </span>s<span class="op">/</span>n
-<span class="kw">coef</span>(fit.ridge, <span class="dt">s=</span>s.best)</code></pre></div>
+s.best.ridge &lt;-<span class="st"> </span>s<span class="op">/</span>n
+<span class="kw">coef</span>(fit.ridge, <span class="dt">s=</span>s.best.ridge)</code></pre></div>
 <pre><code>## 12 x 1 sparse Matrix of class &quot;dgCMatrix&quot;
 ##                         1
-## (Intercept) -9.969433e-15
-## Year         5.266078e-01
-## Trachurus   -1.740663e-01
-## air          1.872741e-01
-## slp         -7.821741e-02
-## sst         -8.785017e-02
-## vwnd         7.888935e-02
-## wspd3        2.703709e-02
-## BOP          9.790106e-02
-## FIP          1.118943e-01
-## HPP          3.023657e-01
-## TOP          2.354273e-01</code></pre>
+## (Intercept) -9.952664e-15
+## Year         5.257198e-01
+## Trachurus   -1.735419e-01
+## air          1.871279e-01
+## slp         -7.807752e-02
+## sst         -8.774486e-02
+## vwnd         7.873963e-02
+## wspd3        2.708797e-02
+## BOP          9.813143e-02
+## FIP          1.116700e-01
+## HPP          3.022813e-01
+## TOP          2.353978e-01</code></pre>
 <p>I will plot the standardized coefficients for the ordinary least squares coefficients against the coefficients using ridge regression.</p>
 <p><img src="Fish-Forecast_files/figure-html/coef.ridge-1.png" width="672" /></p>
 <p>This shows the problem caused by the highly collinear TOP and HPP. They have highly inflated coefficient estimates that are offset by an inflated Year coefficient (in the opposite direction). This is why we need to evaluate collinearity in our variables before fitting a linear regression.</p>
@@ -688,11 +685,11 @@ s.best &lt;-<span class="st"> </span>s<span class="op">/</span>n
 <p>We select the best <span class="math inline">\(\lambda\)</span> as we did for ridge regression using cross-validation.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">n &lt;-<span class="st"> </span><span class="dv">20</span>; s &lt;-<span class="st"> </span><span class="dv">0</span>
 <span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">1</span><span class="op">:</span>n) s &lt;-<span class="st"> </span>s <span class="op">+</span><span class="st"> </span><span class="kw">cv.glmnet</span>(x, y, <span class="dt">nfolds=</span><span class="dv">5</span>, <span class="dt">alpha=</span><span class="dv">1</span>)<span class="op">$</span>lambda.min
-s.best &lt;-<span class="st"> </span>s<span class="op">/</span>n
-coef.lasso &lt;-<span class="st"> </span><span class="kw">as.vector</span>(<span class="kw">coef</span>(fit.lasso, <span class="dt">s=</span>s.best))[<span class="op">-</span><span class="dv">1</span>]</code></pre></div>
-<p>We can compare to the estimates from ridge and OLS and see that the model is now more similar the models we got from stepwise variable selection. The main difference is that slp is included as a variable.</p>
+s.best.lasso &lt;-<span class="st"> </span>s<span class="op">/</span>n
+coef.lasso &lt;-<span class="st"> </span><span class="kw">as.vector</span>(<span class="kw">coef</span>(fit.lasso, <span class="dt">s=</span>s.best.lasso))[<span class="op">-</span><span class="dv">1</span>]</code></pre></div>
+<p>We can compare to the estimates from ridge and OLS and see that the model is now more similar the models we got from stepwise variable selection. The main difference is that slp and air are included as variables.</p>
 <p><img src="Fish-Forecast_files/figure-html/coef.lasso.plot-1.png" width="672" /></p>
-<p>Lasso has estimated a model that is similar to what we got with stepwise variable selection without removing the collinear variables from our data set. Year, air temperature, slp and FIP are the most important variables.</p>
+<p>Lasso has estimated a model that is similar to what we got with stepwise variable selection without removing the collinear variables from our data set.</p>
 </div>
 <div id="penalized-regression-elastic-net-1" class="section level3">
 <h3><span class="header-section-number">11.3.8</span> Penalized regression: Elastic net</h3>
@@ -703,45 +700,231 @@ https://www.analyticsvidhya.com/blog/2017/06/a-comprehensive-guide-for-linear-ri
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">fit.en &lt;-<span class="st"> </span><span class="kw">glmnet</span>(x, y, <span class="dt">family=</span><span class="st">&quot;gaussian&quot;</span>, <span class="dt">alpha=</span><span class="fl">0.5</span>)
 n &lt;-<span class="st"> </span><span class="dv">20</span>; s &lt;-<span class="st"> </span><span class="dv">0</span>
 <span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">1</span><span class="op">:</span>n) s &lt;-<span class="st"> </span>s <span class="op">+</span><span class="st"> </span><span class="kw">cv.glmnet</span>(x, y, <span class="dt">nfolds=</span><span class="dv">5</span>, <span class="dt">alpha=</span><span class="fl">0.5</span>)<span class="op">$</span>lambda.min
-s.best &lt;-<span class="st"> </span>s<span class="op">/</span>n
-coef.en &lt;-<span class="st"> </span><span class="kw">as.vector</span>(<span class="kw">coef</span>(fit.en, <span class="dt">s=</span>s.best))[<span class="op">-</span><span class="dv">1</span>]</code></pre></div>
+s.best.el &lt;-<span class="st"> </span>s<span class="op">/</span>n
+coef.en &lt;-<span class="st"> </span><span class="kw">as.vector</span>(<span class="kw">coef</span>(fit.en, <span class="dt">s=</span>s.best.el))[<span class="op">-</span><span class="dv">1</span>]</code></pre></div>
 <p><img src="Fish-Forecast_files/figure-html/coef.en.plot-1.png" width="672" /> As we might expect, elastic net is part way between the ridge regression model and the Lasso model.</p>
 </div>
+<div id="comparing-model-prediction-accuracy-1" class="section level3">
+<h3><span class="header-section-number">11.3.9</span> Comparing model prediction accuracy</h3>
+<p>We can use cross-validation compare prediction accuracy if we have a set of models to compare. In our case, we do not have a set of models but rather a set of “number of variables”. We cannot use variable selection with our full dataset to chose the variables and then turn around and use cross-validation with the same dataset to test the out-of-sample prediction accuracy. Anytime you double-use your data like that, you will have severe bias problems.</p>
+<p>Instead, we will test our models using the two years that we held out for testing, 1988 and 1989 in Stergiou and Christou and 1988-1992 (five years) for comparison. We will use the performance testing procedure in Chapter <a href="8-perf-testing.html#perf-testing">8</a>.</p>
+<p>First we set up the test data frames.</p>
+<p>We can then compute the RMSE for the predictions from one of our linear regression models. Let’s use the model selected by <code>step()</code> using AIC as the metric and stepwise variable regression starting from a full model, <code>step.full</code>.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">fr &lt;-<span class="st"> </span><span class="kw">predict</span>(step.full, <span class="dt">newdata=</span>testdata2)
+err &lt;-<span class="st"> </span>fr <span class="op">-</span><span class="st"> </span>testdata2<span class="op">$</span>anchovy
+<span class="kw">sqrt</span>(<span class="kw">mean</span>(err<span class="op">^</span><span class="dv">2</span>))</code></pre></div>
+<pre><code>## [1] 0.05289656</code></pre>
+<p>We could also use <code>forecast()</code> in the forecast package to compute predictions and then use <code>accuracy()</code> to compute the prediction metrics for the test data.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">fr &lt;-<span class="st"> </span>forecast<span class="op">::</span><span class="kw">forecast</span>(step.full, <span class="dt">newdata=</span>testdata2)
+forecast<span class="op">::</span><span class="kw">accuracy</span>(fr, testdata2)</code></pre></div>
+<pre><code>##                       ME       RMSE        MAE         MPE      MAPE
+## Training set  0.00000000 0.11151614 0.08960780 -0.01540787 0.9925324
+## Test set     -0.03755081 0.05289656 0.03755081 -0.39104145 0.3910415
+##                   MASE
+## Training set 0.2480860
+## Test set     0.1039623</code></pre>
+<div id="comparing-the-predictions-for-a-suite-of-models" class="section level4 unnumbered">
+<h4>Comparing the predictions for a suite of models</h4>
+<p>Let’s compare a suite of models and compare predictions for the full out-of-sample data that we have: 1988 to 2007.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">fr.list &lt;-<span class="st"> </span><span class="kw">list</span>()
+testdat &lt;-<span class="st"> </span>testdata.full &lt;-<span class="st"> </span>df.full[<span class="dv">24</span><span class="op">:</span><span class="kw">nrow</span>(df.full),]
+n.fr &lt;-<span class="st"> </span><span class="kw">length</span>(testdat)</code></pre></div>
+<p>Then we fit the three best lm models chosen via stepwise regression, exhaustive search or cross-validation:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">modelname &lt;-<span class="st"> &quot;Year+FIP&quot;</span>
+fit &lt;-<span class="st"> </span><span class="kw">lm</span>(anchovy<span class="op">~</span>Year<span class="op">+</span>FIP, <span class="dt">data=</span>df)
+fr.list[[modelname]] &lt;-<span class="st"> </span><span class="kw">predict</span>(fit, <span class="dt">newdata=</span>testdat)
+
+modelname &lt;-<span class="st"> &quot;Year+Trachurus+FIP&quot;</span>
+fit &lt;-<span class="st"> </span><span class="kw">lm</span>(anchovy<span class="op">~</span>Year<span class="op">+</span>Trachurus<span class="op">+</span>FIP, <span class="dt">data=</span>df)
+fr.list[[modelname]] &lt;-<span class="st"> </span><span class="kw">predict</span>(fit, <span class="dt">newdata=</span>testdat)
+
+modelname &lt;-<span class="st"> &quot;6 variables&quot;</span>
+fit &lt;-<span class="st"> </span><span class="kw">lm</span>(anchovy<span class="op">~</span>Year<span class="op">+</span>air<span class="op">+</span>vwnd<span class="op">+</span>BOP<span class="op">+</span>FIP<span class="op">+</span>TOP, <span class="dt">data=</span>df)
+fr.list[[modelname]] &lt;-<span class="st"> </span><span class="kw">predict</span>(fit, <span class="dt">newdata=</span>testdat)</code></pre></div>
+<p>Then we add the forecasts for Ridge Regression.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(glmnet)
+resp &lt;-<span class="st"> </span><span class="kw">colnames</span>(df)<span class="op">!=</span><span class="st">&quot;anchovy&quot;</span>
+x &lt;-<span class="st"> </span><span class="kw">as.matrix</span>(df[,resp])
+y &lt;-<span class="st"> </span><span class="kw">as.matrix</span>(df[,<span class="st">&quot;anchovy&quot;</span>])
+fit &lt;-<span class="st"> </span><span class="kw">glmnet</span>(x, y, <span class="dt">family=</span><span class="st">&quot;gaussian&quot;</span>, <span class="dt">alpha=</span><span class="dv">0</span>)
+n &lt;-<span class="st"> </span><span class="dv">20</span>; s &lt;-<span class="st"> </span><span class="dv">0</span>
+<span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">1</span><span class="op">:</span>n) s &lt;-<span class="st"> </span>s <span class="op">+</span><span class="st"> </span><span class="kw">cv.glmnet</span>(x, y, <span class="dt">nfolds=</span><span class="dv">5</span>, <span class="dt">alpha=</span><span class="dv">0</span>)<span class="op">$</span>lambda.min
+s.best &lt;-<span class="st"> </span>s<span class="op">/</span>n
+
+modelname &lt;-<span class="st"> &quot;Ridge Regression&quot;</span>
+newx &lt;-<span class="st"> </span><span class="kw">as.matrix</span>(testdat[,resp])
+fr.list[[modelname]] &lt;-<span class="st"> </span><span class="kw">predict</span>(fit, <span class="dt">newx=</span>newx, <span class="dt">s=</span>s.best)</code></pre></div>
+<p>LASSO regression,</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">fit &lt;-<span class="st"> </span><span class="kw">glmnet</span>(x, y, <span class="dt">family=</span><span class="st">&quot;gaussian&quot;</span>, <span class="dt">alpha=</span><span class="dv">1</span>)
+n &lt;-<span class="st"> </span><span class="dv">20</span>; s &lt;-<span class="st"> </span><span class="dv">0</span>
+<span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">1</span><span class="op">:</span>n) s &lt;-<span class="st"> </span>s <span class="op">+</span><span class="st"> </span><span class="kw">cv.glmnet</span>(x, y, <span class="dt">nfolds=</span><span class="dv">5</span>, <span class="dt">alpha=</span><span class="dv">1</span>)<span class="op">$</span>lambda.min
+s.best &lt;-<span class="st"> </span>s<span class="op">/</span>n
+
+modelname &lt;-<span class="st"> &quot;LASSO Regression&quot;</span>
+newx &lt;-<span class="st"> </span><span class="kw">as.matrix</span>(testdat[,resp])
+fr.list[[modelname]] &lt;-<span class="st"> </span><span class="kw">predict</span>(fit, <span class="dt">newx=</span>newx, <span class="dt">s=</span>s.best)</code></pre></div>
+<p>and elastic net regression.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">fit &lt;-<span class="st"> </span><span class="kw">glmnet</span>(x, y, <span class="dt">family=</span><span class="st">&quot;gaussian&quot;</span>, <span class="dt">alpha=</span><span class="fl">0.5</span>)
+n &lt;-<span class="st"> </span><span class="dv">20</span>; s &lt;-<span class="st"> </span><span class="dv">0</span>
+<span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">1</span><span class="op">:</span>n) s &lt;-<span class="st"> </span>s <span class="op">+</span><span class="st"> </span><span class="kw">cv.glmnet</span>(x, y, <span class="dt">nfolds=</span><span class="dv">5</span>, <span class="dt">alpha=</span><span class="fl">0.5</span>)<span class="op">$</span>lambda.min
+s.best &lt;-<span class="st"> </span>s<span class="op">/</span>n
+
+modelname &lt;-<span class="st"> &quot;Elastic net Regression&quot;</span>
+newx &lt;-<span class="st"> </span><span class="kw">as.matrix</span>(testdat[,resp])
+fr.list[[modelname]] &lt;-<span class="st"> </span><span class="kw">predict</span>(fit, <span class="dt">newx=</span>newx, <span class="dt">s=</span>s.best)</code></pre></div>
+<p>Now we can create a table</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">restab &lt;-<span class="st"> </span><span class="kw">as.data.frame</span>(<span class="kw">matrix</span>(<span class="ot">NA</span>,<span class="dv">1</span>,<span class="dv">21</span>))
+<span class="co">#restab &lt;- data.frame(model=&quot;&quot;, stringsAsFactors=FALSE)</span>
+<span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">1</span><span class="op">:</span><span class="kw">length</span>(fr.list)){
+  err &lt;-<span class="st"> </span>fr.list[[i]]<span class="op">-</span>testdat<span class="op">$</span>anchovy
+  restab[i,<span class="dv">2</span><span class="op">:</span>(<span class="kw">length</span>(err)<span class="op">+</span><span class="dv">1</span>)] &lt;-<span class="st"> </span><span class="kw">sqrt</span>(<span class="kw">cumsum</span>(err<span class="op">^</span><span class="dv">2</span>)<span class="op">/</span><span class="dv">1</span><span class="op">:</span><span class="kw">length</span>(err))
+  restab[i,<span class="dv">1</span>] &lt;-<span class="st"> </span><span class="kw">names</span>(fr.list)[i]
+}
+tmp &lt;-<span class="st"> </span>restab[,<span class="kw">c</span>(<span class="dv">1</span>,<span class="dv">6</span>,<span class="dv">11</span>,<span class="dv">16</span>,<span class="dv">21</span>)]
+<span class="kw">colnames</span>(tmp) &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;model&quot;</span>,<span class="st">&quot;5 yrs&quot;</span>, <span class="st">&quot;10 yrs&quot;</span>, <span class="st">&quot;15 yrs&quot;</span>, <span class="st">&quot;20 yrs&quot;</span>)
+knitr<span class="op">::</span><span class="kw">kable</span>(tmp)</code></pre></div>
+<table>
+<thead>
+<tr class="header">
+<th align="left">model</th>
+<th align="right">5 yrs</th>
+<th align="right">10 yrs</th>
+<th align="right">15 yrs</th>
+<th align="right">20 yrs</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">Year+FIP</td>
+<td align="right">0.6905211</td>
+<td align="right">0.8252467</td>
+<td align="right">0.9733136</td>
+<td align="right">1.059762</td>
+</tr>
+<tr class="even">
+<td align="left">Year+Trachurus+FIP</td>
+<td align="right">0.8324962</td>
+<td align="right">0.9598570</td>
+<td align="right">1.2391294</td>
+<td align="right">1.444247</td>
+</tr>
+<tr class="odd">
+<td align="left">6 variables</td>
+<td align="right">0.3612936</td>
+<td align="right">0.6716181</td>
+<td align="right">0.9543952</td>
+<td align="right">1.135632</td>
+</tr>
+<tr class="even">
+<td align="left">Ridge Regression</td>
+<td align="right">0.8258894</td>
+<td align="right">0.8849651</td>
+<td align="right">1.0216175</td>
+<td align="right">1.050260</td>
+</tr>
+<tr class="odd">
+<td align="left">LASSO Regression</td>
+<td align="right">0.6047471</td>
+<td align="right">0.7574721</td>
+<td align="right">1.0288479</td>
+<td align="right">1.196678</td>
+</tr>
+<tr class="even">
+<td align="left">Elastic net Regression</td>
+<td align="right">0.6348115</td>
+<td align="right">0.7610670</td>
+<td align="right">0.9833407</td>
+<td align="right">1.097647</td>
+</tr>
+</tbody>
+</table>
+<p>If we plot the forcasts with the 1965-1987 data (open circles) and the 1988-2007 data (solid circles), we see that the forecasts continue the upward trend in the data while the data level off. <img src="Fish-Forecast_files/figure-html/unnamed-chunk-8-1.png" width="672" /></p>
+<p>LASSO regression with no year,</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">resp &lt;-<span class="st"> </span><span class="kw">colnames</span>(df)<span class="op">!=</span><span class="st">&quot;anchovy&quot;</span> <span class="op">&amp;</span><span class="st"> </span><span class="kw">colnames</span>(df)<span class="op">!=</span><span class="st">&quot;Year&quot;</span>
+x &lt;-<span class="st"> </span><span class="kw">as.matrix</span>(df[,resp])
+y &lt;-<span class="st"> </span><span class="kw">as.matrix</span>(df[,<span class="st">&quot;anchovy&quot;</span>])
+fit &lt;-<span class="st"> </span><span class="kw">glmnet</span>(x, y, <span class="dt">family=</span><span class="st">&quot;gaussian&quot;</span>, <span class="dt">alpha=</span><span class="dv">1</span>)
+n &lt;-<span class="st"> </span><span class="dv">20</span>; s &lt;-<span class="st"> </span><span class="dv">0</span>
+<span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">1</span><span class="op">:</span>n) s &lt;-<span class="st"> </span>s <span class="op">+</span><span class="st"> </span><span class="kw">cv.glmnet</span>(x, y, <span class="dt">nfolds=</span><span class="dv">5</span>, <span class="dt">alpha=</span><span class="dv">1</span>)<span class="op">$</span>lambda.min
+s.best &lt;-<span class="st"> </span>s<span class="op">/</span>n
+
+modelname &lt;-<span class="st"> &quot;LASSO Reg no Year&quot;</span>
+newx &lt;-<span class="st"> </span><span class="kw">as.matrix</span>(testdat[,resp])
+fr.list[[modelname]] &lt;-<span class="st"> </span><span class="kw">predict</span>(fit, <span class="dt">newx=</span>newx, <span class="dt">s=</span>s.best)</code></pre></div>
+<p>Ridge regression with no year,</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">resp &lt;-<span class="st"> </span><span class="kw">colnames</span>(df)<span class="op">!=</span><span class="st">&quot;anchovy&quot;</span> <span class="op">&amp;</span><span class="st"> </span><span class="kw">colnames</span>(df)<span class="op">!=</span><span class="st">&quot;Year&quot;</span>
+x &lt;-<span class="st"> </span><span class="kw">as.matrix</span>(df[,resp])
+y &lt;-<span class="st"> </span><span class="kw">as.matrix</span>(df[,<span class="st">&quot;anchovy&quot;</span>])
+fit &lt;-<span class="st"> </span><span class="kw">glmnet</span>(x, y, <span class="dt">family=</span><span class="st">&quot;gaussian&quot;</span>, <span class="dt">alpha=</span><span class="dv">0</span>)
+n &lt;-<span class="st"> </span><span class="dv">20</span>; s &lt;-<span class="st"> </span><span class="dv">0</span>
+<span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">1</span><span class="op">:</span>n) s &lt;-<span class="st"> </span>s <span class="op">+</span><span class="st"> </span><span class="kw">cv.glmnet</span>(x, y, <span class="dt">nfolds=</span><span class="dv">5</span>, <span class="dt">alpha=</span><span class="dv">1</span>)<span class="op">$</span>lambda.min
+s.best &lt;-<span class="st"> </span>s<span class="op">/</span>n
+
+modelname &lt;-<span class="st"> &quot;Ridge Reg no Year&quot;</span>
+newx &lt;-<span class="st"> </span><span class="kw">as.matrix</span>(testdat[,resp])
+fr.list[[modelname]] &lt;-<span class="st"> </span><span class="kw">predict</span>(fit, <span class="dt">newx=</span>newx, <span class="dt">s=</span>s.best)</code></pre></div>
+<p>Now we can create a table</p>
+<table>
+<thead>
+<tr class="header">
+<th></th>
+<th align="left">model</th>
+<th align="right">5 yrs</th>
+<th align="right">10 yrs</th>
+<th align="right">15 yrs</th>
+<th align="right">20 yrs</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>7</td>
+<td align="left">LASSO Reg no Year</td>
+<td align="right">0.7721461</td>
+<td align="right">0.7648776</td>
+<td align="right">0.7535048</td>
+<td align="right">0.6782082</td>
+</tr>
+<tr class="even">
+<td>8</td>
+<td align="left">Ridge Reg no Year</td>
+<td align="right">0.9741012</td>
+<td align="right">0.9555257</td>
+<td align="right">0.9792060</td>
+<td align="right">0.9121324</td>
+</tr>
+</tbody>
+</table>
+<p><img src="Fish-Forecast_files/figure-html/unnamed-chunk-11-1.png" width="672" /></p>
+</div>
+</div>
 <div id="model-selection-with-prior-knowledge-1" class="section level3">
-<h3><span class="header-section-number">11.3.9</span> Model selection with prior knowledge</h3>
-<p>In Section 4.7.7 of (Harrell 2015), a rule of thumb (based on shrinkage) for the number of predictors that can be used without overfitting is given: <span class="math inline">\((LR-p)/9\)</span> where <span class="math inline">\(LR\)</span> is the likelihood ratio test <span class="math inline">\(\chi^2\)</span> of the full model against the null model with only intercept and <span class="math inline">\(p\)</span> is the number of variables in the full model.</p>
+<h3><span class="header-section-number">11.3.10</span> Model selection with prior knowledge</h3>
+<p>In Section 4.7.7 of (Harrell 2015), a rule of thumb (based on shrinkage) for the number of predictors that can be used without overfitting is given by: <span class="math inline">\((LR-p)/9\)</span> where <span class="math inline">\(LR\)</span> is the likelihood ratio test <span class="math inline">\(\chi^2\)</span> of the full model against the null model with only intercept and <span class="math inline">\(p\)</span> is the number of variables in the full model.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">null &lt;-<span class="st"> </span><span class="kw">lm</span>(anchovy <span class="op">~</span><span class="st"> </span><span class="dv">1</span>, <span class="dt">data=</span>df)
 full &lt;-<span class="st"> </span><span class="kw">lm</span>(anchovy <span class="op">~</span><span class="st"> </span>., <span class="dt">data=</span>df)
 a &lt;-<span class="st"> </span>lmtest<span class="op">::</span><span class="kw">lrtest</span>(null, full)
 (a<span class="op">$</span>Chisq[<span class="dv">2</span>]<span class="op">-</span>a<span class="op">$</span>Df[<span class="dv">2</span>])<span class="op">/</span><span class="dv">9</span></code></pre></div>
 <pre><code>## [1] 6.239126</code></pre>
-<p>This rule of thumb suggests that we could include six variables. Let’s try sardine, SST, BOP, HPP, and <em>Trachurus</em>.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">fit.prior &lt;-<span class="st"> </span><span class="kw">lm</span>(anchovy <span class="op">~</span><span class="st"> </span>sardine<span class="op">+</span>BOP<span class="op">+</span>HPP<span class="op">+</span>Trachurus, <span class="dt">data=</span>df.full)</code></pre></div>
-</div>
-<div id="comparing-model-prediction-accuracy-1" class="section level3">
-<h3><span class="header-section-number">11.3.10</span> Comparing model prediction accuracy</h3>
-</div>
-<div id="mreg-of-first-or-second-differences-1" class="section level3">
-<h3><span class="header-section-number">11.3.11</span> MREG of first or second differences</h3>
-<p>In the multivariate regression with ARMA errors, the response variable <span class="math inline">\(x_t\)</span> is not necessarily stationary since the covariates <span class="math inline">\(c_t\)</span>’s need not be stationary. If we wish to model the first or second differences of <span class="math inline">\(x_t\)</span>, then we are potentially modeling a stationary process if differencing leads to a stationary process. We need to think carefully about how we set up a multivariate regression if our response variable is stationary.</p>
-<p>One recommendation is if <span class="math inline">\(x_t\)</span> is differenced, the same differencing is applied to the covariates. The idea is if the response variable is stationary, we want to make sure that the independent variables are also stationary. However, in a fisheries application <span class="math inline">\(x_t - x_{t-1}\)</span> often has a biological meaning, the yearly (or monthly or hourly) rate of change, and that rate of change is what one is trying explain with a covariate. One would not necessarily expect the first difference to be stationary and one is trying to explain any trend in the one-step rate of change with some set of covariates. On the other hand, if the response variable, the raw data or the first or second difference, is stationary then trying to explain its variability via a non-stationary covariate will clearly lead to the effect size of the covariates being zero. We don’t need to fit a model to tell us that.</p>
+<p>This rule of thumb suggests that we could include six variables. Another approach to model building would be to select environmental and biological variables based on the known biology of anchovy and to select one effort variable or a composite “effort” based on a combination of the effort variables.</p>
 </div>
 <div id="cov.df" class="section level3">
-<h3><span class="header-section-number">11.3.12</span> Creating the data frame for model fitting</h3>
+<h3><span class="header-section-number">11.3.11</span> Creating the data frame for model fitting</h3>
 <p>Code to make the <code>df</code> data frame used in the model fitting functions.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># response</span>
 df &lt;-<span class="st"> </span><span class="kw">data.frame</span>(<span class="dt">anchovy=</span>anchovy<span class="op">$</span>log.metric.tons,
-                 <span class="dt">Year=</span>sardine<span class="op">$</span>Year)
-df &lt;-<span class="st"> </span><span class="kw">subset</span>(df, Year<span class="op">&gt;=</span><span class="dv">1965</span> <span class="op">&amp;</span><span class="st"> </span>Year<span class="op">&lt;=</span><span class="dv">1987</span>)
+                 <span class="dt">Year=</span>anchovy<span class="op">$</span>Year)
+Year1 &lt;-<span class="st"> </span>df<span class="op">$</span>Year[<span class="dv">1</span>]
+Year2 &lt;-<span class="st"> </span>df<span class="op">$</span>Year[<span class="kw">length</span>(df<span class="op">$</span>Year)]
+df &lt;-<span class="st"> </span><span class="kw">subset</span>(df, Year<span class="op">&gt;=</span>Year1<span class="op">+</span><span class="dv">1</span> <span class="op">&amp;</span><span class="st"> </span>Year<span class="op">&lt;=</span>Year2)
 <span class="co"># biological covariates</span>
 df.bio &lt;-<span class="st"> </span><span class="kw">subset</span>(landings, Species<span class="op">==</span><span class="st">&quot;Horse.mackerel&quot;</span>)[,<span class="kw">c</span>(<span class="st">&quot;Year&quot;</span>,<span class="st">&quot;log.metric.tons&quot;</span>)]
-df.bio &lt;-<span class="st"> </span><span class="kw">subset</span>(df.bio, Year<span class="op">&gt;=</span><span class="dv">1964</span> <span class="op">&amp;</span><span class="st"> </span>Year<span class="op">&lt;=</span><span class="dv">1986</span>)[,<span class="op">-</span><span class="dv">1</span>,drop=<span class="ot">FALSE</span>] <span class="co"># [,-1] to remove year</span>
+df.bio &lt;-<span class="st"> </span><span class="kw">subset</span>(df.bio, Year<span class="op">&gt;=</span>Year1 <span class="op">&amp;</span><span class="st"> </span>Year<span class="op">&lt;=</span>Year2<span class="op">-</span><span class="dv">1</span>)[,<span class="op">-</span><span class="dv">1</span>,drop=<span class="ot">FALSE</span>] <span class="co"># [,-1] to remove year</span>
 <span class="kw">colnames</span>(df.bio) &lt;-<span class="st"> &quot;Trachurus&quot;</span>
 <span class="co"># environmental covariates</span>
 covsmean.year[,<span class="st">&quot;vwnd.m/s&quot;</span>]&lt;-<span class="st"> </span><span class="kw">abs</span>(covsmean.year[,<span class="st">&quot;vwnd.m/s&quot;</span>])
-df.env &lt;-<span class="st"> </span><span class="kw">log</span>(<span class="kw">subset</span>(covsmean.year, Year<span class="op">&gt;=</span><span class="dv">1964</span> <span class="op">&amp;</span><span class="st"> </span>Year<span class="op">&lt;=</span><span class="dv">1986</span>)[,<span class="op">-</span><span class="dv">1</span>])
+df.env &lt;-<span class="st"> </span><span class="kw">log</span>(<span class="kw">subset</span>(covsmean.year, Year<span class="op">&gt;=</span>Year1 <span class="op">&amp;</span><span class="st"> </span>Year<span class="op">&lt;=</span>Year2<span class="op">-</span><span class="dv">1</span>)[,<span class="op">-</span><span class="dv">1</span>])
 <span class="co"># fishing effort</span>
-df.fish &lt;-<span class="st"> </span><span class="kw">log</span>(<span class="kw">subset</span>(fish.cov, Year<span class="op">&gt;=</span><span class="dv">1964</span> <span class="op">&amp;</span><span class="st"> </span>Year<span class="op">&lt;=</span><span class="dv">1986</span>)[,<span class="op">-</span><span class="dv">1</span>])
+df.fish &lt;-<span class="st"> </span><span class="kw">log</span>(<span class="kw">subset</span>(fish.cov, Year<span class="op">&gt;=</span>Year1 <span class="op">&amp;</span><span class="st"> </span>Year<span class="op">&lt;=</span>Year2<span class="op">-</span><span class="dv">1</span>)[,<span class="op">-</span><span class="dv">1</span>])
 purse.cols &lt;-<span class="st"> </span>stringr<span class="op">::</span><span class="kw">str_detect</span>(<span class="kw">colnames</span>(df.fish),<span class="st">&quot;Purse.seiners&quot;</span>)
 df.fish &lt;-<span class="st"> </span>df.fish[,purse.cols]
 df.fish &lt;-<span class="st"> </span>df.fish[<span class="op">!</span>(<span class="kw">colnames</span>(df.fish)<span class="op">==</span><span class="st">&quot;Purse.seiners.VAP&quot;</span>)]
@@ -752,7 +935,11 @@ df &lt;-<span class="st"> </span><span class="kw">data.frame</span>(
 df<span class="op">$</span>Year &lt;-<span class="st"> </span>df<span class="op">$</span>Year<span class="op">-</span>df<span class="op">$</span>Year[<span class="dv">1</span>]<span class="op">+</span><span class="dv">1</span>
 <span class="kw">colnames</span>(df) &lt;-<span class="st"> </span><span class="kw">sapply</span>(<span class="kw">colnames</span>(df), <span class="cf">function</span>(x){<span class="kw">rev</span>(<span class="kw">str_split</span>(x,<span class="st">&quot;Purse.seiners.&quot;</span>)[[<span class="dv">1</span>]])[<span class="dv">1</span>]})
 <span class="kw">colnames</span>(df) &lt;-<span class="st"> </span><span class="kw">sapply</span>(<span class="kw">colnames</span>(df), <span class="cf">function</span>(x){<span class="kw">str_split</span>(x,<span class="st">&quot;[.]&quot;</span>)[[<span class="dv">1</span>]][<span class="dv">1</span>]})
-df &lt;-<span class="st"> </span>df[,<span class="kw">colnames</span>(df)<span class="op">!=</span><span class="st">&quot;VAP&quot;</span>]</code></pre></div>
+df &lt;-<span class="st"> </span>df[,<span class="kw">colnames</span>(df)<span class="op">!=</span><span class="st">&quot;VAP&quot;</span>]
+<span class="co"># all the data to 2007</span>
+df.full &lt;-<span class="st"> </span>df
+<span class="co"># only training data</span>
+df &lt;-<span class="st"> </span><span class="kw">subset</span>(df, Year<span class="op">&gt;=</span><span class="dv">1965</span><span class="op">-</span><span class="dv">1964</span> <span class="op">&amp;</span><span class="st"> </span>Year<span class="op">&lt;=</span><span class="dv">1987</span><span class="op">-</span><span class="dv">1964</span>)</code></pre></div>
 
 </div>
 </div>

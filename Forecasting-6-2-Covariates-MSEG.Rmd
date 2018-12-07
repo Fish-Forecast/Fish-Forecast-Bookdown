@@ -5,9 +5,17 @@ if(file.exists("Fish-Forecast.Rmd")) file.remove("Fish-Forecast.Rmd")
 bookdown::preview_chapter("Forecasting-6-2-Covariates-MSEG.Rmd")
 -->
 
-In this chapter, I will illustrate developing a forecasting model using a multivariate regression (MREG).  I will show the approach the Stergiou and Christou used to develop MREG models and then compare to other approaches.  Fitting multivariate linear regressions with ARMA errors and fitting ARMAX models will be covered in separate chapters.
+In this chapter, I will illustrate developing a forecasting model using a multivariate regression (MREG).  I will show the approach the Stergiou and Christou used to develop MREG models and then compare to other approaches.  Fitting multivariate linear regressions with ARMA errors and fitting ARMAX models will be covered in separate chapters. More background on the methods discussed in this chapter can be found in the referenceds in the endnotes[^MSEGref1][^MSEGref2][^MSGEGref3][^MSGEGref4].
 
-A multivariate linear regression model with Gaussian errors take the form:
+[^MSEGref1]: [Model selection essentials in R](http://www.sthda.com/english/articles/37-model-selection-essentials-in-r/)
+
+[^MSEGref2]: James, Gareth, Daniela Witten, Trevor Hastie, and Robert Tibshirani. 2014. An Introduction to Statistical Learning: With Applications in R. Springer Publishing Company, Incorporated.
+
+[^MSEGref3]: Harrell, Frank. 2015. Regression modeling strategies. Springer.
+
+[^MSEGref4]: Raftery, A. E. 1995. Bayesian model selection in social research. Sociological Methodology, 25, 111-163.
+
+A multivariate linear regression model with Gaussian errors takes the form:
 
 \begin{equation}
 \begin{gathered}
@@ -18,7 +26,7 @@ e_t \sim N(0,\sigma)
 
 In R, we can fit this model with `lm()`, which uses ordinary least squares (OLS). For model selection (determining what explanatory variables to include), there are a variety of approaches we can take.  I will show approaches that use a few different packages.
 
-```{r f62-load_packages, message=FALSE, warning=FALSE}
+```{r message=FALSE, warning=FALSE}
 library(ggplot2)
 library(MASS)
 library(car)
@@ -27,6 +35,7 @@ library(Hmisc)
 library(stringr)
 library(caret)
 library(leaps)
+library(forecast)
 ```
 
 ### Covariates used in Stergiou and Christou
@@ -54,17 +63,19 @@ For anchovy, the fishery effort metrics from the purse seine fishery were used. 
 ```{r cov.dataframe, echo=FALSE}
 # response
 df <- data.frame(anchovy=anchovy$log.metric.tons,
-                 Year=sardine$Year)
-df <- subset(df, Year>=1965 & Year<=1987)
+                 Year=anchovy$Year)
+Year1 <- df$Year[1]
+Year2 <- df$Year[length(df$Year)]
+df <- subset(df, Year>=Year1+1 & Year<=Year2)
 # biological covariates
 df.bio <- subset(landings, Species=="Horse.mackerel")[,c("Year","log.metric.tons")]
-df.bio <- subset(df.bio, Year>=1964 & Year<=1986)[,-1,drop=FALSE] # [,-1] to remove year
+df.bio <- subset(df.bio, Year>=Year1 & Year<=Year2-1)[,-1,drop=FALSE] # [,-1] to remove year
 colnames(df.bio) <- "Trachurus"
 # environmental covariates
 covsmean.year[,"vwnd.m/s"]<- abs(covsmean.year[,"vwnd.m/s"])
-df.env <- log(subset(covsmean.year, Year>=1964 & Year<=1986)[,-1])
+df.env <- log(subset(covsmean.year, Year>=Year1 & Year<=Year2-1)[,-1])
 # fishing effort
-df.fish <- log(subset(fish.cov, Year>=1964 & Year<=1986)[,-1])
+df.fish <- log(subset(fish.cov, Year>=Year1 & Year<=Year2-1)[,-1])
 purse.cols <- stringr::str_detect(colnames(df.fish),"Purse.seiners")
 df.fish <- df.fish[,purse.cols]
 df.fish <- df.fish[!(colnames(df.fish)=="Purse.seiners.VAP")]
@@ -76,6 +87,10 @@ df$Year <- df$Year-df$Year[1]+1
 colnames(df) <- sapply(colnames(df), function(x){rev(str_split(x,"Purse.seiners.")[[1]])[1]})
 colnames(df) <- sapply(colnames(df), function(x){str_split(x,"[.]")[[1]][1]})
 df <- df[,colnames(df)!="VAP"]
+# all the data to 2007
+df.full <- df
+# only training data
+df <- subset(df, Year>=1965-1964 & Year<=1987-1964)
 ```
 
 We will model anchovy landings as the response variable.  The covariates are lagged by one year, following Stergiou and Christou.  This means that the catch in year $t$ is regressed against the covariates in year $t-1$. We set up our data frame as follows. We use the 1965 to 1987 catch data as the response. We use 1964 to 1986, so year prior, for all the explanatory variables and we log transform the explanatory variables (following Stergiou and Christou). We use $t$ 1 to 23 as a "year" covariate. Our data frame will have the following columns:
@@ -319,6 +334,11 @@ rmin <- which(mod.aicc==min(mod.aicc))
 colnames(smodels$which)[smodels$which[rmin,]]
 ```
 
+In comparison, the best model with AIC is larger.
+```{r leaps.aic.best}
+rmin <- which(mod.aic==min(mod.aic))
+colnames(smodels$which)[smodels$which[rmin,]]
+```
 ### Model selection with cross-validation[^ISLcv]
 
 [^ISLcv]: This section and the R code was adapted from and influenced by Chapter 6 material in Introduction to Statistical Learning by James, Witten, Hastie and Tibshirani. They have an (free) online course and (free) textbook at http://www-bcf.usc.edu/~gareth/ISL/
@@ -364,7 +384,7 @@ Next we set up a matrix that defines the folds. Each row has numbers 1 to k (fol
 ```{r folds.rows}
 nfolds <- 5
 nreps <- 20
-a <- matrix(NA, nreps, nrow(df))
+folds <- matrix(NA, nreps, nrow(df))
 for(i in 1:nreps) 
   folds[i,] <- sample(rep(1:nfolds, length = nrow(df)))
 ```
@@ -464,17 +484,17 @@ Once we have a best $\lambda$ to use, we can get the coefficients at that value.
 ```{r lambda.choice.ridge}
 n <- 20; s <- 0
 for(i in 1:n) s <- s + cv.glmnet(x, y, nfolds=5, alpha=0)$lambda.min
-s.best <- s/n
-coef(fit.ridge, s=s.best)
+s.best.ridge <- s/n
+coef(fit.ridge, s=s.best.ridge)
 ```
 
 I will plot the standardized coefficients for the ordinary least squares coefficients against the coefficients using ridge regression.
 
 ```{r coef.ridge, echo=FALSE}
 full <- lm(anchovy ~ ., data=dfz)
-coef.ridge <- as.vector(coef(fit.ridge, s=s.best))[-1]
+coef.ridge <- as.vector(coef(fit.ridge, s=s.best.ridge))[-1]
 coef.full <- coef(full)[-1]
-labs <- rownames(coef(fit.ridge, s=s.best))[-1]
+labs <- rownames(coef(fit.ridge, s=s.best.ridge))[-1]
 op <- par(mar=c(5, 7, 4, 2) + 0.1)
 barplot(rbind(coef.full,coef.ridge), names.arg=labs, 
         horiz=TRUE, las=2, beside=TRUE,
@@ -502,8 +522,8 @@ We select the best $\lambda$ as we did for ridge regression using cross-validati
 ```{r lambda.choice.lasso}
 n <- 20; s <- 0
 for(i in 1:n) s <- s + cv.glmnet(x, y, nfolds=5, alpha=1)$lambda.min
-s.best <- s/n
-coef.lasso <- as.vector(coef(fit.lasso, s=s.best))[-1]
+s.best.lasso <- s/n
+coef.lasso <- as.vector(coef(fit.lasso, s=s.best.lasso))[-1]
 ```
 
 We can compare to the estimates from ridge and OLS and see that the model is now more similar the models we got from stepwise variable selection.
@@ -535,8 +555,8 @@ Elastic net is uses both L1 and L2 regularization. Elastic regression generally 
 fit.en <- glmnet(x, y, family="gaussian", alpha=0.5)
 n <- 20; s <- 0
 for(i in 1:n) s <- s + cv.glmnet(x, y, nfolds=5, alpha=0.5)$lambda.min
-s.best <- s/n
-coef.en <- as.vector(coef(fit.en, s=s.best))[-1]
+s.best.el <- s/n
+coef.en <- as.vector(coef(fit.en, s=s.best.el))[-1]
 ```
 
 
@@ -555,13 +575,235 @@ As we might expect, elastic net is part way between the ridge regression model a
 
 ### Comparing model prediction accuracy
 
-We can us cross-validation compare prediction accuracy if we have a set of models to compare.  In our case, we do not have a set of models but rather a set of number variables.  We cannot use variable selection with our full dataset to chose the variables and then turn around and use cross-validation, with the same dataset, to test the out-of-sample prediction accuracy.  Anytime you double-use your data like that, you will have severe bias problems.
+We can use cross-validation compare prediction accuracy if we have a set of models to compare.  In our case, we do not have a set of models but rather a set of "number of variables".  We cannot use variable selection with our full dataset to chose the variables and then turn around and use cross-validation with the same dataset to test the out-of-sample prediction accuracy.  Anytime you double-use your data like that, you will have severe bias problems.
 
-Instead, we will test our models using the two years that we held out for testing, 1988 and 1989.
+Instead, we will test our models using the two years that we held out for testing, 1988 and 1989 in Stergiou and Christou and 1988-1992 (five years) for comparison.  We will use the performance testing procedure in Chapter \@ref(perf-testing).
 
-### Model selection with prior knowledge
+First we set up the test data frames.
+```{r testdata2, echo=FALSE}
+# 1988 and 1989 are rows 24 & 25
+testdata2 <- df.full[24:25,]
+```
 
-In Section 4.7.7 of  (Harrell 2015), a rule of thumb (based on shrinkage) for the number of predictors that can be used without overfitting is given by: $(LR-p)/9$ where $LR$ is the likelihood ratio test $\chi^2$ of the full model against the null model with only intercept and $p$ is the number of variables in the full model.
+We can then compute the RMSE for the predictions from one of our linear regression models.  Let's use the model selected by `step()` using AIC as the metric and stepwise variable regression starting from a full model, `step.full`.
+```{r errs}
+fr <- predict(step.full, newdata=testdata2)
+err <- fr - testdata2$anchovy
+sqrt(mean(err^2))
+```
+
+We could also use `forecast()` in the forecast package to compute predictions and then use `accuracy()` to compute the prediction metrics for the test data.
+```{r}
+fr <- forecast::forecast(step.full, newdata=testdata2)
+forecast::accuracy(fr, testdata2)
+```
+
+#### Comparing the predictions for a suite of models {-}
+
+Let's compare a suite of models and compare predictions for the full out-of-sample data that we have: 1988 to 2007.
+```{r}
+fr.list <- list()
+testdat <- testdata.full <- df.full[24:nrow(df.full),]
+n.fr <- length(testdat)
+```
+
+Then we fit the three best lm models chosen via stepwise regression, exhaustive search or cross-validation:
+```{r linear.reg.model.set}
+modelname <- "Year+FIP"
+fit <- lm(anchovy~Year+FIP, data=df)
+fr.list[[modelname]] <- predict(fit, newdata=testdat)
+
+modelname <- "Year+Trachurus+FIP"
+fit <- lm(anchovy~Year+Trachurus+FIP, data=df)
+fr.list[[modelname]] <- predict(fit, newdata=testdat)
+
+modelname <- "6 variables"
+fit <- lm(anchovy~Year+air+vwnd+BOP+FIP+TOP, data=df)
+fr.list[[modelname]] <- predict(fit, newdata=testdat)
+```
+
+Then we add the forecasts for Ridge Regression.
+```{r}
+library(glmnet)
+resp <- colnames(df)!="anchovy"
+x <- as.matrix(df[,resp])
+y <- as.matrix(df[,"anchovy"])
+fit <- glmnet(x, y, family="gaussian", alpha=0)
+n <- 20; s <- 0
+for(i in 1:n) s <- s + cv.glmnet(x, y, nfolds=5, alpha=0)$lambda.min
+s.best <- s/n
+
+modelname <- "Ridge Regression"
+newx <- as.matrix(testdat[,resp])
+fr.list[[modelname]] <- predict(fit, newx=newx, s=s.best)
+```
+LASSO regression,
+```{r}
+fit <- glmnet(x, y, family="gaussian", alpha=1)
+n <- 20; s <- 0
+for(i in 1:n) s <- s + cv.glmnet(x, y, nfolds=5, alpha=1)$lambda.min
+s.best <- s/n
+
+modelname <- "LASSO Regression"
+newx <- as.matrix(testdat[,resp])
+fr.list[[modelname]] <- predict(fit, newx=newx, s=s.best)
+```
+
+and elastic net regression.
+```{r}
+fit <- glmnet(x, y, family="gaussian", alpha=0.5)
+n <- 20; s <- 0
+for(i in 1:n) s <- s + cv.glmnet(x, y, nfolds=5, alpha=0.5)$lambda.min
+s.best <- s/n
+
+modelname <- "Elastic net Regression"
+newx <- as.matrix(testdat[,resp])
+fr.list[[modelname]] <- predict(fit, newx=newx, s=s.best)
+```
+
+Now we can create a table
+```{r model.comp.table, results="asis"}
+restab <- as.data.frame(matrix(NA,1,21))
+#restab <- data.frame(model="", stringsAsFactors=FALSE)
+for(i in 1:length(fr.list)){
+  err <- fr.list[[i]]-testdat$anchovy
+  restab[i,2:(length(err)+1)] <- sqrt(cumsum(err^2)/1:length(err))
+  restab[i,1] <- names(fr.list)[i]
+}
+tmp <- restab[,c(1,6,11,16,21)]
+colnames(tmp) <- c("model","5 yrs", "10 yrs", "15 yrs", "20 yrs")
+knitr::kable(tmp)
+```
+
+
+If we plot the forcasts with the 1965-1987 data (open circles) and the 1988-2007 data (solid circles), we see that the forecasts continue the upward trend in the data while the data level off. 
+
+```{r echo=FALSE}
+plot(Year1+df$Year, df$anchovy, ylim=c(8,12), xlim=c(Year1,Year2), ylab="Anchovy log catch", xlab="", bty="L")
+for(i in 1:length(fr.list)){
+  lines(Year1+testdat$Year,fr.list[[i]], lty=i, col=i)
+}
+points(Year1+testdat$Year,testdat$anchovy, pch=20)
+legend("topleft", names(fr.list), cex=.5, col=1:6, lty=1:6, bty="n")
+```
+
+This illustrates a problem with using "Year" as a covariate.  This covariate is deterministically increasing. If it is included in the model, then the forecasts will have an upward or downward trend.  When using environmental, biological and effort covariates, one hopes that they covariates explain the trends in the data.  It would be wiser to not use "Year" as a covariate.
+
+LASSO regression with no year,
+```{r}
+resp <- colnames(df)!="anchovy" & colnames(df)!="Year"
+x <- as.matrix(df[,resp])
+y <- as.matrix(df[,"anchovy"])
+fit.lasso <- glmnet(x, y, family="gaussian", alpha=1)
+n <- 20; s <- 0
+for(i in 1:n) s <- s + cv.glmnet(x, y, nfolds=5, alpha=1)$lambda.min
+s.best.lasso <- s/n
+
+modelname <- "LASSO Reg no Year"
+newx <- as.matrix(testdat[,resp])
+fr.list[[modelname]] <- predict(fit.lasso, newx=newx, s=s.best.lasso)
+```
+
+Ridge regression with no year,
+```{r}
+resp <- colnames(df)!="anchovy" & colnames(df)!="Year"
+x <- as.matrix(df[,resp])
+y <- as.matrix(df[,"anchovy"])
+fit.ridge <- glmnet(x, y, family="gaussian", alpha=0)
+n <- 20; s <- 0
+for(i in 1:n) s <- s + cv.glmnet(x, y, nfolds=5, alpha=1)$lambda.min
+s.best.ridge <- s/n
+
+modelname <- "Ridge Reg no Year"
+newx <- as.matrix(testdat[,resp])
+fr.list[[modelname]] <- predict(fit.ridge, newx=newx, s=s.best.ridge)
+```
+
+Now we can create a table
+```{r model.comp.table2, results="asis", echo=FALSE}
+restab <- as.data.frame(matrix(NA,1,21))
+#restab <- data.frame(model="", stringsAsFactors=FALSE)
+for(i in 1:length(fr.list)){
+  err <- fr.list[[i]]-testdat$anchovy
+  restab[i,2:(length(err)+1)] <- sqrt(cumsum(err^2)/1:length(err))
+  restab[i,1] <- names(fr.list)[i]
+}
+tmp <- restab[,c(1,6,11,16,21)]
+colnames(tmp) <- c("model","5 yrs", "10 yrs", "15 yrs", "20 yrs")
+knitr::kable(tmp[7:8,])
+```
+
+```{r echo=FALSE}
+plot(Year1+df$Year, df$anchovy, ylim=c(8,12), xlim=c(Year1,Year2), ylab="Anchovy log catch", xlab="", bty="L")
+for(i in 7:length(fr.list)){
+  lines(Year1+testdat$Year,fr.list[[i]], lty=i, col=i)
+}
+points(Year1+testdat$Year,testdat$anchovy, pch=20)
+legend("topleft", names(fr.list)[7:8], cex=.5, col=7:8, lty=7:8, bty="n")
+```
+Without "Year", the model predicts 1988 well (using 1987 covariates) but then has a large jump upward after which is has a similar "flat-ish" trend as seen after 1989.  What happened in 1988 (the covariate year affecting 1989)?  The horsepower covariate, along with BOP (total boats) and TOP (boat tonnage), have a sudden upward jump in 1988. This is seen in all the fisheries.  This suggests that in 1988 either a large number of new boats entered all the fisheries or what boats were counted as "purse seiners" was changed. Upon looking at the covariates, it seems that something changed in the recording from 1988 to 1996.
+
+```{r echo=FALSE}
+par(mfrow=c(2,2),mar=c(2,2,2,2))
+plot(fish.cov$Year,fish.cov$Beach.seiners.BOB,ylab="",xlab="")
+title("Beach Seiner Boats")
+abline(v=1988)
+abline(v=1996)
+plot(fish.cov$Year,fish.cov$Trawlers.BOT,ylab="",xlab="")
+title("Trawler Boats")
+abline(v=1988)
+abline(v=1996)
+plot(fish.cov$Year,fish.cov$Other.BOC,ylab="",xlab="")
+title("Other Boats")
+abline(v=1988)
+abline(v=1996)
+plot(fish.cov$Year,fish.cov$Purse.seiners.BOP,ylab="",xlab="")
+title("Purse Seiner Boats")
+abline(v=1988)
+abline(v=1996)
+
+```
+
+If we correct that jump from 1988 to 1989 (subtract the jump from all data 1989 onward), the Lasso and Ridge predictions without year look considerably better.
+
+```{r echo=FALSE}
+testdatc <- testdat
+testdatc$BOP[(testdat$Year+1964)>1988]<-testdatc$BOP[(testdat$Year+1964)>1988]-0.083
+testdatc$HPP[(testdat$Year+1964)>1988]<-testdatc$HPP[(testdat$Year+1964)>1988]-0.28285
+testdatc$TOP[(testdat$Year+1964)>1988]<-testdatc$TOP[(testdat$Year+1964)>1988]-0.295
+```
+
+```{r echo=FALSE}
+modelname <- "LASSO Reg no Year jump corrected"
+newx <- as.matrix(testdatc[,resp])
+fr.list[[modelname]] <- predict(fit.lasso, newx=newx, s=s.best.lasso)
+
+modelname <- "Ridge Reg no Year jump corrected"
+newx <- as.matrix(testdatc[,resp])
+fr.list[[modelname]] <- predict(fit.ridge, newx=newx, s=s.best.ridge)
+```
+
+```{r echo=FALSE}
+mnames <- c("LASSO Reg no Year jump corrected", "Ridge Reg no Year jump corrected")
+plot(Year1+df$Year, df$anchovy, ylim=c(8,12), xlim=c(Year1,Year2), ylab="Anchovy log catch", xlab="", bty="L")
+for(i in 1:2){
+  lines(Year1+testdat$Year,fr.list[[mnames[i]]], lty=i, col=i)
+}
+points(Year1+testdat$Year,testdat$anchovy, pch=20)
+legend("topleft", mnames, cex=.5, col=1:2, lty=1:2, bty="n")
+```
+
+### Discussion
+
+This chapter illustrates a variety of appoaches for "variable selection".  This is the situation where one has a large number of covariates and one wants to chose the covariates that produce the best predictions.  Following Stergiou and Christou, I used mainly linear regressions with variables selected with stepwise variable selection.
+
+Keep in mind that stepwise variable selection is generally considered data-dredging and a reviewer who is statistician will almost certainly find fault with this approach. Penalized regression is a more accepted approach for developing a regression model with many covariates.  Part of the appeal of penalized regression is that it is robust to collinearity in your covariates.  Stepwise variable regression is not robust to collinearity.
+
+Cross-validation is an approach for testing a *process* of building a model. In the case of the anchovy data, a model with only two covariates, Year and number of fishers, was selected via cross-validation as having the best (lowest) predictive error.  This is considerable smaller than the best model via stepwise variable selection.
+
+When we tested the models against data completely held out of the analysis and model development (1988-2007), we discovered a number of problems. 1) Using "Year" as a covariate is a bad idea since it is deterministically linear upward. and 2) There is a problem with the effort data between 1988 and 1996.  There is a jump in the effort data.
+
+We used variable selection or penalized regression to select weighting on a large set of covariates.  Another approach is to develop a set of covariates from your knowledge of the system and use only covariates that are thought to be important.  In Section 4.7.7 of  (Harrell 2015), a rule of thumb (based on shrinkage) for the number of predictors that can be used without overfitting is given by: $(LR-p)/9$ where $LR$ is the likelihood ratio test $\chi^2$ of the full model against the null model with only intercept and $p$ is the number of variables in the full model.
 
 ```{r eval.shrinkage}
 null <- lm(anchovy ~ 1, data=df)
@@ -571,6 +813,8 @@ a <- lmtest::lrtest(null, full)
 ```
 
 This rule of thumb suggests that we could include six variables. Another approach to model building would be to select environmental and biological variables based on the known biology of anchovy and to select one effort variable or a composite "effort" based on a combination of the effort variables.
+
+<hr>
 
 ### Creating the data frame for model fitting {#cov.df}
 

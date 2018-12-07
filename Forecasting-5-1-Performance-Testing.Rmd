@@ -1,4 +1,4 @@
-# Testing forecast accuracy
+# Testing forecast accuracy {#perf-testing}
 
 Once you have found a set of possible forecast models, you are ready to compare forecasts from a variety of models and choose a forecast model.  
 ```{r f36-load_data, message=FALSE, warning=FALSE, echo=FALSE}

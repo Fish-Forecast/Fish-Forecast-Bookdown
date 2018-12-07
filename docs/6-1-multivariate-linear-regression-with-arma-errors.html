@@ -25,7 +25,7 @@
 <meta name="author" content="Elizabeth Holmes">
 
 
-<meta name="date" content="2018-10-19">
+<meta name="date" content="2018-12-06">
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -33,7 +33,7 @@
   
   
 <link rel="prev" href="6-covariates.html">
-<link rel="next" href="7-seasonality.html">
+<link rel="next" href="6-2-multivariate-linear-regression.html">
 <script src="libs/jquery-2.2.3/jquery.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
@@ -185,9 +185,9 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 </ul></li>
 <li class="chapter" data-level="4.3" data-path="4-3-further-reading.html"><a href="4-3-further-reading.html"><i class="fa fa-check"></i><b>4.3</b> Further Reading</a></li>
 </ul></li>
-<li class="chapter" data-level="5" data-path="5-testing-forecast-accuracy.html"><a href="5-testing-forecast-accuracy.html"><i class="fa fa-check"></i><b>5</b> Testing forecast accuracy</a><ul>
-<li class="chapter" data-level="5.0.1" data-path="5-testing-forecast-accuracy.html"><a href="5-testing-forecast-accuracy.html#training-settest-set"><i class="fa fa-check"></i><b>5.0.1</b> Training set/test set</a></li>
-<li class="chapter" data-level="5.0.2" data-path="5-testing-forecast-accuracy.html"><a href="5-testing-forecast-accuracy.html#cross-validation"><i class="fa fa-check"></i><b>5.0.2</b> Cross-Validation</a></li>
+<li class="chapter" data-level="5" data-path="5-perf-testing.html"><a href="5-perf-testing.html"><i class="fa fa-check"></i><b>5</b> Testing forecast accuracy</a><ul>
+<li class="chapter" data-level="5.0.1" data-path="5-perf-testing.html"><a href="5-perf-testing.html#training-settest-set"><i class="fa fa-check"></i><b>5.0.1</b> Training set/test set</a></li>
+<li class="chapter" data-level="5.0.2" data-path="5-perf-testing.html"><a href="5-perf-testing.html#cross-validation"><i class="fa fa-check"></i><b>5.0.2</b> Cross-Validation</a></li>
 <li class="chapter" data-level="5.1" data-path="5-1-metrics.html"><a href="5-1-metrics.html"><i class="fa fa-check"></i><b>5.1</b> Metrics</a><ul>
 <li class="chapter" data-level="5.1.1" data-path="5-1-metrics.html"><a href="5-1-metrics.html#accuracy-function"><i class="fa fa-check"></i><b>5.1.1</b> <code>accuracy()</code> function</a></li>
 <li class="chapter" data-level="5.1.2" data-path="5-1-metrics.html"><a href="5-1-metrics.html#test-multiple-models"><i class="fa fa-check"></i><b>5.1.2</b> Test multiple models</a></li>
@@ -203,8 +203,20 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 </ul></li>
 <li class="chapter" data-level="6" data-path="6-covariates.html"><a href="6-covariates.html"><i class="fa fa-check"></i><b>6</b> Covariates</a><ul>
 <li class="chapter" data-level="6.1" data-path="6-1-multivariate-linear-regression-with-arma-errors.html"><a href="6-1-multivariate-linear-regression-with-arma-errors.html"><i class="fa fa-check"></i><b>6.1</b> Multivariate linear regression with ARMA errors</a><ul>
-<li class="chapter" data-level="6.1.1" data-path="6-1-multivariate-linear-regression-with-arma-errors.html"><a href="6-1-multivariate-linear-regression-with-arma-errors.html#example-anchovy"><i class="fa fa-check"></i><b>6.1.1</b> Example: anchovy</a></li>
-<li class="chapter" data-level="6.1.2" data-path="6-1-multivariate-linear-regression-with-arma-errors.html"><a href="6-1-multivariate-linear-regression-with-arma-errors.html#mreg-of-first-or-second-differences"><i class="fa fa-check"></i><b>6.1.2</b> MREG of first or second differences</a></li>
+<li class="chapter" data-level="6.1.1" data-path="6-1-multivariate-linear-regression-with-arma-errors.html"><a href="6-1-multivariate-linear-regression-with-arma-errors.html#mreg-of-first-or-second-differences"><i class="fa fa-check"></i><b>6.1.1</b> MREG of first or second differences</a></li>
+</ul></li>
+<li class="chapter" data-level="6.2" data-path="6-2-multivariate-linear-regression.html"><a href="6-2-multivariate-linear-regression.html"><i class="fa fa-check"></i><b>6.2</b> Multivariate linear regression</a><ul>
+<li class="chapter" data-level="6.2.1" data-path="6-2-multivariate-linear-regression.html"><a href="6-2-multivariate-linear-regression.html#covariates-used-in-stergiou-and-christou"><i class="fa fa-check"></i><b>6.2.1</b> Covariates used in Stergiou and Christou</a></li>
+<li class="chapter" data-level="6.2.2" data-path="6-2-multivariate-linear-regression.html"><a href="6-2-multivariate-linear-regression.html#collinearity"><i class="fa fa-check"></i><b>6.2.2</b> Collinearity</a></li>
+<li class="chapter" data-level="6.2.3" data-path="6-2-multivariate-linear-regression.html"><a href="6-2-multivariate-linear-regression.html#effect-of-collinearity"><i class="fa fa-check"></i><b>6.2.3</b> Effect of collinearity</a></li>
+<li class="chapter" data-level="6.2.4" data-path="6-2-multivariate-linear-regression.html"><a href="6-2-multivariate-linear-regression.html#model-selection-with-stepwise-variable-selection"><i class="fa fa-check"></i><b>6.2.4</b> Model selection with stepwise variable selection</a></li>
+<li class="chapter" data-level="6.2.5" data-path="6-2-multivariate-linear-regression.html"><a href="6-2-multivariate-linear-regression.html#model-selection-with-cross-validationislcv"><i class="fa fa-check"></i><b>6.2.5</b> Model selection with cross-validation</a></li>
+<li class="chapter" data-level="6.2.6" data-path="6-2-multivariate-linear-regression.html"><a href="6-2-multivariate-linear-regression.html#penalized-regression-ridge-regression"><i class="fa fa-check"></i><b>6.2.6</b> Penalized regression: ridge regression</a></li>
+<li class="chapter" data-level="6.2.7" data-path="6-2-multivariate-linear-regression.html"><a href="6-2-multivariate-linear-regression.html#penalized-regression-lasso"><i class="fa fa-check"></i><b>6.2.7</b> Penalized regression: Lasso</a></li>
+<li class="chapter" data-level="6.2.8" data-path="6-2-multivariate-linear-regression.html"><a href="6-2-multivariate-linear-regression.html#penalized-regression-elastic-net"><i class="fa fa-check"></i><b>6.2.8</b> Penalized regression: Elastic net</a></li>
+<li class="chapter" data-level="6.2.9" data-path="6-2-multivariate-linear-regression.html"><a href="6-2-multivariate-linear-regression.html#comparing-model-prediction-accuracy"><i class="fa fa-check"></i><b>6.2.9</b> Comparing model prediction accuracy</a></li>
+<li class="chapter" data-level="6.2.10" data-path="6-2-multivariate-linear-regression.html"><a href="6-2-multivariate-linear-regression.html#discussion"><i class="fa fa-check"></i><b>6.2.10</b> Discussion</a></li>
+<li class="chapter" data-level="6.2.11" data-path="6-2-multivariate-linear-regression.html"><a href="6-2-multivariate-linear-regression.html#cov.df"><i class="fa fa-check"></i><b>6.2.11</b> Creating the data frame for model fitting</a></li>
 </ul></li>
 </ul></li>
 <li class="chapter" data-level="7" data-path="7-seasonality.html"><a href="7-seasonality.html"><i class="fa fa-check"></i><b>7</b> Seasonality</a><ul>
@@ -258,24 +270,20 @@ e_t \sim N(0,\sigma)
 \end{gathered}
 \end{equation}\]</span>
 <p>where <code>xreg</code> is matrix with <span class="math inline">\(c_{t,1}\)</span> in column 1, <span class="math inline">\(c_{t-2}\)</span> in column 2, etc. <span class="math inline">\(z_t\)</span> are the ARMA errors.</p>
-<div id="example-anchovy" class="section level3">
-<h3><span class="header-section-number">6.1.1</span> Example: anchovy</h3>
-</div>
 <div id="mreg-of-first-or-second-differences" class="section level3">
-<h3><span class="header-section-number">6.1.2</span> MREG of first or second differences</h3>
+<h3><span class="header-section-number">6.1.1</span> MREG of first or second differences</h3>
 <p>In the multivariate regression with ARMA errors, the response variable <span class="math inline">\(x_t\)</span> is not necessarily stationary since the covariates <span class="math inline">\(c_t\)</span>’s need not be stationary. If we wish to model the first or second differences of <span class="math inline">\(x_t\)</span>, then we are potentially modeling a stationary process if differencing leads to a stationary process. We need to think carefully about how we set up a multivariate regression if our response variable is stationary.</p>
-<p>One recommendation is if <span class="math inline">\(x_t\)</span> is differenced, the same differencing is applied to the covariates. The idea is if the response variable is stationary, we want to make sure that the independent variables are also stationary. However, in a fisheries application <span class="math inline">\(x_t - x_{t-1}\)</span> often has a biological meaning, the yearly (or monthly or hourly) rate of change, and that rate of change is what one is trying explain with a covariate. One would not necessarily expect the first difference to be stationary and one is trying to explain any trend in the one-step rate of change with some set of covariates. On the other hand, if the response variable, the raw data or the first or second difference, is stationary then trying to explain its variability via a non-stationary covariate will clearly lead to the effect size of the covariates being zero. We don’t need to fit a model to tell us that. <span class="math inline">\(x_t - x_{t-1}\)</span>.</p>
+<p>One recommendation is if <span class="math inline">\(x_t\)</span> is differenced, the same differencing is applied to the covariates. The idea is if the response variable is stationary, we want to make sure that the independent variables are also stationary. However, in a fisheries application <span class="math inline">\(x_t - x_{t-1}\)</span> often has a biological meaning, the yearly (or monthly or hourly) rate of change, and that rate of change is what one is trying explain with a covariate. One would not necessarily expect the first difference to be stationary and one is trying to explain any trend in the one-step rate of change with some set of covariates. On the other hand, if the response variable, the raw data or the first or second difference, is stationary then trying to explain its variability via a non-stationary covariate will clearly lead to the effect size of the covariates being zero. We don’t need to fit a model to tell us that.</p>
 
 </div>
 </div>
-<!-- </div> -->
             </section>
 
           </div>
         </div>
       </div>
 <a href="6-covariates.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
-<a href="7-seasonality.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+<a href="6-2-multivariate-linear-regression.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
     </div>
   </div>
 <script src="libs/gitbook-2.6.7/js/app.min.js"></script>
