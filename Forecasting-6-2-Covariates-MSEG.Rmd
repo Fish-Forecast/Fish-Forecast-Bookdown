@@ -103,8 +103,9 @@ For most of the analyses, we will use the untransformed variables, however for s
 
 ```{r z.score}
 dfz <- df
+n <- nrow(df)
 for(i in colnames(df)){
-  pop_sd <- sd(df[,i])*sqrt((length(df[,i])-1)/(length(df[,i])))
+  pop_sd <- sd(df[,i])*sqrt(n-1)/n
   pop_mean <- mean(df[,i])
   dfz[,i] <- (df[,i]-pop_mean)/pop_sd
 }
@@ -341,7 +342,7 @@ colnames(smodels$which)[smodels$which[rmin,]]
 ```
 ### Model selection with cross-validation[^ISLcv]
 
-[^ISLcv]: This section and the R code was adapted from and influenced by Chapter 6 material in Introduction to Statistical Learning by James, Witten, Hastie and Tibshirani. They have an (free) online course and (free) textbook at http://www-bcf.usc.edu/~gareth/ISL/
+[^ISLcv]: This section and the R code was adapted from and influenced by [Chapter 6 material](https://lagunita.stanford.edu/c4x/HumanitiesSciences/StatLearning/asset/ch6.html) in Introduction to Statistical Learning by James, Witten, Hastie and Tibshirani. They have an (free) online course and (free) textbook at http://www-bcf.usc.edu/~gareth/ISL/ .
 
 <!--
 https://lagunita.stanford.edu/courses/HumanitiesSciences/StatLearning/Winter2016/about
@@ -576,6 +577,11 @@ As we might expect, elastic net is part way between the ridge regression model a
 ### Comparing model prediction accuracy
 
 We can use cross-validation compare prediction accuracy if we have a set of models to compare.  In our case, we do not have a set of models but rather a set of "number of variables".  We cannot use variable selection with our full dataset to chose the variables and then turn around and use cross-validation with the same dataset to test the out-of-sample prediction accuracy.  Anytime you double-use your data like that, you will have severe bias problems.
+
+<!--
+Discussion of this issue
+https://stats.stackexchange.com/questions/27750/feature-selection-and-cross-validation/27751#27751
+-->
 
 Instead, we will test our models using the two years that we held out for testing, 1988 and 1989 in Stergiou and Christou and 1988-1992 (five years) for comparison.  We will use the performance testing procedure in Chapter \@ref(perf-testing).
 
