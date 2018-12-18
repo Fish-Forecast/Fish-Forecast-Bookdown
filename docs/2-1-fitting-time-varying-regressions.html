@@ -5,11 +5,11 @@
 
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>Fisheries Catch Forecasting</title>
+  <title>2.1 Fitting time-varying regressions | Fisheries Catch Forecasting</title>
   <meta name="description" content="This book will show you how to model and forecast annual and seasonal fisheries catches using R and its time-series analysis functions and packages. Forecasting using time-varying regression, ARIMA (Box-Jenkins) models, and expoential smoothing models is demonstrated using real catch time series. The entire process from data evaluation and diagnostics, model fitting, model selection and forecast evaluation is shown. The focus of the book is on univariate time series (annual or seasonal), however multivariate regression with autocorrelated errors and multivariate autoregressive models (MAR) are covered briefly. For multivariate autoregressive models and multivariate autoregressive state-space models for fisheries and environmental sciences, see Holmes, Ward and Scheuerell (2018).">
-  <meta name="generator" content="bookdown 0.7 and GitBook 2.6.7">
+  <meta name="generator" content="bookdown  and GitBook 2.6.7">
 
-  <meta property="og:title" content="Fisheries Catch Forecasting" />
+  <meta property="og:title" content="2.1 Fitting time-varying regressions | Fisheries Catch Forecasting />
   <meta property="og:type" content="book" />
   
   <meta property="og:image" content="images/cover.png" />
@@ -17,7 +17,7 @@
   <meta name="github-repo" content="fish-forecast/Fish-Forecast-Bookdown/" />
 
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="Fisheries Catch Forecasting" />
+  <meta name="twitter:title" content="2.1 Fitting time-varying regressions | Fisheries Catch Forecasting />
   
   <meta name="twitter:description" content="This book will show you how to model and forecast annual and seasonal fisheries catches using R and its time-series analysis functions and packages. Forecasting using time-varying regression, ARIMA (Box-Jenkins) models, and expoential smoothing models is demonstrated using real catch time series. The entire process from data evaluation and diagnostics, model fitting, model selection and forecast evaluation is shown. The focus of the book is on univariate time series (annual or seasonal), however multivariate regression with autocorrelated errors and multivariate autoregressive models (MAR) are covered briefly. For multivariate autoregressive models and multivariate autoregressive state-space models for fisheries and environmental sciences, see Holmes, Ward and Scheuerell (2018)." />
   <meta name="twitter:image" content="images/cover.png" />
@@ -25,7 +25,7 @@
 <meta name="author" content="Elizabeth Holmes">
 
 
-<meta name="date" content="2018-12-06">
+<meta name="date" content="2018-12-17">
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -36,6 +36,7 @@
 <link rel="next" href="2-2-forecasting-with-a-time-varying-regression-model.html">
 <script src="libs/jquery-2.2.3/jquery.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
@@ -51,41 +52,67 @@
 
 
 <style type="text/css">
-div.sourceCode { overflow-x: auto; }
-table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
-  margin: 0; padding: 0; vertical-align: baseline; border: none; }
-table.sourceCode { width: 100%; line-height: 100%; }
-td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
-td.sourceCode { padding-left: 5px; }
-code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
-code > span.dt { color: #902000; } /* DataType */
-code > span.dv { color: #40a070; } /* DecVal */
-code > span.bn { color: #40a070; } /* BaseN */
-code > span.fl { color: #40a070; } /* Float */
-code > span.ch { color: #4070a0; } /* Char */
-code > span.st { color: #4070a0; } /* String */
-code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
-code > span.ot { color: #007020; } /* Other */
-code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
-code > span.fu { color: #06287e; } /* Function */
-code > span.er { color: #ff0000; font-weight: bold; } /* Error */
-code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
-code > span.cn { color: #880000; } /* Constant */
-code > span.sc { color: #4070a0; } /* SpecialChar */
-code > span.vs { color: #4070a0; } /* VerbatimString */
-code > span.ss { color: #bb6688; } /* SpecialString */
-code > span.im { } /* Import */
-code > span.va { color: #19177c; } /* Variable */
-code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
-code > span.op { color: #666666; } /* Operator */
-code > span.bu { } /* BuiltIn */
-code > span.ex { } /* Extension */
-code > span.pp { color: #bc7a00; } /* Preprocessor */
-code > span.at { color: #7d9029; } /* Attribute */
-code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
-code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
-code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
-code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+a.sourceLine { display: inline-block; line-height: 1.25; }
+a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
+a.sourceLine:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode { white-space: pre; position: relative; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+code.sourceCode { white-space: pre-wrap; }
+a.sourceLine { text-indent: -1em; padding-left: 1em; }
+}
+pre.numberSource a.sourceLine
+  { position: relative; left: -4em; }
+pre.numberSource a.sourceLine::before
+  { content: attr(data-line-number);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; pointer-events: all; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {  }
+@media screen {
+a.sourceLine::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
 </style>
 
 <link rel="stylesheet" href="style.css" type="text/css" />
@@ -263,18 +290,18 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <p>Fitting a time-varying regression is done with the <code>lm()</code> function. For example, here is how to fit a 4th-order polynomial for time to the anchovy data. We are fitting this model:</p>
 <p><span class="math display">\[log(Anchovy) = \alpha + \beta t + \beta_2 t^2 + \beta_3 t^3 + \beta_4 t^4 + e_t\]</span></p>
 <p>First load in the data. <code>landings.RData</code> includes a number of data objects. <code>anchovy</code> is a data frame with year and log.metric.tons columns. <code>anchovy87</code> is the same data frame but with the years 1964 to 1987. These are the years that Stergio and Christou use for fitting their models. They hold out 1988 and 1989 for forecast evaluation.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">load</span>(<span class="st">&quot;landings.RData&quot;</span>)</code></pre></div>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">load</span>(<span class="st">&quot;landings.RData&quot;</span>)</code></pre>
 <p>We need to add on a column for <span class="math inline">\(t\)</span> (and <span class="math inline">\(t^2\)</span>, <span class="math inline">\(t^3\)</span>, <span class="math inline">\(t^4\)</span>) where the first year is <span class="math inline">\(t=1\)</span>. We could regress against year (so 1964 to 1987), but by convention, one regresses against 1 to the number of years or 0 to the number of years minus 1. Stergiou and Christou did the former.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">anchovy87<span class="op">$</span>t =<span class="st"> </span>anchovy87<span class="op">$</span>Year<span class="op">-</span><span class="dv">1963</span>
+<pre class="sourceCode r"><code class="sourceCode r">anchovy87<span class="op">$</span>t =<span class="st"> </span>anchovy87<span class="op">$</span>Year<span class="dv">-1963</span>
 anchovy87<span class="op">$</span>t2 =<span class="st"> </span>anchovy87<span class="op">$</span>t<span class="op">^</span><span class="dv">2</span>
 anchovy87<span class="op">$</span>t3 =<span class="st"> </span>anchovy87<span class="op">$</span>t<span class="op">^</span><span class="dv">3</span>
 anchovy87<span class="op">$</span>t4 =<span class="st"> </span>anchovy87<span class="op">$</span>t<span class="op">^</span><span class="dv">4</span>
-model &lt;-<span class="st"> </span><span class="kw">lm</span>(log.metric.tons <span class="op">~</span><span class="st"> </span>t <span class="op">+</span><span class="st"> </span>t2 <span class="op">+</span><span class="st"> </span>t3 <span class="op">+</span><span class="st"> </span>t4, <span class="dt">data=</span>anchovy87)</code></pre></div>
+model &lt;-<span class="st"> </span><span class="kw">lm</span>(log.metric.tons <span class="op">~</span><span class="st"> </span>t <span class="op">+</span><span class="st"> </span>t2 <span class="op">+</span><span class="st"> </span>t3 <span class="op">+</span><span class="st"> </span>t4, <span class="dt">data=</span>anchovy87)</code></pre>
 <p>All our covariates are functions of <span class="math inline">\(t\)</span>, so we do not actually need to add on the <span class="math inline">\(t^2\)</span>, <span class="math inline">\(t^3\)</span> and <span class="math inline">\(t^4\)</span> to our data frame. We can use the <code>I()</code> function. This function is useful whenever you want to use a transformed value of a column of your data frame in your regression.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">anchovy87<span class="op">$</span>t =<span class="st"> </span>anchovy87<span class="op">$</span>Year<span class="op">-</span><span class="dv">1963</span>
-model &lt;-<span class="st"> </span><span class="kw">lm</span>(log.metric.tons <span class="op">~</span><span class="st"> </span>t <span class="op">+</span><span class="st"> </span><span class="kw">I</span>(t<span class="op">^</span><span class="dv">2</span>) <span class="op">+</span><span class="st"> </span><span class="kw">I</span>(t<span class="op">^</span><span class="dv">3</span>) <span class="op">+</span><span class="st"> </span><span class="kw">I</span>(t<span class="op">^</span><span class="dv">4</span>), <span class="dt">data=</span>anchovy87)</code></pre></div>
+<pre class="sourceCode r"><code class="sourceCode r">anchovy87<span class="op">$</span>t =<span class="st"> </span>anchovy87<span class="op">$</span>Year<span class="dv">-1963</span>
+model &lt;-<span class="st"> </span><span class="kw">lm</span>(log.metric.tons <span class="op">~</span><span class="st"> </span>t <span class="op">+</span><span class="st"> </span><span class="kw">I</span>(t<span class="op">^</span><span class="dv">2</span>) <span class="op">+</span><span class="st"> </span><span class="kw">I</span>(t<span class="op">^</span><span class="dv">3</span>) <span class="op">+</span><span class="st"> </span><span class="kw">I</span>(t<span class="op">^</span><span class="dv">4</span>), <span class="dt">data=</span>anchovy87)</code></pre>
 <p>Let’s look at the fit.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">summary</span>(model)</code></pre></div>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">summary</span>(model)</code></pre>
 <pre><code>## 
 ## Call:
 ## lm(formula = log.metric.tons ~ t + I(t^2) + I(t^3) + I(t^4), 
@@ -305,18 +332,18 @@ model &lt;-<span class="st"> </span><span class="kw">lm</span>(log.metric.tons <
 <div id="poly-function" class="section level4">
 <h4><span class="header-section-number">2.1.1.1</span> <code>poly()</code> function</h4>
 <p>The <code>poly()</code> function creates orthogonal covariates for your polynomial. What does that mean? Let’s say you want to fit a model with a 2nd order polynomial of <span class="math inline">\(t\)</span>. It has <span class="math inline">\(t\)</span> and <span class="math inline">\(t^2\)</span>, but using these as covariates directly lead to using two covariates that are highly correlated. Instead we want a covariate that explains <span class="math inline">\(t\)</span> and another that explains the part of <span class="math inline">\(t^2\)</span> that cannot be explained by <span class="math inline">\(t\)</span>. <code>poly()</code> creates these orthogonal covariates. The <code>poly()</code> function creates covariates with mean zero and identical variances. Covariates with different means and variances makes it hard to compare the estimated effect sizes.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">T1 =<span class="st"> </span><span class="dv">1</span><span class="op">:</span><span class="dv">24</span>; T2=T1<span class="op">^</span><span class="dv">2</span>
-<span class="kw">c</span>(<span class="kw">mean</span>(T1),<span class="kw">mean</span>(T2),<span class="kw">cov</span>(T1, T2))</code></pre></div>
+<pre class="sourceCode r"><code class="sourceCode r">T1 =<span class="st"> </span><span class="dv">1</span><span class="op">:</span><span class="dv">24</span>; T2=T1<span class="op">^</span><span class="dv">2</span>
+<span class="kw">c</span>(<span class="kw">mean</span>(T1),<span class="kw">mean</span>(T2),<span class="kw">cov</span>(T1, T2))</code></pre>
 <pre><code>## [1]   12.5000  204.1667 1250.0000</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">T1 =<span class="st"> </span><span class="kw">poly</span>(T1,<span class="dv">2</span>)[,<span class="dv">1</span>]; T2=<span class="kw">poly</span>(T1,<span class="dv">2</span>)[,<span class="dv">2</span>]
-<span class="kw">c</span>(<span class="kw">mean</span>(T1),<span class="kw">mean</span>(T2),<span class="kw">cov</span>(T1, T2))</code></pre></div>
+<pre class="sourceCode r"><code class="sourceCode r">T1 =<span class="st"> </span><span class="kw">poly</span>(T1,<span class="dv">2</span>)[,<span class="dv">1</span>]; T2=<span class="kw">poly</span>(T1,<span class="dv">2</span>)[,<span class="dv">2</span>]
+<span class="kw">c</span>(<span class="kw">mean</span>(T1),<span class="kw">mean</span>(T2),<span class="kw">cov</span>(T1, T2))</code></pre>
 <pre><code>## [1]  4.921826e-18  2.674139e-17 -4.949619e-20</code></pre>
 </div>
 <div id="using-poly-to-fit-the-anchovy-data" class="section level4 unnumbered">
 <h4>Using <code>poly()</code> to fit the anchovy data</h4>
 <p>We saw in the anchovy fit that using <span class="math inline">\(t\)</span>, <span class="math inline">\(t^2\)</span>, <span class="math inline">\(t^3\)</span> and <span class="math inline">\(t^4\)</span> directly in the fit resulted in no significant estimated time effect despite a clear temporal trend in the data. If we fit with <code>poly()</code> so that we do not use correlated time covariates, we see a different picture.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">model &lt;-<span class="st"> </span><span class="kw">lm</span>(log.metric.tons <span class="op">~</span><span class="st"> </span><span class="kw">poly</span>(t,<span class="dv">4</span>), <span class="dt">data=</span>anchovy87)
-<span class="kw">summary</span>(model)</code></pre></div>
+<pre class="sourceCode r"><code class="sourceCode r">model &lt;-<span class="st"> </span><span class="kw">lm</span>(log.metric.tons <span class="op">~</span><span class="st"> </span><span class="kw">poly</span>(t,<span class="dv">4</span>), <span class="dt">data=</span>anchovy87)
+<span class="kw">summary</span>(model)</code></pre>
 <pre><code>## 
 ## Call:
 ## lm(formula = log.metric.tons ~ poly(t, 4), data = anchovy87)
@@ -349,16 +376,16 @@ model &lt;-<span class="st"> </span><span class="kw">lm</span>(log.metric.tons <
 </ul>
 <div id="example-of-the-ljung-box-test" class="section level4 unnumbered">
 <h4>Example of the Ljung-Box test</h4>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">Box.test</span>(<span class="kw">rnorm</span>(<span class="dv">100</span>), <span class="dt">type=</span><span class="st">&quot;Ljung-Box&quot;</span>)</code></pre></div>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">Box.test</span>(<span class="kw">rnorm</span>(<span class="dv">100</span>), <span class="dt">type=</span><span class="st">&quot;Ljung-Box&quot;</span>)</code></pre>
 <pre><code>## 
 ##  Box-Ljung test
 ## 
 ## data:  rnorm(100)
-## X-squared = 0.89203, df = 1, p-value = 0.3449</code></pre>
+## X-squared = 0.42605, df = 1, p-value = 0.5139</code></pre>
 <p>The null hypothesis is not rejected. These are not serially correlated.</p>
 <p>Stergio and Christou appear to use a lag of 14 for the test (this is a bit large for 24 data points). The degrees of freedom is lag minus the number of estimated parameters in the model. So for the Anchovy data, <span class="math inline">\(df = 14 - 2\)</span>.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">x &lt;-<span class="st"> </span><span class="kw">resid</span>(model)
-<span class="kw">Box.test</span>(x, <span class="dt">lag =</span> <span class="dv">14</span>, <span class="dt">type =</span> <span class="st">&quot;Ljung-Box&quot;</span>, <span class="dt">fitdf=</span><span class="dv">2</span>)</code></pre></div>
+<pre class="sourceCode r"><code class="sourceCode r">x &lt;-<span class="st"> </span><span class="kw">resid</span>(model)
+<span class="kw">Box.test</span>(x, <span class="dt">lag =</span> <span class="dv">14</span>, <span class="dt">type =</span> <span class="st">&quot;Ljung-Box&quot;</span>, <span class="dt">fitdf=</span><span class="dv">2</span>)</code></pre>
 <pre><code>## 
 ##  Box-Ljung test
 ## 
@@ -369,7 +396,7 @@ model &lt;-<span class="st"> </span><span class="kw">lm</span>(log.metric.tons <
 <div id="breusch-godfrey-test" class="section level4 unnumbered">
 <h4>Breusch-Godfrey test</h4>
 <p>Although Stergiou and Christou use the Ljung-Box test, the Breusch-Godfrey test is more standard for regression residuals. The forecast package has the <code>checkresiduals()</code> function which will run this test and some diagnostic plots.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">forecast<span class="op">::</span><span class="kw">checkresiduals</span>(model)</code></pre></div>
+<pre class="sourceCode r"><code class="sourceCode r">forecast<span class="op">::</span><span class="kw">checkresiduals</span>(model)</code></pre>
 <p><img src="Fish-Forecast_files/figure-html/unnamed-chunk-4-1.png" width="672" style="display: block; margin: auto;" /></p>
 <pre><code>## 
 ##  Breusch-Godfrey test for serial correlation of order up to 8
@@ -388,20 +415,20 @@ model &lt;-<span class="st"> </span><span class="kw">lm</span>(log.metric.tons <
 <div id="compare-anchovy-fit-to-stergiou-and-christou" class="section level4 unnumbered">
 <h4>Compare anchovy fit to Stergiou and Christou</h4>
 <p>Stergiou and Christou use a first order polynomial, linear relationship with time, for the anchovy data. They do not state how they choose this over a 2nd order polynomial which also appears supported (see fit with <code>poly()</code> fit to the anchovy data).</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">anchovy87<span class="op">$</span>t =<span class="st"> </span>anchovy87<span class="op">$</span>Year<span class="op">-</span><span class="dv">1963</span>
-model &lt;-<span class="st"> </span><span class="kw">lm</span>(log.metric.tons <span class="op">~</span><span class="st"> </span>t, <span class="dt">data=</span>anchovy87)</code></pre></div>
+<pre class="sourceCode r"><code class="sourceCode r">anchovy87<span class="op">$</span>t =<span class="st"> </span>anchovy87<span class="op">$</span>Year<span class="dv">-1963</span>
+model &lt;-<span class="st"> </span><span class="kw">lm</span>(log.metric.tons <span class="op">~</span><span class="st"> </span>t, <span class="dt">data=</span>anchovy87)</code></pre>
 <p>The coefficients and adjusted R2 are similar to that shown in their Table 4. The coefficients are not identical so there may be some differences in the data I extracted from the Greek statistical reports and those used in Stergiou and Christou.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">c</span>(<span class="kw">coef</span>(model), <span class="kw">summary</span>(model)<span class="op">$</span>adj.r.squared)</code></pre></div>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">c</span>(<span class="kw">coef</span>(model), <span class="kw">summary</span>(model)<span class="op">$</span>adj.r.squared)</code></pre>
 <pre><code>## (Intercept)           t             
 ##  8.36143085  0.05818942  0.81856644</code></pre>
 </div>
 <div id="compare-sardine-fit-to-stergiou-and-christou" class="section level4 unnumbered">
 <h4>Compare sardine fit to Stergiou and Christou</h4>
 <p>For the sardine (bottom row in Table 4), Stergio and Christou fit a 4th order polynomial. With <code>poly()</code>, a 4th order time-varying regression model is fit to the sardine data as:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">sardine87<span class="op">$</span>t =<span class="st"> </span>sardine87<span class="op">$</span>Year<span class="op">-</span><span class="dv">1963</span>
-model &lt;-<span class="st"> </span><span class="kw">lm</span>(log.metric.tons <span class="op">~</span><span class="st"> </span><span class="kw">poly</span>(t,<span class="dv">4</span>), <span class="dt">data=</span>sardine87)</code></pre></div>
+<pre class="sourceCode r"><code class="sourceCode r">sardine87<span class="op">$</span>t =<span class="st"> </span>sardine87<span class="op">$</span>Year<span class="dv">-1963</span>
+model &lt;-<span class="st"> </span><span class="kw">lm</span>(log.metric.tons <span class="op">~</span><span class="st"> </span><span class="kw">poly</span>(t,<span class="dv">4</span>), <span class="dt">data=</span>sardine87)</code></pre>
 <p>This indicates support for the 2nd, 3rd, and 4th orders but not the 1st (linear) part.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">summary</span>(model)</code></pre></div>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">summary</span>(model)</code></pre>
 <pre><code>## 
 ## Call:
 ## lm(formula = log.metric.tons ~ poly(t, 4), data = sardine87)
@@ -424,16 +451,16 @@ model &lt;-<span class="st"> </span><span class="kw">lm</span>(log.metric.tons <
 ## Multiple R-squared:  0.6353, Adjusted R-squared:  0.5586 
 ## F-statistic: 8.275 on 4 and 19 DF,  p-value: 0.0004846</code></pre>
 <p>Stergiou and Christou appear to have used a raw polynomial model using <span class="math inline">\(t\)</span>, <span class="math inline">\(t^2\)</span>, <span class="math inline">\(t^3\)</span> and <span class="math inline">\(t^4\)</span> as the covariates instead of orthogonal polynomials. To fit the model that they did, we use</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">model &lt;-<span class="st"> </span><span class="kw">lm</span>(log.metric.tons <span class="op">~</span><span class="st"> </span>t <span class="op">+</span><span class="st"> </span><span class="kw">I</span>(t<span class="op">^</span><span class="dv">2</span>) <span class="op">+</span><span class="st"> </span><span class="kw">I</span>(t<span class="op">^</span><span class="dv">3</span>) <span class="op">+</span><span class="st"> </span><span class="kw">I</span>(t<span class="op">^</span><span class="dv">4</span>), <span class="dt">data=</span>sardine87)</code></pre></div>
+<pre class="sourceCode r"><code class="sourceCode r">model &lt;-<span class="st"> </span><span class="kw">lm</span>(log.metric.tons <span class="op">~</span><span class="st"> </span>t <span class="op">+</span><span class="st"> </span><span class="kw">I</span>(t<span class="op">^</span><span class="dv">2</span>) <span class="op">+</span><span class="st"> </span><span class="kw">I</span>(t<span class="op">^</span><span class="dv">3</span>) <span class="op">+</span><span class="st"> </span><span class="kw">I</span>(t<span class="op">^</span><span class="dv">4</span>), <span class="dt">data=</span>sardine87)</code></pre>
 <p>Using a model fit with the raw time covariates, the coefficients and adjusted R2 are similar to that shown in Table 4.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">c</span>(<span class="kw">coef</span>(model), <span class="kw">summary</span>(model)<span class="op">$</span>adj.r.squared)</code></pre></div>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">c</span>(<span class="kw">coef</span>(model), <span class="kw">summary</span>(model)<span class="op">$</span>adj.r.squared)</code></pre>
 <pre><code>##   (Intercept)             t        I(t^2)        I(t^3)        I(t^4) 
 ##  9.672783e+00 -2.443273e-01  3.738773e-02 -1.983588e-03  3.405533e-05 
 ##               
 ##  5.585532e-01</code></pre>
 <p>The test for autocorrelation of the residuals is</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">x &lt;-<span class="st"> </span><span class="kw">resid</span>(model)
-<span class="kw">Box.test</span>(x, <span class="dt">lag =</span> <span class="dv">14</span>, <span class="dt">type =</span> <span class="st">&quot;Ljung-Box&quot;</span>, <span class="dt">fitdf=</span><span class="dv">5</span>)</code></pre></div>
+<pre class="sourceCode r"><code class="sourceCode r">x &lt;-<span class="st"> </span><span class="kw">resid</span>(model)
+<span class="kw">Box.test</span>(x, <span class="dt">lag =</span> <span class="dv">14</span>, <span class="dt">type =</span> <span class="st">&quot;Ljung-Box&quot;</span>, <span class="dt">fitdf=</span><span class="dv">5</span>)</code></pre>
 <pre><code>## 
 ##  Box-Ljung test
 ## 
@@ -496,7 +523,7 @@ gitbook.start({
 "google": false,
 "linkedin": false,
 "weibo": false,
-"instapper": false,
+"instapaper": false,
 "vk": false,
 "all": ["facebook", "google", "twitter", "linkedin", "weibo", "instapaper"]
 },
@@ -508,6 +535,10 @@ gitbook.start({
 "edit": {
 "link": "https://github.com/fish-forecast/Fish-Forecast-Bookdown/edit/master/Forecasting-2-2-TV-Regression.Rmd",
 "text": "Edit"
+},
+"history": {
+"link": null,
+"text": null
 },
 "download": null,
 "toc": {
@@ -522,8 +553,8 @@ gitbook.start({
   (function () {
     var script = document.createElement("script");
     script.type = "text/javascript";
-    var src = "";
-    if (src === "" || src === "true") src = "https://cdn.bootcss.com/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML";
+    var src = "true";
+    if (src === "" || src === "true") src = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML";
     if (location.protocol !== "file:" && /^https?:/.test(src))
       src = src.replace(/^https?:/, '');
     script.src = src;

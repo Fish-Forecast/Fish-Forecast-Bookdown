@@ -5,11 +5,11 @@
 
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>Fisheries Catch Forecasting</title>
+  <title>5.4 Models fit | Fisheries Catch Forecasting</title>
   <meta name="description" content="This book will show you how to model and forecast annual and seasonal fisheries catches using R and its time-series analysis functions and packages. Forecasting using time-varying regression, ARIMA (Box-Jenkins) models, and expoential smoothing models is demonstrated using real catch time series. The entire process from data evaluation and diagnostics, model fitting, model selection and forecast evaluation is shown. The focus of the book is on univariate time series (annual or seasonal), however multivariate regression with autocorrelated errors and multivariate autoregressive models (MAR) are covered briefly. For multivariate autoregressive models and multivariate autoregressive state-space models for fisheries and environmental sciences, see Holmes, Ward and Scheuerell (2018).">
-  <meta name="generator" content="bookdown 0.7 and GitBook 2.6.7">
+  <meta name="generator" content="bookdown  and GitBook 2.6.7">
 
-  <meta property="og:title" content="Fisheries Catch Forecasting" />
+  <meta property="og:title" content="5.4 Models fit | Fisheries Catch Forecasting />
   <meta property="og:type" content="book" />
   
   <meta property="og:image" content="images/cover.png" />
@@ -17,7 +17,7 @@
   <meta name="github-repo" content="fish-forecast/Fish-Forecast-Bookdown/" />
 
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="Fisheries Catch Forecasting" />
+  <meta name="twitter:title" content="5.4 Models fit | Fisheries Catch Forecasting />
   
   <meta name="twitter:description" content="This book will show you how to model and forecast annual and seasonal fisheries catches using R and its time-series analysis functions and packages. Forecasting using time-varying regression, ARIMA (Box-Jenkins) models, and expoential smoothing models is demonstrated using real catch time series. The entire process from data evaluation and diagnostics, model fitting, model selection and forecast evaluation is shown. The focus of the book is on univariate time series (annual or seasonal), however multivariate regression with autocorrelated errors and multivariate autoregressive models (MAR) are covered briefly. For multivariate autoregressive models and multivariate autoregressive state-space models for fisheries and environmental sciences, see Holmes, Ward and Scheuerell (2018)." />
   <meta name="twitter:image" content="images/cover.png" />
@@ -25,7 +25,7 @@
 <meta name="author" content="Elizabeth Holmes">
 
 
-<meta name="date" content="2018-12-06">
+<meta name="date" content="2018-12-17">
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -36,6 +36,7 @@
 <link rel="next" href="6-covariates.html">
 <script src="libs/jquery-2.2.3/jquery.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
@@ -51,41 +52,67 @@
 
 
 <style type="text/css">
-div.sourceCode { overflow-x: auto; }
-table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
-  margin: 0; padding: 0; vertical-align: baseline; border: none; }
-table.sourceCode { width: 100%; line-height: 100%; }
-td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
-td.sourceCode { padding-left: 5px; }
-code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
-code > span.dt { color: #902000; } /* DataType */
-code > span.dv { color: #40a070; } /* DecVal */
-code > span.bn { color: #40a070; } /* BaseN */
-code > span.fl { color: #40a070; } /* Float */
-code > span.ch { color: #4070a0; } /* Char */
-code > span.st { color: #4070a0; } /* String */
-code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
-code > span.ot { color: #007020; } /* Other */
-code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
-code > span.fu { color: #06287e; } /* Function */
-code > span.er { color: #ff0000; font-weight: bold; } /* Error */
-code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
-code > span.cn { color: #880000; } /* Constant */
-code > span.sc { color: #4070a0; } /* SpecialChar */
-code > span.vs { color: #4070a0; } /* VerbatimString */
-code > span.ss { color: #bb6688; } /* SpecialString */
-code > span.im { } /* Import */
-code > span.va { color: #19177c; } /* Variable */
-code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
-code > span.op { color: #666666; } /* Operator */
-code > span.bu { } /* BuiltIn */
-code > span.ex { } /* Extension */
-code > span.pp { color: #bc7a00; } /* Preprocessor */
-code > span.at { color: #7d9029; } /* Attribute */
-code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
-code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
-code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
-code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+a.sourceLine { display: inline-block; line-height: 1.25; }
+a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
+a.sourceLine:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode { white-space: pre; position: relative; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+code.sourceCode { white-space: pre-wrap; }
+a.sourceLine { text-indent: -1em; padding-left: 1em; }
+}
+pre.numberSource a.sourceLine
+  { position: relative; left: -4em; }
+pre.numberSource a.sourceLine::before
+  { content: attr(data-line-number);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; pointer-events: all; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {  }
+@media screen {
+a.sourceLine::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
 </style>
 
 <link rel="stylesheet" href="style.css" type="text/css" />
@@ -261,8 +288,8 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <div id="models-fit" class="section level2">
 <h2><span class="header-section-number">5.4</span> Models fit</h2>
 <p>Now we can use <code>names()</code> to see the models that we have fit. If we want to add more, we use the code above as a template.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">modelnames &lt;-<span class="st"> </span><span class="kw">names</span>(fit.list)
-modelnames</code></pre></div>
+<pre class="sourceCode r"><code class="sourceCode r">modelnames &lt;-<span class="st"> </span><span class="kw">names</span>(fit.list)
+modelnames</code></pre>
 <pre><code>## [1] &quot;ETS w trend&quot;          &quot;ETS no trend&quot;         &quot;ARIMA(0,1,1) w drift&quot;
 ## [4] &quot;ARIMA(2,1,0) w drift&quot; &quot;TV linear regression&quot; &quot;Naive&quot;               
 ## [7] &quot;Naive w trend&quot;        &quot;Average&quot;</code></pre>
@@ -270,7 +297,7 @@ modelnames</code></pre></div>
 <div id="metrics-for-each-model" class="section level3">
 <h3><span class="header-section-number">5.4.1</span> Metrics for each model</h3>
 <p>We will run the models and compute the forecast metrics for each and put in a table.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">restab &lt;-<span class="st"> </span><span class="kw">data.frame</span>(<span class="dt">model=</span>modelnames, <span class="dt">RMSE=</span><span class="ot">NA</span>, <span class="dt">ME=</span><span class="ot">NA</span>, <span class="dt">tsCV.RMSE=</span><span class="ot">NA</span>, <span class="dt">AIC=</span><span class="ot">NA</span>, <span class="dt">BIC=</span><span class="ot">NA</span>, <span class="dt">stringsAsFactors =</span> <span class="ot">FALSE</span>)
+<pre class="sourceCode r"><code class="sourceCode r">restab &lt;-<span class="st"> </span><span class="kw">data.frame</span>(<span class="dt">model=</span>modelnames, <span class="dt">RMSE=</span><span class="ot">NA</span>, <span class="dt">ME=</span><span class="ot">NA</span>, <span class="dt">tsCV.RMSE=</span><span class="ot">NA</span>, <span class="dt">AIC=</span><span class="ot">NA</span>, <span class="dt">BIC=</span><span class="ot">NA</span>, <span class="dt">stringsAsFactors =</span> <span class="ot">FALSE</span>)
 <span class="cf">for</span>(i <span class="cf">in</span> modelnames){
   fit &lt;-<span class="st"> </span>fit.list[[i]]
   fr &lt;-<span class="st"> </span>fr.list[[i]]
@@ -280,122 +307,122 @@ modelnames</code></pre></div>
   restab<span class="op">$</span>tsCV.RMSE[restab<span class="op">$</span>model<span class="op">==</span>i] &lt;-<span class="st"> </span><span class="kw">sqrt</span>(<span class="kw">mean</span>(e<span class="op">^</span><span class="dv">2</span>, <span class="dt">na.rm=</span><span class="ot">TRUE</span>))
   restab<span class="op">$</span>AIC[restab<span class="op">$</span>model<span class="op">==</span>i] &lt;-<span class="st"> </span><span class="kw">AIC</span>(fit)
   restab<span class="op">$</span>BIC[restab<span class="op">$</span>model<span class="op">==</span>i] &lt;-<span class="st"> </span><span class="kw">BIC</span>(fit)
-}</code></pre></div>
+}</code></pre>
 <p>Add on <span class="math inline">\(\Delta\)</span>AIC and <span class="math inline">\(\Delta\)</span>BIC. Sort by <span class="math inline">\(\Delta\)</span>AIC and format to have 3 digits.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">restab<span class="op">$</span>DeltaAIC &lt;-<span class="st"> </span>restab<span class="op">$</span>AIC<span class="op">-</span><span class="kw">min</span>(restab<span class="op">$</span>AIC)
+<pre class="sourceCode r"><code class="sourceCode r">restab<span class="op">$</span>DeltaAIC &lt;-<span class="st"> </span>restab<span class="op">$</span>AIC<span class="op">-</span><span class="kw">min</span>(restab<span class="op">$</span>AIC)
 restab<span class="op">$</span>DeltaBIC &lt;-<span class="st"> </span>restab<span class="op">$</span>BIC<span class="op">-</span><span class="kw">min</span>(restab<span class="op">$</span>BIC)
 restab &lt;-<span class="st"> </span>restab[<span class="kw">order</span>(restab<span class="op">$</span>DeltaAIC),]
-resfor &lt;-<span class="st"> </span><span class="kw">format</span>(restab, <span class="dt">digits=</span><span class="dv">3</span>, <span class="dt">trim=</span><span class="ot">TRUE</span>)</code></pre></div>
+resfor &lt;-<span class="st"> </span><span class="kw">format</span>(restab, <span class="dt">digits=</span><span class="dv">3</span>, <span class="dt">trim=</span><span class="ot">TRUE</span>)</code></pre>
 <p>Bold the minimum values in each column so they are easy to spot.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="cf">for</span>(i <span class="cf">in</span> <span class="kw">colnames</span>(resfor)){
+<pre class="sourceCode r"><code class="sourceCode r"><span class="cf">for</span>(i <span class="cf">in</span> <span class="kw">colnames</span>(resfor)){
   <span class="cf">if</span>(<span class="kw">class</span>(restab[,i])<span class="op">==</span><span class="st">&quot;character&quot;</span>) <span class="cf">next</span>
   <span class="cf">if</span>(i<span class="op">!=</span><span class="st">&quot;ME&quot;</span>) testval &lt;-<span class="st"> </span>restab[,i] <span class="cf">else</span> testval &lt;-<span class="st"> </span><span class="kw">abs</span>(restab[,i])
   theminrow &lt;-<span class="st"> </span><span class="kw">which</span>(testval<span class="op">==</span><span class="kw">min</span>(testval))
   resfor[theminrow, i] &lt;-<span class="st"> </span><span class="kw">paste0</span>(<span class="st">&quot;**&quot;</span>,resfor[theminrow,i],<span class="st">&quot;**&quot;</span>)
-}</code></pre></div>
+}</code></pre>
 <p>This is the table of FORECAST performance metrics. Not how well it fits the data, but how well it forecasts out of the data. RSME and ME are for the 2 data points in 1988 and 1989 that were held out for testing. tsCV.RMSE is the RSME for the time-series crossvalidation that makes a series of forecasts for each point in the data. AIC and BIC are information criteria, which are a measure of data support for each model.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">knitr<span class="op">::</span><span class="kw">kable</span>(resfor)</code></pre></div>
+<pre class="sourceCode r"><code class="sourceCode r">knitr<span class="op">::</span><span class="kw">kable</span>(resfor)</code></pre>
 <table>
 <thead>
 <tr class="header">
-<th></th>
-<th align="left">model</th>
-<th align="left">RMSE</th>
-<th align="left">ME</th>
-<th align="left">tsCV.RMSE</th>
-<th align="left">AIC</th>
-<th align="left">BIC</th>
-<th align="left">DeltaAIC</th>
-<th align="left">DeltaBIC</th>
+<th align="right">mod</th>
+<th>el RMS</th>
+<th>E ME</th>
+<th align="right">tsC</th>
+<th>V.RMSE AIC</th>
+<th align="right">BIC</th>
+<th align="right">Del</th>
+<th>taAIC Del</th>
+<th align="left">taBIC</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td>5</td>
-<td align="left">TV linear regression</td>
-<td align="left"><strong>0.195</strong></td>
-<td align="left"><strong>-0.114</strong></td>
-<td align="left">0.247</td>
-<td align="left"><strong>-7.00</strong></td>
-<td align="left">-3.4611</td>
-<td align="left"><strong>0.00000</strong></td>
+<td align="right">5</td>
+<td>TV linear regression</td>
+<td><strong>0.195</strong></td>
+<td align="right"><strong>-0.114</strong></td>
+<td>0.247</td>
+<td align="right"><strong>-7.00</strong></td>
+<td align="right">-3.4611</td>
+<td><strong>0.00000</strong></td>
 <td align="left">0.123</td>
 </tr>
 <tr class="even">
-<td>3</td>
-<td align="left">ARIMA(0,1,1) w drift</td>
-<td align="left">0.370</td>
-<td align="left">-0.332</td>
-<td align="left">0.231</td>
-<td align="left">-6.99</td>
-<td align="left"><strong>-3.5844</strong></td>
-<td align="left">0.00443</td>
+<td align="right">3</td>
+<td>ARIMA(0,1,1) w drift</td>
+<td>0.370</td>
+<td align="right">-0.332</td>
+<td>0.231</td>
+<td align="right">-6.99</td>
+<td align="right"><strong>-3.5844</strong></td>
+<td>0.00443</td>
 <td align="left"><strong>0.000</strong></td>
 </tr>
 <tr class="odd">
-<td>4</td>
-<td align="left">ARIMA(2,1,0) w drift</td>
-<td align="left">0.381</td>
-<td align="left">-0.347</td>
-<td align="left">0.224</td>
-<td align="left">-6.08</td>
-<td align="left">-1.5399</td>
-<td align="left">0.91340</td>
+<td align="right">4</td>
+<td>ARIMA(2,1,0) w drift</td>
+<td>0.381</td>
+<td align="right">-0.347</td>
+<td>0.224</td>
+<td align="right">-6.08</td>
+<td align="right">-1.5399</td>
+<td>0.91340</td>
 <td align="left">2.044</td>
 </tr>
 <tr class="even">
-<td>7</td>
-<td align="left">Naive w trend</td>
-<td align="left">0.510</td>
-<td align="left">-0.483</td>
-<td align="left">0.239</td>
-<td align="left">-2.18</td>
-<td align="left">0.0883</td>
-<td align="left">4.81255</td>
+<td align="right">7</td>
+<td>Naive w trend</td>
+<td>0.510</td>
+<td align="right">-0.483</td>
+<td>0.239</td>
+<td align="right">-2.18</td>
+<td align="right">0.0883</td>
+<td>4.81255</td>
 <td align="left">3.673</td>
 </tr>
 <tr class="odd">
-<td>6</td>
-<td align="left">Naive</td>
-<td align="left">0.406</td>
-<td align="left">-0.384</td>
-<td align="left"><strong>0.220</strong></td>
-<td align="left">-2.06</td>
-<td align="left">-0.9247</td>
-<td align="left">4.93505</td>
+<td align="right">6</td>
+<td>Naive</td>
+<td>0.406</td>
+<td align="right">-0.384</td>
+<td><strong>0.220</strong></td>
+<td align="right">-2.06</td>
+<td align="right">-0.9247</td>
+<td>4.93505</td>
 <td align="left">2.660</td>
 </tr>
 <tr class="even">
-<td>1</td>
-<td align="left">ETS w trend</td>
-<td align="left">0.538</td>
-<td align="left">-0.500</td>
-<td align="left">0.251</td>
-<td align="left">3.67</td>
-<td align="left">9.5587</td>
-<td align="left">10.66374</td>
+<td align="right">1</td>
+<td>ETS w trend</td>
+<td>0.538</td>
+<td align="right">-0.500</td>
+<td>0.251</td>
+<td align="right">3.67</td>
+<td align="right">9.5587</td>
+<td>10.66374</td>
 <td align="left">13.143</td>
 </tr>
 <tr class="odd">
-<td>2</td>
-<td align="left">ETS no trend</td>
-<td align="left">0.317</td>
-<td align="left">-0.289</td>
-<td align="left">0.222</td>
-<td align="left">6.76</td>
-<td align="left">10.2988</td>
-<td align="left">13.75990</td>
+<td align="right">2</td>
+<td>ETS no trend</td>
+<td>0.317</td>
+<td align="right">-0.289</td>
+<td>0.222</td>
+<td align="right">6.76</td>
+<td align="right">10.2988</td>
+<td>13.75990</td>
 <td align="left">13.883</td>
 </tr>
 <tr class="even">
-<td>8</td>
-<td align="left">Average</td>
-<td align="left">0.656</td>
-<td align="left">0.643</td>
-<td align="left">0.476</td>
-<td align="left">33.04</td>
-<td align="left">35.3924</td>
-<td align="left">40.03162</td>
+<td align="right">8</td>
+<td>Average</td>
+<td>0.656</td>
+<td align="right">0.643</td>
+<td>0.476</td>
+<td align="right">33.04</td>
+<td align="right">35.3924</td>
+<td>40.03162</td>
 <td align="left">38.977</td>
 </tr>
 </tbody>
@@ -430,7 +457,7 @@ gitbook.start({
 "google": false,
 "linkedin": false,
 "weibo": false,
-"instapper": false,
+"instapaper": false,
 "vk": false,
 "all": ["facebook", "google", "twitter", "linkedin", "weibo", "instapaper"]
 },
@@ -442,6 +469,10 @@ gitbook.start({
 "edit": {
 "link": "https://github.com/fish-forecast/Fish-Forecast-Bookdown/edit/master/Forecasting-5-4-Candidate-Model-Sets-Test.Rmd",
 "text": "Edit"
+},
+"history": {
+"link": null,
+"text": null
 },
 "download": null,
 "toc": {
@@ -456,8 +487,8 @@ gitbook.start({
   (function () {
     var script = document.createElement("script");
     script.type = "text/javascript";
-    var src = "";
-    if (src === "" || src === "true") src = "https://cdn.bootcss.com/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML";
+    var src = "true";
+    if (src === "" || src === "true") src = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML";
     if (location.protocol !== "file:" && /^https?:/.test(src))
       src = src.replace(/^https?:/, '');
     script.src = src;

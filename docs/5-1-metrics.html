@@ -5,11 +5,11 @@
 
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>Fisheries Catch Forecasting</title>
+  <title>5.1 Metrics | Fisheries Catch Forecasting</title>
   <meta name="description" content="This book will show you how to model and forecast annual and seasonal fisheries catches using R and its time-series analysis functions and packages. Forecasting using time-varying regression, ARIMA (Box-Jenkins) models, and expoential smoothing models is demonstrated using real catch time series. The entire process from data evaluation and diagnostics, model fitting, model selection and forecast evaluation is shown. The focus of the book is on univariate time series (annual or seasonal), however multivariate regression with autocorrelated errors and multivariate autoregressive models (MAR) are covered briefly. For multivariate autoregressive models and multivariate autoregressive state-space models for fisheries and environmental sciences, see Holmes, Ward and Scheuerell (2018).">
-  <meta name="generator" content="bookdown 0.7 and GitBook 2.6.7">
+  <meta name="generator" content="bookdown  and GitBook 2.6.7">
 
-  <meta property="og:title" content="Fisheries Catch Forecasting" />
+  <meta property="og:title" content="5.1 Metrics | Fisheries Catch Forecasting />
   <meta property="og:type" content="book" />
   
   <meta property="og:image" content="images/cover.png" />
@@ -17,7 +17,7 @@
   <meta name="github-repo" content="fish-forecast/Fish-Forecast-Bookdown/" />
 
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="Fisheries Catch Forecasting" />
+  <meta name="twitter:title" content="5.1 Metrics | Fisheries Catch Forecasting />
   
   <meta name="twitter:description" content="This book will show you how to model and forecast annual and seasonal fisheries catches using R and its time-series analysis functions and packages. Forecasting using time-varying regression, ARIMA (Box-Jenkins) models, and expoential smoothing models is demonstrated using real catch time series. The entire process from data evaluation and diagnostics, model fitting, model selection and forecast evaluation is shown. The focus of the book is on univariate time series (annual or seasonal), however multivariate regression with autocorrelated errors and multivariate autoregressive models (MAR) are covered briefly. For multivariate autoregressive models and multivariate autoregressive state-space models for fisheries and environmental sciences, see Holmes, Ward and Scheuerell (2018)." />
   <meta name="twitter:image" content="images/cover.png" />
@@ -25,7 +25,7 @@
 <meta name="author" content="Elizabeth Holmes">
 
 
-<meta name="date" content="2018-12-06">
+<meta name="date" content="2018-12-17">
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -36,6 +36,7 @@
 <link rel="next" href="5-2-candidate-model-set.html">
 <script src="libs/jquery-2.2.3/jquery.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
@@ -51,41 +52,67 @@
 
 
 <style type="text/css">
-div.sourceCode { overflow-x: auto; }
-table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
-  margin: 0; padding: 0; vertical-align: baseline; border: none; }
-table.sourceCode { width: 100%; line-height: 100%; }
-td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
-td.sourceCode { padding-left: 5px; }
-code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
-code > span.dt { color: #902000; } /* DataType */
-code > span.dv { color: #40a070; } /* DecVal */
-code > span.bn { color: #40a070; } /* BaseN */
-code > span.fl { color: #40a070; } /* Float */
-code > span.ch { color: #4070a0; } /* Char */
-code > span.st { color: #4070a0; } /* String */
-code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
-code > span.ot { color: #007020; } /* Other */
-code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
-code > span.fu { color: #06287e; } /* Function */
-code > span.er { color: #ff0000; font-weight: bold; } /* Error */
-code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
-code > span.cn { color: #880000; } /* Constant */
-code > span.sc { color: #4070a0; } /* SpecialChar */
-code > span.vs { color: #4070a0; } /* VerbatimString */
-code > span.ss { color: #bb6688; } /* SpecialString */
-code > span.im { } /* Import */
-code > span.va { color: #19177c; } /* Variable */
-code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
-code > span.op { color: #666666; } /* Operator */
-code > span.bu { } /* BuiltIn */
-code > span.ex { } /* Extension */
-code > span.pp { color: #bc7a00; } /* Preprocessor */
-code > span.at { color: #7d9029; } /* Attribute */
-code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
-code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
-code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
-code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+a.sourceLine { display: inline-block; line-height: 1.25; }
+a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
+a.sourceLine:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode { white-space: pre; position: relative; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+code.sourceCode { white-space: pre-wrap; }
+a.sourceLine { text-indent: -1em; padding-left: 1em; }
+}
+pre.numberSource a.sourceLine
+  { position: relative; left: -4em; }
+pre.numberSource a.sourceLine::before
+  { content: attr(data-line-number);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; pointer-events: all; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {  }
+@media screen {
+a.sourceLine::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
 </style>
 
 <link rel="stylesheet" href="style.css" type="text/css" />
@@ -263,8 +290,8 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <p>How to we quantify the difference between the forecast and the actual values in the test data set?</p>
 <p>Let’s take the example of a training set/test set.</p>
 <p>The forecast errors are the difference between the test data and the forecasts.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">fr.err &lt;-<span class="st"> </span>testdat <span class="op">-</span><span class="st"> </span>fr<span class="op">$</span>mean
-fr.err</code></pre></div>
+<pre class="sourceCode r"><code class="sourceCode r">fr.err &lt;-<span class="st"> </span>testdat <span class="op">-</span><span class="st"> </span>fr<span class="op">$</span>mean
+fr.err</code></pre>
 <pre><code>## Time Series:
 ## Start = 1988 
 ## End = 1989 
@@ -274,7 +301,7 @@ fr.err</code></pre></div>
 <div id="accuracy-function" class="section level3">
 <h3><span class="header-section-number">5.1.1</span> <code>accuracy()</code> function</h3>
 <p>The <code>accuracy()</code> function in forecast provides many different metrics such as mean error, root mean square error, mean absolute error, mean percentage error, mean absolute percentage error. It requires a forecast object and a test data set that is the same length.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">accuracy</span>(fr, testdat)</code></pre></div>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">accuracy</span>(fr, testdat)</code></pre>
 <pre><code>##                       ME      RMSE       MAE        MPE     MAPE      MASE
 ## Training set -0.00473511 0.1770653 0.1438523 -0.1102259 1.588409 0.7698386
 ## Test set     -0.33245398 0.3698342 0.3324540 -3.4390277 3.439028 1.7791577
@@ -284,39 +311,39 @@ fr.err</code></pre></div>
 <p>The metrics are:</p>
 <div id="me-mean-err" class="section level4 unnumbered">
 <h4>ME Mean err</h4>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">me &lt;-<span class="st"> </span><span class="kw">mean</span>(fr.err)
-me</code></pre></div>
+<pre class="sourceCode r"><code class="sourceCode r">me &lt;-<span class="st"> </span><span class="kw">mean</span>(fr.err)
+me</code></pre>
 <pre><code>## [1] -0.332454</code></pre>
 </div>
 <div id="rmse-root-mean-squared-error" class="section level4 unnumbered">
 <h4>RMSE Root mean squared error</h4>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">rmse &lt;-<span class="st"> </span><span class="kw">sqrt</span>(<span class="kw">mean</span>(fr.err<span class="op">^</span><span class="dv">2</span>))
-rmse</code></pre></div>
+<pre class="sourceCode r"><code class="sourceCode r">rmse &lt;-<span class="st"> </span><span class="kw">sqrt</span>(<span class="kw">mean</span>(fr.err<span class="op">^</span><span class="dv">2</span>))
+rmse</code></pre>
 <pre><code>## [1] 0.3698342</code></pre>
 </div>
 <div id="mae-mean-absolute-error" class="section level4 unnumbered">
 <h4>MAE Mean absolute error</h4>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">mae &lt;-<span class="st"> </span><span class="kw">mean</span>(<span class="kw">abs</span>(fr.err))
-mae</code></pre></div>
+<pre class="sourceCode r"><code class="sourceCode r">mae &lt;-<span class="st"> </span><span class="kw">mean</span>(<span class="kw">abs</span>(fr.err))
+mae</code></pre>
 <pre><code>## [1] 0.332454</code></pre>
 </div>
 <div id="mpe-mean-percentage-error" class="section level4 unnumbered">
 <h4>MPE Mean percentage error</h4>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">fr.pe &lt;-<span class="st"> </span><span class="dv">100</span><span class="op">*</span>fr.err<span class="op">/</span>testdat
+<pre class="sourceCode r"><code class="sourceCode r">fr.pe &lt;-<span class="st"> </span><span class="dv">100</span><span class="op">*</span>fr.err<span class="op">/</span>testdat
 mpe &lt;-<span class="st"> </span><span class="kw">mean</span>(fr.pe)
-mpe</code></pre></div>
+mpe</code></pre>
 <pre><code>## [1] -3.439028</code></pre>
 </div>
 <div id="mape-mean-absolute-percentage-error" class="section level4 unnumbered">
 <h4>MAPE Mean absolute percentage error</h4>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">mape &lt;-<span class="st"> </span><span class="kw">mean</span>(<span class="kw">abs</span>(fr.pe))
-mape</code></pre></div>
+<pre class="sourceCode r"><code class="sourceCode r">mape &lt;-<span class="st"> </span><span class="kw">mean</span>(<span class="kw">abs</span>(fr.pe))
+mape</code></pre>
 <pre><code>## [1] 3.439028</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">accuracy</span>(fr, testdat)[,<span class="dv">1</span><span class="op">:</span><span class="dv">5</span>]</code></pre></div>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">accuracy</span>(fr, testdat)[,<span class="dv">1</span><span class="op">:</span><span class="dv">5</span>]</code></pre>
 <pre><code>##                       ME      RMSE       MAE        MPE     MAPE
 ## Training set -0.00473511 0.1770653 0.1438523 -0.1102259 1.588409
 ## Test set     -0.33245398 0.3698342 0.3324540 -3.4390277 3.439028</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">c</span>(me, rmse, mae, mpe, mape)</code></pre></div>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">c</span>(me, rmse, mae, mpe, mape)</code></pre>
 <pre><code>## [1] -0.3324540  0.3698342  0.3324540 -3.4390277  3.4390277</code></pre>
 <hr />
 </div>
@@ -324,7 +351,7 @@ mape</code></pre></div>
 <div id="test-multiple-models" class="section level3">
 <h3><span class="header-section-number">5.1.2</span> Test multiple models</h3>
 <p>Now that you have some metrics for forecast accuracy, you can compute these for all the models in your candidate set.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># The model picked by auto.arima</span>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="co"># The model picked by auto.arima</span>
 fit1 &lt;-<span class="st"> </span>forecast<span class="op">::</span><span class="kw">Arima</span>(traindat, <span class="dt">order=</span><span class="kw">c</span>(<span class="dv">0</span>,<span class="dv">1</span>,<span class="dv">1</span>))
 fr1 &lt;-<span class="st"> </span>forecast<span class="op">::</span><span class="kw">forecast</span>(fit1, <span class="dt">h=</span><span class="dv">2</span>)
 test1 &lt;-<span class="st"> </span>forecast<span class="op">::</span><span class="kw">accuracy</span>(fr1, testdat)[<span class="dv">2</span>,<span class="dv">1</span><span class="op">:</span><span class="dv">5</span>]
@@ -337,7 +364,7 @@ test2 &lt;-<span class="st"> </span>forecast<span class="op">::</span><span clas
 <span class="co"># Naive model with drift</span>
 fit3 &lt;-<span class="st"> </span>forecast<span class="op">::</span><span class="kw">rwf</span>(traindat, <span class="dt">drift=</span><span class="ot">TRUE</span>)
 fr3 &lt;-<span class="st"> </span>forecast<span class="op">::</span><span class="kw">forecast</span>(fit3, <span class="dt">h=</span><span class="dv">2</span>)
-test3 &lt;-<span class="st"> </span>forecast<span class="op">::</span><span class="kw">accuracy</span>(fr3, testdat)[<span class="dv">2</span>,<span class="dv">1</span><span class="op">:</span><span class="dv">5</span>]</code></pre></div>
+test3 &lt;-<span class="st"> </span>forecast<span class="op">::</span><span class="kw">accuracy</span>(fr3, testdat)[<span class="dv">2</span>,<span class="dv">1</span><span class="op">:</span><span class="dv">5</span>]</code></pre>
 <div id="show-a-summary" class="section level4 unnumbered">
 <h4>Show a summary</h4>
 <table>
@@ -432,23 +459,23 @@ Naive
 <h3><span class="header-section-number">5.1.3</span> Cross-validation</h3>
 <p>Computing forecast errors and performance metrics with time series cross-validation is similar to the training set/test test approach.</p>
 <p>The first step to using the <code>tsCV()</code> function is to define the function that returns a forecast for your model. Your function needs to take <code>x</code>, a time series, and <code>h</code> the length of the forecast. You can also have other arguments if needed. Here is an example function for a forecast from an ARIMA model.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">fun &lt;-<span class="st"> </span><span class="cf">function</span>(x, h, order){
+<pre class="sourceCode r"><code class="sourceCode r">fun &lt;-<span class="st"> </span><span class="cf">function</span>(x, h, order){
   forecast<span class="op">::</span><span class="kw">forecast</span>(<span class="kw">Arima</span>(x, <span class="dt">order=</span>order), <span class="dt">h=</span>h)
-}</code></pre></div>
+}</code></pre>
 <p>We pass this into the <code>tsCV()</code> function. <code>tsCV()</code> requires our dataset and our forecast function. The arguments after the forecast function are those we included in our <code>fun</code> definition. <code>tsCV()</code> returns a time series of errors.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">e &lt;-<span class="st"> </span>forecast<span class="op">::</span><span class="kw">tsCV</span>(traindat, fun, <span class="dt">h=</span><span class="dv">1</span>, <span class="dt">order=</span><span class="kw">c</span>(<span class="dv">0</span>,<span class="dv">1</span>,<span class="dv">1</span>))</code></pre></div>
+<pre class="sourceCode r"><code class="sourceCode r">e &lt;-<span class="st"> </span>forecast<span class="op">::</span><span class="kw">tsCV</span>(traindat, fun, <span class="dt">h=</span><span class="dv">1</span>, <span class="dt">order=</span><span class="kw">c</span>(<span class="dv">0</span>,<span class="dv">1</span>,<span class="dv">1</span>))</code></pre>
 <p>We then can compute performance metrics from these errors.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">tscv1 &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="dt">ME=</span><span class="kw">mean</span>(e, <span class="dt">na.rm=</span><span class="ot">TRUE</span>), <span class="dt">RMSE=</span><span class="kw">sqrt</span>(<span class="kw">mean</span>(e<span class="op">^</span><span class="dv">2</span>, <span class="dt">na.rm=</span><span class="ot">TRUE</span>)), <span class="dt">MAE=</span><span class="kw">mean</span>(<span class="kw">abs</span>(e), <span class="dt">na.rm=</span><span class="ot">TRUE</span>))
-tscv1</code></pre></div>
+<pre class="sourceCode r"><code class="sourceCode r">tscv1 &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="dt">ME=</span><span class="kw">mean</span>(e, <span class="dt">na.rm=</span><span class="ot">TRUE</span>), <span class="dt">RMSE=</span><span class="kw">sqrt</span>(<span class="kw">mean</span>(e<span class="op">^</span><span class="dv">2</span>, <span class="dt">na.rm=</span><span class="ot">TRUE</span>)), <span class="dt">MAE=</span><span class="kw">mean</span>(<span class="kw">abs</span>(e), <span class="dt">na.rm=</span><span class="ot">TRUE</span>))
+tscv1</code></pre>
 <pre><code>##        ME      RMSE       MAE 
 ## 0.1128788 0.2261706 0.1880392</code></pre>
 <div id="cross-validation-farther-in-future-1" class="section level4 unnumbered">
 <h4>Cross-validation farther in future</h4>
 <p>Compare accuracy of forecasts 1 year out versus 4 years out. If <code>h</code> is greater than 1, then the errors are returned as a matrix with each <code>h</code> in a column. Column 4 is the forecast, 4 years out.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">e &lt;-<span class="st"> </span>forecast<span class="op">::</span><span class="kw">tsCV</span>(traindat, fun, <span class="dt">h=</span><span class="dv">4</span>, <span class="dt">order=</span><span class="kw">c</span>(<span class="dv">0</span>,<span class="dv">1</span>,<span class="dv">1</span>))[,<span class="dv">4</span>]
+<pre class="sourceCode r"><code class="sourceCode r">e &lt;-<span class="st"> </span>forecast<span class="op">::</span><span class="kw">tsCV</span>(traindat, fun, <span class="dt">h=</span><span class="dv">4</span>, <span class="dt">order=</span><span class="kw">c</span>(<span class="dv">0</span>,<span class="dv">1</span>,<span class="dv">1</span>))[,<span class="dv">4</span>]
 <span class="co">#RMSE</span>
 tscv4 &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="dt">ME=</span><span class="kw">mean</span>(e, <span class="dt">na.rm=</span><span class="ot">TRUE</span>), <span class="dt">RMSE=</span><span class="kw">sqrt</span>(<span class="kw">mean</span>(e<span class="op">^</span><span class="dv">2</span>, <span class="dt">na.rm=</span><span class="ot">TRUE</span>)), <span class="dt">MAE=</span><span class="kw">mean</span>(<span class="kw">abs</span>(e), <span class="dt">na.rm=</span><span class="ot">TRUE</span>))
-<span class="kw">rbind</span>(tscv1, tscv4)</code></pre></div>
+<span class="kw">rbind</span>(tscv1, tscv4)</code></pre>
 <pre><code>##              ME      RMSE       MAE
 ## tscv1 0.1128788 0.2261706 0.1880392
 ## tscv4 0.2839064 0.3812815 0.3359689</code></pre>
@@ -457,21 +484,21 @@ tscv4 &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="dt">M
 <div id="cross-validation-with-a-fixed-window" class="section level4 unnumbered">
 <h4>Cross-validation with a fixed window</h4>
 <p>Compare accuracy of forecasts with a fixed 10-year window and 1-year out forecasts.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">e &lt;-<span class="st"> </span>forecast<span class="op">::</span><span class="kw">tsCV</span>(traindat, fun, <span class="dt">h=</span><span class="dv">1</span>, <span class="dt">order=</span><span class="kw">c</span>(<span class="dv">0</span>,<span class="dv">1</span>,<span class="dv">1</span>), <span class="dt">window=</span><span class="dv">10</span>)
+<pre class="sourceCode r"><code class="sourceCode r">e &lt;-<span class="st"> </span>forecast<span class="op">::</span><span class="kw">tsCV</span>(traindat, fun, <span class="dt">h=</span><span class="dv">1</span>, <span class="dt">order=</span><span class="kw">c</span>(<span class="dv">0</span>,<span class="dv">1</span>,<span class="dv">1</span>), <span class="dt">window=</span><span class="dv">10</span>)
 <span class="co">#RMSE</span>
 tscvf1 &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="dt">ME=</span><span class="kw">mean</span>(e, <span class="dt">na.rm=</span><span class="ot">TRUE</span>), <span class="dt">RMSE=</span><span class="kw">sqrt</span>(<span class="kw">mean</span>(e<span class="op">^</span><span class="dv">2</span>, <span class="dt">na.rm=</span><span class="ot">TRUE</span>)), <span class="dt">MAE=</span><span class="kw">mean</span>(<span class="kw">abs</span>(e), <span class="dt">na.rm=</span><span class="ot">TRUE</span>))
-tscvf1</code></pre></div>
+tscvf1</code></pre>
 <pre><code>##        ME      RMSE       MAE 
 ## 0.1387670 0.2286572 0.1942840</code></pre>
 </div>
 <div id="all-the-forecasts-tests-together" class="section level4 unnumbered">
 <h4>All the forecasts tests together</h4>
 <p>Here are all 4 types of forecasts tests together. There is not right approach. Time series cross-validation has the advantage that you test many more forecasts and use all your data.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">comp.tab &lt;-<span class="st"> </span><span class="kw">rbind</span>(<span class="dt">train.test=</span>test1[<span class="kw">c</span>(<span class="st">&quot;ME&quot;</span>,<span class="st">&quot;RMSE&quot;</span>,<span class="st">&quot;MAE&quot;</span>)],
+<pre class="sourceCode r"><code class="sourceCode r">comp.tab &lt;-<span class="st"> </span><span class="kw">rbind</span>(<span class="dt">train.test=</span>test1[<span class="kw">c</span>(<span class="st">&quot;ME&quot;</span>,<span class="st">&quot;RMSE&quot;</span>,<span class="st">&quot;MAE&quot;</span>)],
       <span class="dt">tsCV.variable1=</span>tscv1,
       <span class="dt">tsCV.variable4=</span>tscv4,
       <span class="dt">tsCV.fixed1=</span>tscvf1)
-knitr<span class="op">::</span><span class="kw">kable</span>(comp.tab, <span class="dt">format=</span><span class="st">&quot;html&quot;</span>)</code></pre></div>
+knitr<span class="op">::</span><span class="kw">kable</span>(comp.tab, <span class="dt">format=</span><span class="st">&quot;html&quot;</span>)</code></pre>
 <table>
 <thead>
 <tr>
@@ -577,7 +604,7 @@ gitbook.start({
 "google": false,
 "linkedin": false,
 "weibo": false,
-"instapper": false,
+"instapaper": false,
 "vk": false,
 "all": ["facebook", "google", "twitter", "linkedin", "weibo", "instapaper"]
 },
@@ -589,6 +616,10 @@ gitbook.start({
 "edit": {
 "link": "https://github.com/fish-forecast/Fish-Forecast-Bookdown/edit/master/Forecasting-5-2-Metrics.Rmd",
 "text": "Edit"
+},
+"history": {
+"link": null,
+"text": null
 },
 "download": null,
 "toc": {
@@ -603,8 +634,8 @@ gitbook.start({
   (function () {
     var script = document.createElement("script");
     script.type = "text/javascript";
-    var src = "";
-    if (src === "" || src === "true") src = "https://cdn.bootcss.com/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML";
+    var src = "true";
+    if (src === "" || src === "true") src = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML";
     if (location.protocol !== "file:" && /^https?:/.test(src))
       src = src.replace(/^https?:/, '');
     script.src = src;

@@ -5,7 +5,7 @@ if(file.exists("Fish-Forecast.Rmd")) file.remove("Fish-Forecast.Rmd")
 bookdown::preview_chapter("Forecasting-6-2-Covariates-MSEG.Rmd")
 -->
 
-In this chapter, I will illustrate developing a forecasting model using a multivariate regression (MREG).  I will show the approach the Stergiou and Christou used to develop MREG models and then compare to other approaches.  Fitting multivariate linear regressions with ARMA errors and fitting ARMAX models will be covered in separate chapters. More background on the methods discussed in this chapter can be found in the referenceds in the endnotes[^MSEGref1][^MSEGref2][^MSGEGref3][^MSGEGref4].
+In this chapter, I will illustrate developing a forecasting model using a multivariate regression (MREG).  I will show the approach the Stergiou and Christou used to develop MREG models and then compare to other approaches.  Fitting multivariate linear regressions with ARMA errors and fitting ARMAX models will be covered in separate chapters. More background on the methods discussed in this chapter can be found in the references in the endnotes[^MSEGref1] [^MSEGref2] [^MSEGref3] [^MSEGref4].
 
 [^MSEGref1]: [Model selection essentials in R](http://www.sthda.com/english/articles/37-model-selection-essentials-in-r/)
 
@@ -56,7 +56,7 @@ In addition to the environmental covariates, Stergiou and Christou used many cov
 ```{r fish.cov}
 colnames(fish.cov)
 ```
-For anchovy, the fishery effort metrics from the purse seine fishery were used. Lastly, biological covariates were included which were the landings of other species.  Stergiou and Christou state (page 118) that the other species modelled by VAR (page 114) was included. This would mean sardine was used as an explanatory variable.  However in Table 3 (page 119), it appears that *Trachurus* (Horse mackerel) was included.  It is not clear if sardine was also included but not chosen as an important variable.  I included *Trachurus* and not sardine as the biological explanatory variable.
+For anchovy, the fishery effort metrics from the purse seine fishery were used. Lastly, biological covariates were included which were the landings of other species.  Stergiou and Christou state (page 118) that the other species modeled by VAR (page 114) was included. This would mean sardine was used as an explanatory variable.  However in Table 3 (page 119), it appears that *Trachurus* (Horse mackerel) was included.  It is not clear if sardine was also included but not chosen as an important variable.  I included *Trachurus* and not sardine as the biological explanatory variable.
 
 #### Preparing the data frame {-}
 
@@ -91,6 +91,7 @@ df <- df[,colnames(df)!="VAP"]
 df.full <- df
 # only training data
 df <- subset(df, Year>=1965-1964 & Year<=1987-1964)
+save(df, df.full, "MREG_Data.RData")
 ```
 
 We will model anchovy landings as the response variable.  The covariates are lagged by one year, following Stergiou and Christou.  This means that the catch in year $t$ is regressed against the covariates in year $t-1$. We set up our data frame as follows. We use the 1965 to 1987 catch data as the response. We use 1964 to 1986, so year prior, for all the explanatory variables and we log transform the explanatory variables (following Stergiou and Christou). We use $t$ 1 to 23 as a "year" covariate. Our data frame will have the following columns:
@@ -188,7 +189,7 @@ Stergiou and Christou do not state how (if at all) they address the collinearity
 http://www.sthda.com/english/articles/37-model-selection-essentials-in-r/154-stepwise-regression-essentials-in-r/
 -->
 
-Stergiou and Christou state that the covariates to include were selected with stepwise variable selection.  Stepwise variable selection is a type of automatic variable selection.  Stepwise variable selection has many statistical problems and the problems are worse when the covariates are collinear as they are in our case  (see this [link](https://www.stata.com/support/faqs/statistics/stepwise-regression-problems/) for a review of the problems with stepwise variable selection). The jist of the problem is one of over-fitting. A stepwise selection procedure will tend to choose variables that, by chance, have large coefficients. With only 23 data points and high collinearity, this is likely to be a rather large problem for our dataset. As we saw, collinearity tends to cause very large positive effect sizes offset by large negative effect sizes. However I use stepwise variable selection here to replicate Stergiou and Christou.  I will follow this with an example of other more robust approaches to model selection for linear regression.
+Stergiou and Christou state that the covariates to include were selected with stepwise variable selection.  Stepwise variable selection is a type of automatic variable selection.  Stepwise variable selection has many statistical problems and the problems are worse when the covariates are collinear as they are in our case  (see this [link](https://www.stata.com/support/faqs/statistics/stepwise-regression-problems/) for a review of the problems with stepwise variable selection). The gist of the problem is one of over-fitting. A stepwise selection procedure will tend to choose variables that, by chance, have large coefficients. With only 23 data points and high collinearity, this is likely to be a rather large problem for our dataset. As we saw, collinearity tends to cause very large positive effect sizes offset by large negative effect sizes. However I use stepwise variable selection here to replicate Stergiou and Christou.  I will follow this with an example of other more robust approaches to model selection for linear regression.
 
 Stergiou and Christou do not give specifics on how they implemented stepwise variable selection. Stepwise variable selection refers to a forward-backward search, however there are many ways we can implement this and different approaches give different answers.  The starting model in particular will have a large effect on the ending model. I will illustrate a number of approaches for doing stepwise variable selection using R.
 
@@ -357,7 +358,7 @@ Variable selection (forward, backward, stepwise) is known to overfit models and 
 
 Model selection with cross-validation estimates the out-of-sample predictive performance of a *process* for building a model. So for example, you could use cross-validation to ask the question, "If I select a best model with AIC does that approach led to models with better predictive performance over selecting a best model with BIC?". 
 
-The basic idea behind cross-validation is that part of the data is used for fitting (training) the model and the left-out data is used for assessing predictions.  You predict the left-out data and compare the actual data to the predictions. There are two common types of cross-validation: leave-one-out cross-validation (LOOCV) and k-fold cross-validationa.
+The basic idea behind cross-validation is that part of the data is used for fitting (training) the model and the left-out data is used for assessing predictions.  You predict the left-out data and compare the actual data to the predictions. There are two common types of cross-validation: leave-one-out cross-validation (LOOCV) and k-fold cross-validation.
 
 Leave-one-out cross-validation (LOOCV) is a cross-validation where you leave one data point out, fit to the rest of the data, predict the left out data point, and compute the prediction error with prediction minus actual data value.  This is repeated for all data points.  So you will have $n$ prediction errors if you have $n$ data points.  From these errors, you can compute various statistics.  Root mean squared error (RMSE), mean squared error (MSE), and mean absolute error (MAE) are common.
 
@@ -418,7 +419,7 @@ rmse.cv <- sqrt(apply(cv.errors, 2, mean, na.rm=TRUE))
 plot(1:nvmax, rmse.cv, pch = 19, type = "b",xlab="Number of Variables", ylab="RMSE")
 ```
 
-The model size with the best predictive performance is smaller, intercept plus 2 variables instead of intercept plus 3 variables.  This suggests that we should constrain our model size to 2 variables (plus intercept).  Note, that with a 5-fold crossvalidation, we were fitting the models to 19 data points instead of 23.  However, even with a 23-fold crossvalidation (Leave One Out CV), a model with 2 variables has the lowest RMSE.
+The model size with the best predictive performance is smaller, intercept plus 2 variables instead of intercept plus 3 variables.  This suggests that we should constrain our model size to 2 variables (plus intercept).  Note, that with a 5-fold cross-validation, we were fitting the models to 19 data points instead of 23.  However, even with a 23-fold cross-validation (Leave One Out CV), a model with 2 variables has the lowest RMSE.
 
 The best fit 2 variable model has Year and FIP.
 ```{r best.fit.2}
@@ -682,7 +683,7 @@ knitr::kable(tmp)
 ```
 
 
-If we plot the forcasts with the 1965-1987 data (open circles) and the 1988-2007 data (solid circles), we see that the forecasts continue the upward trend in the data while the data level off. 
+If we plot the forecasts with the 1965-1987 data (open circles) and the 1988-2007 data (solid circles), we see that the forecasts continue the upward trend in the data while the data level off. 
 
 ```{r echo=FALSE}
 plot(Year1+df$Year, df$anchovy, ylim=c(8,12), xlim=c(Year1,Year2), ylab="Anchovy log catch", xlab="", bty="L")
@@ -777,6 +778,7 @@ testdatc <- testdat
 testdatc$BOP[(testdat$Year+1964)>1988]<-testdatc$BOP[(testdat$Year+1964)>1988]-0.083
 testdatc$HPP[(testdat$Year+1964)>1988]<-testdatc$HPP[(testdat$Year+1964)>1988]-0.28285
 testdatc$TOP[(testdat$Year+1964)>1988]<-testdatc$TOP[(testdat$Year+1964)>1988]-0.295
+save(df, df.full, testdatc, "MREG_Data.RData")
 ```
 
 ```{r echo=FALSE}
@@ -801,7 +803,7 @@ legend("topleft", mnames, cex=.5, col=1:2, lty=1:2, bty="n")
 
 ### Discussion
 
-This chapter illustrates a variety of appoaches for "variable selection".  This is the situation where one has a large number of covariates and one wants to chose the covariates that produce the best predictions.  Following Stergiou and Christou, I used mainly linear regressions with variables selected with stepwise variable selection.
+This chapter illustrates a variety of approaches for "variable selection".  This is the situation where one has a large number of covariates and one wants to chose the covariates that produce the best predictions.  Following Stergiou and Christou, I used mainly linear regressions with variables selected with stepwise variable selection.
 
 Keep in mind that stepwise variable selection is generally considered data-dredging and a reviewer who is statistician will almost certainly find fault with this approach. Penalized regression is a more accepted approach for developing a regression model with many covariates.  Part of the appeal of penalized regression is that it is robust to collinearity in your covariates.  Stepwise variable regression is not robust to collinearity.
 

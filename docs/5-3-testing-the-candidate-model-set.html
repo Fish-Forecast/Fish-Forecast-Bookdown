@@ -5,11 +5,11 @@
 
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>Fisheries Catch Forecasting</title>
+  <title>5.3 Testing the candidate model set | Fisheries Catch Forecasting</title>
   <meta name="description" content="This book will show you how to model and forecast annual and seasonal fisheries catches using R and its time-series analysis functions and packages. Forecasting using time-varying regression, ARIMA (Box-Jenkins) models, and expoential smoothing models is demonstrated using real catch time series. The entire process from data evaluation and diagnostics, model fitting, model selection and forecast evaluation is shown. The focus of the book is on univariate time series (annual or seasonal), however multivariate regression with autocorrelated errors and multivariate autoregressive models (MAR) are covered briefly. For multivariate autoregressive models and multivariate autoregressive state-space models for fisheries and environmental sciences, see Holmes, Ward and Scheuerell (2018).">
-  <meta name="generator" content="bookdown 0.7 and GitBook 2.6.7">
+  <meta name="generator" content="bookdown  and GitBook 2.6.7">
 
-  <meta property="og:title" content="Fisheries Catch Forecasting" />
+  <meta property="og:title" content="5.3 Testing the candidate model set | Fisheries Catch Forecasting />
   <meta property="og:type" content="book" />
   
   <meta property="og:image" content="images/cover.png" />
@@ -17,7 +17,7 @@
   <meta name="github-repo" content="fish-forecast/Fish-Forecast-Bookdown/" />
 
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="Fisheries Catch Forecasting" />
+  <meta name="twitter:title" content="5.3 Testing the candidate model set | Fisheries Catch Forecasting />
   
   <meta name="twitter:description" content="This book will show you how to model and forecast annual and seasonal fisheries catches using R and its time-series analysis functions and packages. Forecasting using time-varying regression, ARIMA (Box-Jenkins) models, and expoential smoothing models is demonstrated using real catch time series. The entire process from data evaluation and diagnostics, model fitting, model selection and forecast evaluation is shown. The focus of the book is on univariate time series (annual or seasonal), however multivariate regression with autocorrelated errors and multivariate autoregressive models (MAR) are covered briefly. For multivariate autoregressive models and multivariate autoregressive state-space models for fisheries and environmental sciences, see Holmes, Ward and Scheuerell (2018)." />
   <meta name="twitter:image" content="images/cover.png" />
@@ -25,7 +25,7 @@
 <meta name="author" content="Elizabeth Holmes">
 
 
-<meta name="date" content="2018-12-06">
+<meta name="date" content="2018-12-17">
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -36,6 +36,7 @@
 <link rel="next" href="5-4-models-fit.html">
 <script src="libs/jquery-2.2.3/jquery.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
@@ -51,41 +52,67 @@
 
 
 <style type="text/css">
-div.sourceCode { overflow-x: auto; }
-table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
-  margin: 0; padding: 0; vertical-align: baseline; border: none; }
-table.sourceCode { width: 100%; line-height: 100%; }
-td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
-td.sourceCode { padding-left: 5px; }
-code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
-code > span.dt { color: #902000; } /* DataType */
-code > span.dv { color: #40a070; } /* DecVal */
-code > span.bn { color: #40a070; } /* BaseN */
-code > span.fl { color: #40a070; } /* Float */
-code > span.ch { color: #4070a0; } /* Char */
-code > span.st { color: #4070a0; } /* String */
-code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
-code > span.ot { color: #007020; } /* Other */
-code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
-code > span.fu { color: #06287e; } /* Function */
-code > span.er { color: #ff0000; font-weight: bold; } /* Error */
-code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
-code > span.cn { color: #880000; } /* Constant */
-code > span.sc { color: #4070a0; } /* SpecialChar */
-code > span.vs { color: #4070a0; } /* VerbatimString */
-code > span.ss { color: #bb6688; } /* SpecialString */
-code > span.im { } /* Import */
-code > span.va { color: #19177c; } /* Variable */
-code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
-code > span.op { color: #666666; } /* Operator */
-code > span.bu { } /* BuiltIn */
-code > span.ex { } /* Extension */
-code > span.pp { color: #bc7a00; } /* Preprocessor */
-code > span.at { color: #7d9029; } /* Attribute */
-code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
-code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
-code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
-code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+a.sourceLine { display: inline-block; line-height: 1.25; }
+a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
+a.sourceLine:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode { white-space: pre; position: relative; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+code.sourceCode { white-space: pre-wrap; }
+a.sourceLine { text-indent: -1em; padding-left: 1em; }
+}
+pre.numberSource a.sourceLine
+  { position: relative; left: -4em; }
+pre.numberSource a.sourceLine::before
+  { content: attr(data-line-number);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; pointer-events: all; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {  }
+@media screen {
+a.sourceLine::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
 </style>
 
 <link rel="stylesheet" href="style.css" type="text/css" />
@@ -272,51 +299,51 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <div id="fit-each-of-our-candidate-models" class="section level3">
 <h3><span class="header-section-number">5.3.1</span> Fit each of our candidate models</h3>
 <p>We will define the training data as 1964 to 1987 and the test data as 1988 and 1989. The full data is 1964 to 1989.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">fulldat &lt;-<span class="st"> </span><span class="kw">window</span>(anchovyts, <span class="dv">1964</span>, <span class="dv">1989</span>)
+<pre class="sourceCode r"><code class="sourceCode r">fulldat &lt;-<span class="st"> </span><span class="kw">window</span>(anchovyts, <span class="dv">1964</span>, <span class="dv">1989</span>)
 traindat &lt;-<span class="st"> </span><span class="kw">window</span>(anchovyts, <span class="dv">1964</span>, <span class="dv">1987</span>)
-testdat &lt;-<span class="st"> </span><span class="kw">window</span>(anchovyts, <span class="dv">1988</span>, <span class="dv">1989</span>)</code></pre></div>
+testdat &lt;-<span class="st"> </span><span class="kw">window</span>(anchovyts, <span class="dv">1988</span>, <span class="dv">1989</span>)</code></pre>
 <p>We will store our fits and forecasts in a list for easy access. <code>fun.list</code> is the function to pass to <code>tsCV()</code>.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">fit.list &lt;-<span class="st"> </span><span class="kw">list</span>()
+<pre class="sourceCode r"><code class="sourceCode r">fit.list &lt;-<span class="st"> </span><span class="kw">list</span>()
 fr.list &lt;-<span class="st"> </span><span class="kw">list</span>()
 fun.list &lt;-<span class="st"> </span><span class="kw">list</span>()
-n.fr &lt;-<span class="st"> </span><span class="kw">length</span>(testdat)</code></pre></div>
+n.fr &lt;-<span class="st"> </span><span class="kw">length</span>(testdat)</code></pre>
 <p>For each model, we will fit, forecast, and define a forecast function.</p>
 <ul>
 <li>Exponential smoothing model with trend</li>
 </ul>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">modelname &lt;-<span class="st"> &quot;ETS w trend&quot;</span>
+<pre class="sourceCode r"><code class="sourceCode r">modelname &lt;-<span class="st"> &quot;ETS w trend&quot;</span>
 fit &lt;-<span class="st"> </span><span class="kw">ets</span>(traindat, <span class="dt">model=</span><span class="st">&quot;AAN&quot;</span>)
 fit.list[[modelname]] &lt;-<span class="st"> </span>fit
 fr.list[[modelname]] &lt;-<span class="st"> </span><span class="kw">forecast</span>(fit, <span class="dt">h=</span>n.fr)
-fun.list[[modelname]] &lt;-<span class="st"> </span><span class="cf">function</span>(x, h){ <span class="kw">forecast</span>(<span class="kw">ets</span>(x, <span class="dt">model=</span><span class="st">&quot;AAN&quot;</span>), <span class="dt">h=</span>h) }</code></pre></div>
+fun.list[[modelname]] &lt;-<span class="st"> </span><span class="cf">function</span>(x, h){ <span class="kw">forecast</span>(<span class="kw">ets</span>(x, <span class="dt">model=</span><span class="st">&quot;AAN&quot;</span>), <span class="dt">h=</span>h) }</code></pre>
 <ul>
 <li>Exponential smoothing model no trend</li>
 </ul>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">modelname &lt;-<span class="st"> &quot;ETS no trend&quot;</span>
+<pre class="sourceCode r"><code class="sourceCode r">modelname &lt;-<span class="st"> &quot;ETS no trend&quot;</span>
 fit &lt;-<span class="st"> </span><span class="kw">ets</span>(traindat, <span class="dt">model=</span><span class="st">&quot;ANN&quot;</span>)
 fit.list[[modelname]] &lt;-<span class="st"> </span>fit
 fr.list[[modelname]] &lt;-<span class="st"> </span><span class="kw">forecast</span>(fit, <span class="dt">h=</span>n.fr)
-fun.list[[modelname]] &lt;-<span class="st"> </span><span class="cf">function</span>(x, h){ <span class="kw">forecast</span>(<span class="kw">ets</span>(x, <span class="dt">model=</span><span class="st">&quot;ANN&quot;</span>), <span class="dt">h=</span>h) }</code></pre></div>
+fun.list[[modelname]] &lt;-<span class="st"> </span><span class="cf">function</span>(x, h){ <span class="kw">forecast</span>(<span class="kw">ets</span>(x, <span class="dt">model=</span><span class="st">&quot;ANN&quot;</span>), <span class="dt">h=</span>h) }</code></pre>
 <ul>
 <li>ARIMA(0,1,1) with drift (best)</li>
 </ul>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">modelname &lt;-<span class="st"> &quot;ARIMA(0,1,1) w drift&quot;</span>
+<pre class="sourceCode r"><code class="sourceCode r">modelname &lt;-<span class="st"> &quot;ARIMA(0,1,1) w drift&quot;</span>
 fit &lt;-<span class="st"> </span><span class="kw">Arima</span>(traindat, <span class="dt">order=</span><span class="kw">c</span>(<span class="dv">0</span>,<span class="dv">1</span>,<span class="dv">1</span>), <span class="dt">include.drift=</span><span class="ot">TRUE</span>)
 fit.list[[modelname]] &lt;-<span class="st"> </span>fit
 fr.list[[modelname]] &lt;-<span class="st"> </span><span class="kw">forecast</span>(fit, <span class="dt">h=</span>n.fr)
-fun.list[[modelname]] &lt;-<span class="st"> </span><span class="cf">function</span>(x, h){ <span class="kw">forecast</span>(<span class="kw">Arima</span>(x, <span class="dt">order=</span><span class="kw">c</span>(<span class="dv">0</span>,<span class="dv">1</span>,<span class="dv">1</span>), <span class="dt">include.drift=</span><span class="ot">TRUE</span>),<span class="dt">h=</span>h) }</code></pre></div>
+fun.list[[modelname]] &lt;-<span class="st"> </span><span class="cf">function</span>(x, h){ <span class="kw">forecast</span>(<span class="kw">Arima</span>(x, <span class="dt">order=</span><span class="kw">c</span>(<span class="dv">0</span>,<span class="dv">1</span>,<span class="dv">1</span>), <span class="dt">include.drift=</span><span class="ot">TRUE</span>),<span class="dt">h=</span>h) }</code></pre>
 <ul>
 <li>ARIMA(2,1,0) with drift (within 2 AIC of best)</li>
 </ul>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">modelname &lt;-<span class="st"> &quot;ARIMA(2,1,0) w drift&quot;</span>
+<pre class="sourceCode r"><code class="sourceCode r">modelname &lt;-<span class="st"> &quot;ARIMA(2,1,0) w drift&quot;</span>
 fit &lt;-<span class="st"> </span><span class="kw">Arima</span>(traindat, <span class="dt">order=</span><span class="kw">c</span>(<span class="dv">2</span>,<span class="dv">1</span>,<span class="dv">0</span>), <span class="dt">include.drift=</span><span class="ot">TRUE</span>)
 fit.list[[modelname]] &lt;-<span class="st"> </span>fit
 fr.list[[modelname]] &lt;-<span class="st"> </span><span class="kw">forecast</span>(fit, <span class="dt">h=</span>n.fr)
-fun.list[[modelname]] &lt;-<span class="st"> </span><span class="cf">function</span>(x, h){ <span class="kw">forecast</span>(<span class="kw">Arima</span>(x, <span class="dt">order=</span><span class="kw">c</span>(<span class="dv">2</span>,<span class="dv">1</span>,<span class="dv">0</span>), <span class="dt">include.drift=</span><span class="ot">TRUE</span>),<span class="dt">h=</span>h) }</code></pre></div>
+fun.list[[modelname]] &lt;-<span class="st"> </span><span class="cf">function</span>(x, h){ <span class="kw">forecast</span>(<span class="kw">Arima</span>(x, <span class="dt">order=</span><span class="kw">c</span>(<span class="dv">2</span>,<span class="dv">1</span>,<span class="dv">0</span>), <span class="dt">include.drift=</span><span class="ot">TRUE</span>),<span class="dt">h=</span>h) }</code></pre>
 <ul>
 <li>Time-varying regression with linear time</li>
 </ul>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">TT &lt;-<span class="st"> </span><span class="kw">length</span>(traindat)
+<pre class="sourceCode r"><code class="sourceCode r">TT &lt;-<span class="st"> </span><span class="kw">length</span>(traindat)
 <span class="co">#make a data.frame for lm</span>
 dat &lt;-<span class="st"> </span><span class="kw">data.frame</span>(<span class="dt">log.metric.tons=</span>traindat, <span class="dt">t=</span><span class="dv">1</span><span class="op">:</span>TT)
 modelname &lt;-<span class="st"> &quot;TV linear regression&quot;</span>
@@ -328,31 +355,31 @@ fun.list[[modelname]] &lt;-<span class="st"> </span><span class="cf">function</s
   dat &lt;-<span class="st"> </span><span class="kw">data.frame</span>(<span class="dt">log.metric.tons=</span>x, <span class="dt">t=</span><span class="dv">1</span><span class="op">:</span>TT)
   ft &lt;-<span class="st"> </span><span class="kw">lm</span>(log.metric.tons <span class="op">~</span><span class="st"> </span>t, <span class="dt">data=</span>dat)
   <span class="kw">forecast</span>(ft, <span class="dt">newdata=</span><span class="kw">data.frame</span>(<span class="dt">t=</span>TT<span class="op">+</span>h))
-  }</code></pre></div>
+  }</code></pre>
 <ul>
 <li>Naive no trend</li>
 </ul>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">modelname &lt;-<span class="st"> &quot;Naive&quot;</span>
+<pre class="sourceCode r"><code class="sourceCode r">modelname &lt;-<span class="st"> &quot;Naive&quot;</span>
 fit &lt;-<span class="st"> </span><span class="kw">Arima</span>(traindat, <span class="dt">order=</span><span class="kw">c</span>(<span class="dv">0</span>,<span class="dv">1</span>,<span class="dv">0</span>))
 fit.list[[modelname]] &lt;-<span class="st"> </span>fit
 fr.list[[modelname]] &lt;-<span class="st"> </span><span class="kw">forecast</span>(fit, <span class="dt">h=</span>n.fr)
-fun.list[[modelname]] &lt;-<span class="st"> </span><span class="cf">function</span>(x, h){ <span class="kw">rwf</span>(x,<span class="dt">h=</span>h) }</code></pre></div>
+fun.list[[modelname]] &lt;-<span class="st"> </span><span class="cf">function</span>(x, h){ <span class="kw">rwf</span>(x,<span class="dt">h=</span>h) }</code></pre>
 <ul>
 <li>Naive with trend</li>
 </ul>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">modelname &lt;-<span class="st"> &quot;Naive w trend&quot;</span>
+<pre class="sourceCode r"><code class="sourceCode r">modelname &lt;-<span class="st"> &quot;Naive w trend&quot;</span>
 fit &lt;-<span class="st"> </span><span class="kw">Arima</span>(traindat, <span class="dt">order=</span><span class="kw">c</span>(<span class="dv">0</span>,<span class="dv">1</span>,<span class="dv">0</span>), <span class="dt">include.drift=</span><span class="ot">TRUE</span>)
 fit.list[[modelname]] &lt;-<span class="st"> </span>fit
 fr.list[[modelname]] &lt;-<span class="st"> </span><span class="kw">forecast</span>(fit, <span class="dt">h=</span>n.fr)
-fun.list[[modelname]] &lt;-<span class="st"> </span><span class="cf">function</span>(x, h){ <span class="kw">rwf</span>(x, <span class="dt">drift=</span><span class="ot">TRUE</span>, <span class="dt">h=</span>h) }</code></pre></div>
+fun.list[[modelname]] &lt;-<span class="st"> </span><span class="cf">function</span>(x, h){ <span class="kw">rwf</span>(x, <span class="dt">drift=</span><span class="ot">TRUE</span>, <span class="dt">h=</span>h) }</code></pre>
 <ul>
 <li>Average or mean</li>
 </ul>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">modelname &lt;-<span class="st"> &quot;Average&quot;</span>
+<pre class="sourceCode r"><code class="sourceCode r">modelname &lt;-<span class="st"> &quot;Average&quot;</span>
 fit &lt;-<span class="st"> </span><span class="kw">Arima</span>(traindat, <span class="dt">order=</span><span class="kw">c</span>(<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>))
 fit.list[[modelname]] &lt;-<span class="st"> </span>fit
 fr.list[[modelname]] &lt;-<span class="st"> </span><span class="kw">forecast</span>(fit, <span class="dt">h=</span>n.fr)
-fun.list[[modelname]] &lt;-<span class="st"> </span><span class="cf">function</span>(x, h){ <span class="kw">forecast</span>(<span class="kw">Arima</span>(x, <span class="dt">order=</span><span class="kw">c</span>(<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>)),<span class="dt">h=</span>h) }</code></pre></div>
+fun.list[[modelname]] &lt;-<span class="st"> </span><span class="cf">function</span>(x, h){ <span class="kw">forecast</span>(<span class="kw">Arima</span>(x, <span class="dt">order=</span><span class="kw">c</span>(<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>)),<span class="dt">h=</span>h) }</code></pre>
 </div>
 </div>
             </section>
@@ -381,7 +408,7 @@ gitbook.start({
 "google": false,
 "linkedin": false,
 "weibo": false,
-"instapper": false,
+"instapaper": false,
 "vk": false,
 "all": ["facebook", "google", "twitter", "linkedin", "weibo", "instapaper"]
 },
@@ -393,6 +420,10 @@ gitbook.start({
 "edit": {
 "link": "https://github.com/fish-forecast/Fish-Forecast-Bookdown/edit/master/Forecasting-5-4-Candidate-Model-Sets-Test.Rmd",
 "text": "Edit"
+},
+"history": {
+"link": null,
+"text": null
 },
 "download": null,
 "toc": {
@@ -407,8 +438,8 @@ gitbook.start({
   (function () {
     var script = document.createElement("script");
     script.type = "text/javascript";
-    var src = "";
-    if (src === "" || src === "true") src = "https://cdn.bootcss.com/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML";
+    var src = "true";
+    if (src === "" || src === "true") src = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML";
     if (location.protocol !== "file:" && /^https?:/.test(src))
       src = src.replace(/^https?:/, '');
     script.src = src;

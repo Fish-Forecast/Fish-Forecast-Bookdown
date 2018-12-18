@@ -5,11 +5,11 @@
 
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>Fisheries Catch Forecasting</title>
+  <title>6.1 Multivariate linear regression | Fisheries Catch Forecasting</title>
   <meta name="description" content="This book will show you how to model and forecast annual and seasonal fisheries catches using R and its time-series analysis functions and packages. Forecasting using time-varying regression, ARIMA (Box-Jenkins) models, and expoential smoothing models is demonstrated using real catch time series. The entire process from data evaluation and diagnostics, model fitting, model selection and forecast evaluation is shown. The focus of the book is on univariate time series (annual or seasonal), however multivariate regression with autocorrelated errors and multivariate autoregressive models (MAR) are covered briefly. For multivariate autoregressive models and multivariate autoregressive state-space models for fisheries and environmental sciences, see Holmes, Ward and Scheuerell (2018).">
-  <meta name="generator" content="bookdown 0.7 and GitBook 2.6.7">
+  <meta name="generator" content="bookdown  and GitBook 2.6.7">
 
-  <meta property="og:title" content="Fisheries Catch Forecasting" />
+  <meta property="og:title" content="6.1 Multivariate linear regression | Fisheries Catch Forecasting />
   <meta property="og:type" content="book" />
   
   <meta property="og:image" content="images/cover.png" />
@@ -17,7 +17,7 @@
   <meta name="github-repo" content="fish-forecast/Fish-Forecast-Bookdown/" />
 
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="Fisheries Catch Forecasting" />
+  <meta name="twitter:title" content="6.1 Multivariate linear regression | Fisheries Catch Forecasting />
   
   <meta name="twitter:description" content="This book will show you how to model and forecast annual and seasonal fisheries catches using R and its time-series analysis functions and packages. Forecasting using time-varying regression, ARIMA (Box-Jenkins) models, and expoential smoothing models is demonstrated using real catch time series. The entire process from data evaluation and diagnostics, model fitting, model selection and forecast evaluation is shown. The focus of the book is on univariate time series (annual or seasonal), however multivariate regression with autocorrelated errors and multivariate autoregressive models (MAR) are covered briefly. For multivariate autoregressive models and multivariate autoregressive state-space models for fisheries and environmental sciences, see Holmes, Ward and Scheuerell (2018)." />
   <meta name="twitter:image" content="images/cover.png" />
@@ -25,7 +25,7 @@
 <meta name="author" content="Elizabeth Holmes">
 
 
-<meta name="date" content="2018-12-06">
+<meta name="date" content="2018-12-17">
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -36,6 +36,7 @@
 <link rel="next" href="6-2-multivariate-linear-regression-with-arma-errors.html">
 <script src="libs/jquery-2.2.3/jquery.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
@@ -51,41 +52,67 @@
 
 
 <style type="text/css">
-div.sourceCode { overflow-x: auto; }
-table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
-  margin: 0; padding: 0; vertical-align: baseline; border: none; }
-table.sourceCode { width: 100%; line-height: 100%; }
-td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
-td.sourceCode { padding-left: 5px; }
-code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
-code > span.dt { color: #902000; } /* DataType */
-code > span.dv { color: #40a070; } /* DecVal */
-code > span.bn { color: #40a070; } /* BaseN */
-code > span.fl { color: #40a070; } /* Float */
-code > span.ch { color: #4070a0; } /* Char */
-code > span.st { color: #4070a0; } /* String */
-code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
-code > span.ot { color: #007020; } /* Other */
-code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
-code > span.fu { color: #06287e; } /* Function */
-code > span.er { color: #ff0000; font-weight: bold; } /* Error */
-code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
-code > span.cn { color: #880000; } /* Constant */
-code > span.sc { color: #4070a0; } /* SpecialChar */
-code > span.vs { color: #4070a0; } /* VerbatimString */
-code > span.ss { color: #bb6688; } /* SpecialString */
-code > span.im { } /* Import */
-code > span.va { color: #19177c; } /* Variable */
-code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
-code > span.op { color: #666666; } /* Operator */
-code > span.bu { } /* BuiltIn */
-code > span.ex { } /* Extension */
-code > span.pp { color: #bc7a00; } /* Preprocessor */
-code > span.at { color: #7d9029; } /* Attribute */
-code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
-code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
-code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
-code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+a.sourceLine { display: inline-block; line-height: 1.25; }
+a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
+a.sourceLine:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode { white-space: pre; position: relative; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+code.sourceCode { white-space: pre-wrap; }
+a.sourceLine { text-indent: -1em; padding-left: 1em; }
+}
+pre.numberSource a.sourceLine
+  { position: relative; left: -4em; }
+pre.numberSource a.sourceLine::before
+  { content: attr(data-line-number);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; pointer-events: all; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {  }
+@media screen {
+a.sourceLine::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
 </style>
 
 <link rel="stylesheet" href="style.css" type="text/css" />
@@ -264,16 +291,16 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 if(file.exists("Fish-Forecast.Rmd")) file.remove("Fish-Forecast.Rmd")
 bookdown::preview_chapter("Forecasting-6-2-Covariates-MSEG.Rmd")
 -->
-<p>In this chapter, I will illustrate developing a forecasting model using a multivariate regression (MREG). I will show the approach the Stergiou and Christou used to develop MREG models and then compare to other approaches. Fitting multivariate linear regressions with ARMA errors and fitting ARMAX models will be covered in separate chapters. More background on the methods discussed in this chapter can be found in the referenceds in the endnotes<a href="#fn1" class="footnoteRef" id="fnref1"><sup>1</sup></a><a href="#fn2" class="footnoteRef" id="fnref2"><sup>2</sup></a>[^MSGEGref3][^MSGEGref4].</p>
+<p>In this chapter, I will illustrate developing a forecasting model using a multivariate regression (MREG). I will show the approach the Stergiou and Christou used to develop MREG models and then compare to other approaches. Fitting multivariate linear regressions with ARMA errors and fitting ARMAX models will be covered in separate chapters. More background on the methods discussed in this chapter can be found in the references in the endnotes<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a><a href="#fn2" class="footnote-ref" id="fnref2"><sup>2</sup></a> [^MSGEGref3] [^MSGEGref4].</p>
 <p>A multivariate linear regression model with Gaussian errors takes the form:</p>
-<span class="math display">\[\begin{equation}
+<p><span class="math display">\[\begin{equation}
 \begin{gathered}
 x_t = \alpha + \phi_1 c_{t,1} + \phi_2 c_{t,2} + \dots + e_t \\
 e_t \sim N(0,\sigma)
 \end{gathered}
-\end{equation}\]</span>
+\end{equation}\]</span></p>
 <p>In R, we can fit this model with <code>lm()</code>, which uses ordinary least squares (OLS). For model selection (determining what explanatory variables to include), there are a variety of approaches we can take. I will show approaches that use a few different packages.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(ggplot2)
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(ggplot2)
 <span class="kw">library</span>(MASS)
 <span class="kw">library</span>(car)
 <span class="kw">library</span>(glmnet)
@@ -281,18 +308,18 @@ e_t \sim N(0,\sigma)
 <span class="kw">library</span>(stringr)
 <span class="kw">library</span>(caret)
 <span class="kw">library</span>(leaps)
-<span class="kw">library</span>(forecast)</code></pre></div>
+<span class="kw">library</span>(forecast)</code></pre>
 <div id="covariates-used-in-stergiou-and-christou" class="section level3">
 <h3><span class="header-section-number">6.1.1</span> Covariates used in Stergiou and Christou</h3>
 <p>Stergiou and Christou used five environmental covariates: air temperature (air), sea-level pressure (slp), sea surface temperature (sst), vertical wind speed (vwnd), and wind speed cubed (wspd3). Monthly values for these covariates in three 1 degree boxes were taken from the COADS database, and then a yearly average over all months in the three boxes was used to compute a yearly average.</p>
 <p>These yearly average environmental covariates are in <code>covsmean.year</code>, which is part of <code>landings.RData</code>.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">load</span>(<span class="st">&quot;landings.RData&quot;</span>)
-<span class="kw">colnames</span>(covsmean.year)</code></pre></div>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">load</span>(<span class="st">&quot;landings.RData&quot;</span>)
+<span class="kw">colnames</span>(covsmean.year)</code></pre>
 <pre><code>## [1] &quot;Year&quot;          &quot;air.degC&quot;      &quot;slp.millibars&quot; &quot;sst.degC&quot;     
 ## [5] &quot;vwnd.m/s&quot;      &quot;wspd3.m3/s3&quot;</code></pre>
 <p>The covariates are those in Stergiou and Christou with the following differences. I used the ICOADS data not the COADS. The boxes are 1 degree but on 1 degree centers not 0.5 centers. Thus box is 39.5-40.5 not 39-40. ICOADS does not include ‘vertical wind’. I used NS winds which may be different. The code to download the ICOADS data is in the appendix.</p>
 <p>In addition to the environmental covariates, Stergiou and Christou used many covariates of fishing effort for trawlers, purse seiners, beach seiners, other coastal boats and demersal (sum of trawlers, beach seiners and other coastal boats). For each fishery type, they used data on number of fishers (FI), number of boats (BO), total engine horse power (HP), total boat tonnage (TO). They also used an economic variable: value (VA) of catch for trawlers, purse seiners, beach seiners, other coastal boats.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">colnames</span>(fish.cov)</code></pre></div>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">colnames</span>(fish.cov)</code></pre>
 <pre><code>##  [1] &quot;Year&quot;              &quot;Boats.BO&quot;          &quot;Trawlers.BOT&quot;     
 ##  [4] &quot;Purse.seiners.BOP&quot; &quot;Beach.seiners.BOB&quot; &quot;Other.BOC&quot;        
 ##  [7] &quot;Demersal.BOD&quot;      &quot;Fishers.FI&quot;        &quot;Trawlers.FIT&quot;     
@@ -302,22 +329,23 @@ e_t \sim N(0,\sigma)
 ## [19] &quot;Demersal.HPD&quot;      &quot;Trawler.VAT&quot;       &quot;Purse.seiners.VAP&quot;
 ## [22] &quot;Beach.seiners.VAB&quot; &quot;Other.VAC&quot;         &quot;Tonnage.TO&quot;       
 ## [25] &quot;Trawlers.TOT&quot;      &quot;Purse.seiners.TOP&quot;</code></pre>
-<p>For anchovy, the fishery effort metrics from the purse seine fishery were used. Lastly, biological covariates were included which were the landings of other species. Stergiou and Christou state (page 118) that the other species modelled by VAR (page 114) was included. This would mean sardine was used as an explanatory variable. However in Table 3 (page 119), it appears that <em>Trachurus</em> (Horse mackerel) was included. It is not clear if sardine was also included but not chosen as an important variable. I included <em>Trachurus</em> and not sardine as the biological explanatory variable.</p>
+<p>For anchovy, the fishery effort metrics from the purse seine fishery were used. Lastly, biological covariates were included which were the landings of other species. Stergiou and Christou state (page 118) that the other species modeled by VAR (page 114) was included. This would mean sardine was used as an explanatory variable. However in Table 3 (page 119), it appears that <em>Trachurus</em> (Horse mackerel) was included. It is not clear if sardine was also included but not chosen as an important variable. I included <em>Trachurus</em> and not sardine as the biological explanatory variable.</p>
 <div id="preparing-the-data-frame" class="section level4 unnumbered">
 <h4>Preparing the data frame</h4>
 <p>We will model anchovy landings as the response variable. The covariates are lagged by one year, following Stergiou and Christou. This means that the catch in year <span class="math inline">\(t\)</span> is regressed against the covariates in year <span class="math inline">\(t-1\)</span>. We set up our data frame as follows. We use the 1965 to 1987 catch data as the response. We use 1964 to 1986, so year prior, for all the explanatory variables and we log transform the explanatory variables (following Stergiou and Christou). We use <span class="math inline">\(t\)</span> 1 to 23 as a “year” covariate. Our data frame will have the following columns:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">colnames</span>(df)</code></pre></div>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">colnames</span>(df)</code></pre>
 <pre><code>##  [1] &quot;anchovy&quot;   &quot;Year&quot;      &quot;Trachurus&quot; &quot;air&quot;       &quot;slp&quot;      
 ##  [6] &quot;sst&quot;       &quot;vwnd&quot;      &quot;wspd3&quot;     &quot;BOP&quot;       &quot;FIP&quot;      
 ## [11] &quot;HPP&quot;       &quot;TOP&quot;</code></pre>
 <p>In total, there are 11 covariates and 23 years of data—which is not much data per explanatory variable. Section @ref(cov.df) shows the R code to create the <code>df</code> data frame with the response variable and all the explanatory variables.</p>
 <p>For most of the analyses, we will use the untransformed variables, however for some analyses, we will want the effect sizes (the estimated <span class="math inline">\(\beta\)</span>’s) to be on the same scale. For these analyses, we will use the z-scored variables, which will be stored in data frame <code>dfz</code>. z-scoring removes the mean and normalizes the variance to 1.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">dfz &lt;-<span class="st"> </span>df
+<pre class="sourceCode r"><code class="sourceCode r">dfz &lt;-<span class="st"> </span>df
+n &lt;-<span class="st"> </span><span class="kw">nrow</span>(df)
 <span class="cf">for</span>(i <span class="cf">in</span> <span class="kw">colnames</span>(df)){
-  pop_sd &lt;-<span class="st"> </span><span class="kw">sd</span>(df[,i])<span class="op">*</span><span class="kw">sqrt</span>((<span class="kw">length</span>(df[,i])<span class="op">-</span><span class="dv">1</span>)<span class="op">/</span>(<span class="kw">length</span>(df[,i])))
+  pop_sd &lt;-<span class="st"> </span><span class="kw">sd</span>(df[,i])<span class="op">*</span><span class="kw">sqrt</span>(n<span class="dv">-1</span>)<span class="op">/</span>n
   pop_mean &lt;-<span class="st"> </span><span class="kw">mean</span>(df[,i])
   dfz[,i] &lt;-<span class="st"> </span>(df[,i]<span class="op">-</span>pop_mean)<span class="op">/</span>pop_sd
-}</code></pre></div>
+}</code></pre>
 </div>
 </div>
 <div id="collinearity" class="section level3">
@@ -326,18 +354,18 @@ e_t \sim N(0,\sigma)
 <div id="pairs-plot" class="section level4 unnumbered">
 <h4>Pairs plot</h4>
 <p>One way to see this is visually is with the <code>pairs()</code> plot. A pairs plot of fishing effort covariates reveals high correlations between Year, HPP and TOP.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">pairs</span>(df[,<span class="kw">c</span>(<span class="dv">2</span>,<span class="dv">9</span><span class="op">:</span><span class="dv">12</span>)])</code></pre></div>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">pairs</span>(df[,<span class="kw">c</span>(<span class="dv">2</span>,<span class="dv">9</span><span class="op">:</span><span class="dv">12</span>)])</code></pre>
 <p><img src="Fish-Forecast_files/figure-html/pairs.fish-1.png" width="672" style="display: block; margin: auto;" /></p>
 <p>The environmental covariates look generally ok.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">pairs</span>(df[,<span class="kw">c</span>(<span class="dv">2</span>,<span class="dv">4</span><span class="op">:</span><span class="dv">8</span>)])</code></pre></div>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">pairs</span>(df[,<span class="kw">c</span>(<span class="dv">2</span>,<span class="dv">4</span><span class="op">:</span><span class="dv">8</span>)])</code></pre>
 <p><img src="Fish-Forecast_files/figure-html/pairs.env-1.png" width="672" style="display: block; margin: auto;" /></p>
 </div>
 <div id="variance-inflation-factors" class="section level4 unnumbered">
 <h4>Variance inflation factors</h4>
 <p>Another way is to look for collinearity is to compute the variance inflation factors (VIF). The variance inflation factor is an estimate of how much larger the variance of a coefficient estimate is compared to if the variable were uncorrelated with the other explanatory variables in the model. If the VIF of variable <span class="math inline">\(i\)</span> is <span class="math inline">\(z\)</span>, then the standard error of the <span class="math inline">\(\beta_i\)</span> for variable <span class="math inline">\(i\)</span> is <span class="math inline">\(\sqrt{z}\)</span> times larger than if variable <span class="math inline">\(i\)</span> were uncorrelated with the other variables. For example, if VIF=10, the standard error of the coefficient estimate is 3.16 times larger (inflated). The rule of thumb is that any of the variables with VIF greater than 10 have collinearity problems.</p>
 <p>The <code>vif()</code> function in the car package will compute VIFs for us.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">full &lt;-<span class="st"> </span><span class="kw">lm</span>(anchovy <span class="op">~</span><span class="st"> </span>., <span class="dt">data=</span>df)
-car<span class="op">::</span><span class="kw">vif</span>(full)</code></pre></div>
+<pre class="sourceCode r"><code class="sourceCode r">full &lt;-<span class="st"> </span><span class="kw">lm</span>(anchovy <span class="op">~</span><span class="st"> </span>., <span class="dt">data=</span>df)
+car<span class="op">::</span><span class="kw">vif</span>(full)</code></pre>
 <pre><code>##       Year  Trachurus        air        slp        sst       vwnd 
 ## 103.922970  18.140279   3.733963   3.324463   2.476689   2.010485 
 ##      wspd3        BOP        FIP        HPP        TOP 
@@ -348,8 +376,8 @@ car<span class="op">::</span><span class="kw">vif</span>(full)</code></pre></div
 <h4><span class="header-section-number">6.1.2.1</span> redun()</h4>
 <p>The Hmisc library also has a redundancy function (<code>redun()</code>) that can help identify which variables are redundant. This identifies variables that can be explained with an <span class="math inline">\(R^2&gt;0.9\)</span> by a linear (or non-linear) combination of other variables. We are fitting a linear model, so we set <code>nk=0</code> to force <code>redun()</code> to only look at linear combinations.</p>
 <p>We use <code>redun()</code> only on the explanatory variables and thus remove the first column, which is our response variable (anchovy).</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">a &lt;-<span class="st"> </span>Hmisc<span class="op">::</span><span class="kw">redun</span>(<span class="op">~</span><span class="st"> </span>.,<span class="dt">data=</span>df[,<span class="op">-</span><span class="dv">1</span>], <span class="dt">nk=</span><span class="dv">0</span>)
-a<span class="op">$</span>Out</code></pre></div>
+<pre class="sourceCode r"><code class="sourceCode r">a &lt;-<span class="st"> </span>Hmisc<span class="op">::</span><span class="kw">redun</span>(<span class="op">~</span><span class="st"> </span>.,<span class="dt">data=</span>df[,<span class="op">-</span><span class="dv">1</span>], <span class="dt">nk=</span><span class="dv">0</span>)
+a<span class="op">$</span>Out</code></pre>
 <pre><code>## [1] &quot;TOP&quot; &quot;HPP&quot;</code></pre>
 <p>This indicates that TOP and HPP can be explained by the other variables.</p>
 </div>
@@ -360,18 +388,18 @@ a<span class="op">$</span>Out</code></pre></div>
 <p><img src="Fish-Forecast_files/figure-html/coef.full-1.png" width="672" style="display: block; margin: auto;" /></p>
 <p>The Year coefficients is very large and the TOP and HPP coefficients are negative and very large.</p>
 <p>If we look at the fit, we see the at the standard errors for Year, TOP and HPP are very large. The p-value for Year is significant, however we know that in the presence of severe collinearity, reported p-values should not be trusted.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">summary</span>(fit.full)</code></pre></div>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">summary</span>(fit.full)</code></pre>
 <pre><code>## 
 ## Call:
 ## lm(formula = anchovy ~ ., data = dfz)
 ## 
 ## Residuals:
 ##     Min      1Q  Median      3Q     Max 
-## -0.4112 -0.1633 -0.0441  0.1459  0.5009 
+## -1.9718 -0.7834 -0.2115  0.6996  2.4024 
 ## 
 ## Coefficients:
 ##               Estimate Std. Error t value Pr(&gt;|t|)  
-## (Intercept) -9.171e-15  7.003e-02   0.000   1.0000  
+## (Intercept) -4.383e-14  3.359e-01   0.000   1.0000  
 ## Year         2.118e+00  7.139e-01   2.966   0.0128 *
 ## Trachurus   -6.717e-02  2.983e-01  -0.225   0.8260  
 ## air          2.987e-01  1.353e-01   2.207   0.0495 *
@@ -386,7 +414,7 @@ a<span class="op">$</span>Out</code></pre></div>
 ## ---
 ## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
 ## 
-## Residual standard error: 0.3359 on 11 degrees of freedom
+## Residual standard error: 1.611 on 11 degrees of freedom
 ## Multiple R-squared:  0.946,  Adjusted R-squared:  0.8921 
 ## F-statistic: 17.53 on 11 and 11 DF,  p-value: 2.073e-05</code></pre>
 <p>Stergiou and Christou do not state how (if at all) they address the collinearity in the explanatory variables, but it is clearly present.</p>
@@ -396,18 +424,18 @@ a<span class="op">$</span>Out</code></pre></div>
 <!--
 http://www.sthda.com/english/articles/37-model-selection-essentials-in-r/154-stepwise-regression-essentials-in-r/
 -->
-<p>Stergiou and Christou state that the covariates to include were selected with stepwise variable selection. Stepwise variable selection is a type of automatic variable selection. Stepwise variable selection has many statistical problems and the problems are worse when the covariates are collinear as they are in our case (see this <a href="https://www.stata.com/support/faqs/statistics/stepwise-regression-problems/">link</a> for a review of the problems with stepwise variable selection). The jist of the problem is one of over-fitting. A stepwise selection procedure will tend to choose variables that, by chance, have large coefficients. With only 23 data points and high collinearity, this is likely to be a rather large problem for our dataset. As we saw, collinearity tends to cause very large positive effect sizes offset by large negative effect sizes. However I use stepwise variable selection here to replicate Stergiou and Christou. I will follow this with an example of other more robust approaches to model selection for linear regression.</p>
+<p>Stergiou and Christou state that the covariates to include were selected with stepwise variable selection. Stepwise variable selection is a type of automatic variable selection. Stepwise variable selection has many statistical problems and the problems are worse when the covariates are collinear as they are in our case (see this <a href="https://www.stata.com/support/faqs/statistics/stepwise-regression-problems/">link</a> for a review of the problems with stepwise variable selection). The gist of the problem is one of over-fitting. A stepwise selection procedure will tend to choose variables that, by chance, have large coefficients. With only 23 data points and high collinearity, this is likely to be a rather large problem for our dataset. As we saw, collinearity tends to cause very large positive effect sizes offset by large negative effect sizes. However I use stepwise variable selection here to replicate Stergiou and Christou. I will follow this with an example of other more robust approaches to model selection for linear regression.</p>
 <p>Stergiou and Christou do not give specifics on how they implemented stepwise variable selection. Stepwise variable selection refers to a forward-backward search, however there are many ways we can implement this and different approaches give different answers. The starting model in particular will have a large effect on the ending model. I will illustrate a number of approaches for doing stepwise variable selection using R.</p>
 <div id="step" class="section level4 unnumbered">
 <h4>step()</h4>
 <p>When using the <code>step()</code> function in the stats package (and the related <code>stepAIC()</code> function in the MASS package) , we specify the starting model and the scope of the search, i.e., the smallest model and the largest model. We set direction equal to “both” to specify stepwise variable selection. We also need to specify the selection criteria. The default is to use AIC.</p>
 <p>Let’s start with a search that starts with a full model which has all the explanatory variables. The first argument to <code>step()</code> is the starting model and <code>scope</code> specifies the maximum and minimum models as a list. <code>direction=&quot;both&quot;</code> is stepwise variable selection. <code>trace=0</code> turns off the reporting.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">null &lt;-<span class="st"> </span><span class="kw">lm</span>(anchovy <span class="op">~</span><span class="st"> </span><span class="dv">1</span>, <span class="dt">data=</span>df)
+<pre class="sourceCode r"><code class="sourceCode r">null &lt;-<span class="st"> </span><span class="kw">lm</span>(anchovy <span class="op">~</span><span class="st"> </span><span class="dv">1</span>, <span class="dt">data=</span>df)
 full &lt;-<span class="st"> </span><span class="kw">lm</span>(anchovy <span class="op">~</span><span class="st"> </span>., <span class="dt">data=</span>df)
 step.full &lt;-<span class="st"> </span><span class="kw">step</span>(full, 
                        <span class="dt">scope=</span><span class="kw">list</span>(<span class="dt">lower=</span>null, <span class="dt">upper=</span>full),
                        <span class="dt">direction=</span><span class="st">&quot;both&quot;</span>, <span class="dt">trace =</span> <span class="dv">0</span>)
-step.full</code></pre></div>
+step.full</code></pre>
 <pre><code>## 
 ## Call:
 ## lm(formula = anchovy ~ Year + air + vwnd + BOP + FIP + TOP, data = df)
@@ -418,17 +446,17 @@ step.full</code></pre></div>
 ##         FIP          TOP  
 ##      1.0189      -1.7894</code></pre>
 <p>We can also apply <code>step()</code> with the caret package:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">step.caret &lt;-<span class="st"> </span>caret<span class="op">::</span><span class="kw">train</span>(anchovy <span class="op">~</span><span class="st"> </span>., <span class="dt">data =</span> df,
+<pre class="sourceCode r"><code class="sourceCode r">step.caret &lt;-<span class="st"> </span>caret<span class="op">::</span><span class="kw">train</span>(anchovy <span class="op">~</span><span class="st"> </span>., <span class="dt">data =</span> df,
                     <span class="dt">method =</span> <span class="st">&quot;lmStepAIC&quot;</span>,
                     <span class="dt">direction =</span> <span class="st">&quot;both&quot;</span>,
                     <span class="dt">trace =</span> <span class="ot">FALSE</span>
-)</code></pre></div>
+)</code></pre>
 <pre><code>## Warning: attempting model selection on an essentially perfect fit is
 ## nonsense
 
 ## Warning: attempting model selection on an essentially perfect fit is
 ## nonsense</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">step.caret<span class="op">$</span>finalModel</code></pre></div>
+<pre class="sourceCode r"><code class="sourceCode r">step.caret<span class="op">$</span>finalModel</code></pre>
 <pre><code>## 
 ## Call:
 ## lm(formula = .outcome ~ Year + air + vwnd + BOP + FIP + TOP, 
@@ -442,12 +470,12 @@ step.full</code></pre></div>
 <p>Note that <code>method=&quot;lmStepAIC&quot;</code> in the <code>train()</code> function will always start with the full model.</p>
 <p>The AIC for this model is -19.6. This is a larger model than that reported in Table 3 (page 119) of Stergiou and Christou. The model in Table 3 includes only Year, <em>Trachurus</em> catch, SST, and FIP. The model selected by <code>step()</code> starting from the full model includes Year, <em>Trachurus</em> catch, air temperature, vertical wind, BOP, FIP and TOP.</p>
 <p>Let’s repeat but start the search with the smallest model.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">null &lt;-<span class="st"> </span><span class="kw">lm</span>(anchovy <span class="op">~</span><span class="st"> </span><span class="dv">1</span>, <span class="dt">data=</span>df)
+<pre class="sourceCode r"><code class="sourceCode r">null &lt;-<span class="st"> </span><span class="kw">lm</span>(anchovy <span class="op">~</span><span class="st"> </span><span class="dv">1</span>, <span class="dt">data=</span>df)
 full &lt;-<span class="st"> </span><span class="kw">lm</span>(anchovy <span class="op">~</span><span class="st"> </span>., <span class="dt">data=</span>df)
 step.null &lt;-<span class="st"> </span><span class="kw">step</span>(null, 
                    <span class="dt">scope=</span><span class="kw">list</span>(<span class="dt">lower=</span>null, <span class="dt">upper=</span>full),
                    <span class="dt">direction=</span><span class="st">&quot;both&quot;</span>, <span class="dt">trace =</span> <span class="dv">0</span>)
-step.null</code></pre></div>
+step.null</code></pre>
 <pre><code>## 
 ## Call:
 ## lm(formula = anchovy ~ Year + FIP + Trachurus + air, data = df)
@@ -457,11 +485,11 @@ step.null</code></pre></div>
 ##    -0.51874      0.08663      0.81058     -0.28602      1.62735</code></pre>
 <p>This model has an AIC of -18.7. This AIC is larger (worse), which illustrates that you need to be careful how you set up the search. This selected model is very similar to that in Table 3 except that air temperature instead of SST is selected. Air temperature and SST are correlated, however.</p>
 <p>The air temperature is removed from the best model if we use BIC as the model selection criteria. This is done by setting <code>k=log(n)</code> where <span class="math inline">\(n\)</span> is sample size.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">step.null.bic &lt;-<span class="st"> </span><span class="kw">step</span>(null, 
+<pre class="sourceCode r"><code class="sourceCode r">step.null.bic &lt;-<span class="st"> </span><span class="kw">step</span>(null, 
                        <span class="dt">scope=</span><span class="kw">list</span>(<span class="dt">lower=</span>null, <span class="dt">upper=</span>full),
                        <span class="dt">direction=</span><span class="st">&quot;both&quot;</span>, <span class="dt">trace =</span> <span class="dv">0</span>,
                        <span class="dt">k=</span><span class="kw">log</span>(<span class="kw">nrow</span>(df)))
-step.null.bic</code></pre></div>
+step.null.bic</code></pre>
 <pre><code>## 
 ## Call:
 ## lm(formula = anchovy ~ Year + FIP + Trachurus, data = df)
@@ -470,9 +498,9 @@ step.null.bic</code></pre></div>
 ## (Intercept)         Year          FIP    Trachurus  
 ##     2.81733      0.08836      0.98541     -0.30092</code></pre>
 <p>We can also do stepwise variable selection using the leaps package. However, the algorithm or starting model is different than for <code>step()</code> and the results are correspondingly different. The results are similar to <code>step()</code> starting from the full model but not identical. See the next section for a brief introduction to the leaps package.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">models &lt;-<span class="st"> </span>leaps<span class="op">::</span><span class="kw">regsubsets</span>(anchovy<span class="op">~</span>., <span class="dt">data =</span> df, <span class="dt">nvmax =</span><span class="dv">11</span>,
+<pre class="sourceCode r"><code class="sourceCode r">models &lt;-<span class="st"> </span>leaps<span class="op">::</span><span class="kw">regsubsets</span>(anchovy<span class="op">~</span>., <span class="dt">data =</span> df, <span class="dt">nvmax =</span><span class="dv">11</span>,
                      <span class="dt">method =</span> <span class="st">&quot;seqrep&quot;</span>, <span class="dt">nbest=</span><span class="dv">1</span>)
-<span class="kw">plot</span>(models, <span class="dt">scale=</span><span class="st">&quot;bic&quot;</span>)</code></pre></div>
+<span class="kw">plot</span>(models, <span class="dt">scale=</span><span class="st">&quot;bic&quot;</span>)</code></pre>
 <p><img src="Fish-Forecast_files/figure-html/leaps.step-1.png" width="672" style="display: block; margin: auto;" /></p>
 </div>
 <div id="leaps" class="section level4 unnumbered">
@@ -482,23 +510,25 @@ Raftery, A. E. (1995). Bayesian Model Selection in Social Research. Sociological
 -->
 <p>We can use the leaps package to do a full search of the model space. The function <code>leaps::regsubsets()</code> will find the <code>nbest</code> models of size (number of explanatory variables) 1 to <code>nvmax</code> using different types of searches: exhaustive, forward, backward, and stepwise variable selection. We can then plot these best models of each size against a criteria. such as BIC. leaps allows us to plot against BIC, Cp (asymptotically the same as AIC and LOOCV), <span class="math inline">\(R^2\)</span> and adjusted <span class="math inline">\(R^2\)</span>. Each row in the plot is a model. The dark shading shows which variables are in the model. On the y-axis, farther away from the x-axis is better, so the models (rows) at the top of the plot are the best models.</p>
 <p>Let’s start with an exhaustive search and show only the best model of each size, where size is the number of explanatory variables in the model.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">models &lt;-<span class="st"> </span>leaps<span class="op">::</span><span class="kw">regsubsets</span>(anchovy<span class="op">~</span>., <span class="dt">data =</span> df, 
+<pre class="sourceCode r"><code class="sourceCode r">models &lt;-<span class="st"> </span>leaps<span class="op">::</span><span class="kw">regsubsets</span>(anchovy<span class="op">~</span>., <span class="dt">data =</span> df, 
                      <span class="dt">nvmax =</span> <span class="dv">11</span>, <span class="dt">nbest=</span><span class="dv">1</span>,
                      <span class="dt">method =</span> <span class="st">&quot;exhaustive&quot;</span>)
-<span class="kw">plot</span>(models, <span class="dt">scale=</span><span class="st">&quot;bic&quot;</span>)</code></pre></div>
-<p><img src="Fish-Forecast_files/figure-html/leaps-1.png" width="672" style="display: block; margin: auto;" /> We see that when we use BIC as the selection criteria, the best model has Year, <em>Trachurus</em>, and FIP.</p>
+<span class="kw">plot</span>(models, <span class="dt">scale=</span><span class="st">&quot;bic&quot;</span>)</code></pre>
+<p><img src="Fish-Forecast_files/figure-html/leaps-1.png" width="672" style="display: block; margin: auto;" />
+We see that when we use BIC as the selection criteria, the best model has Year, <em>Trachurus</em>, and FIP.</p>
 <p>Let’s look at more than one model for each model size. Let’s take the top 3 models for each model size and look at their BICs.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">models &lt;-<span class="st"> </span>leaps<span class="op">::</span><span class="kw">regsubsets</span>(anchovy<span class="op">~</span>., <span class="dt">data =</span> df, 
+<pre class="sourceCode r"><code class="sourceCode r">models &lt;-<span class="st"> </span>leaps<span class="op">::</span><span class="kw">regsubsets</span>(anchovy<span class="op">~</span>., <span class="dt">data =</span> df, 
                      <span class="dt">nvmax =</span> <span class="dv">11</span>, <span class="dt">nbest=</span><span class="dv">3</span>,
                      <span class="dt">method =</span> <span class="st">&quot;exhaustive&quot;</span>)
-<span class="kw">plot</span>(models, <span class="dt">scale=</span><span class="st">&quot;bic&quot;</span>)</code></pre></div>
-<p><img src="Fish-Forecast_files/figure-html/leaps2-1.png" width="672" style="display: block; margin: auto;" /> We can plot the BIC for each size of model also.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">smodels =<span class="st"> </span><span class="kw">summary</span>(models)
+<span class="kw">plot</span>(models, <span class="dt">scale=</span><span class="st">&quot;bic&quot;</span>)</code></pre>
+<p><img src="Fish-Forecast_files/figure-html/leaps2-1.png" width="672" style="display: block; margin: auto;" />
+We can plot the BIC for each size of model also.</p>
+<pre class="sourceCode r"><code class="sourceCode r">smodels =<span class="st"> </span><span class="kw">summary</span>(models)
 nvar &lt;-<span class="st"> </span><span class="kw">apply</span>(smodels<span class="op">$</span>which,<span class="dv">1</span>,sum)<span class="op">-</span><span class="dv">1</span>
 <span class="kw">plot</span>(nvar, smodels<span class="op">$</span>bic, <span class="dt">xlab =</span> <span class="st">&quot;Number of Variables&quot;</span>, <span class="dt">ylab =</span> <span class="st">&quot;BIC&quot;</span>)
 min.bic &lt;-<span class="st"> </span><span class="kw">which.min</span>(smodels<span class="op">$</span>bic)
 <span class="kw">points</span>(nvar[min.bic], smodels<span class="op">$</span>bic[min.bic], <span class="dt">pch =</span> <span class="dv">20</span>, <span class="dt">col =</span> <span class="st">&quot;red&quot;</span>)
-<span class="kw">abline</span>(<span class="dt">h =</span> smodels<span class="op">$</span>bic[min.bic]<span class="op">+</span><span class="dv">2</span>, <span class="dt">lty=</span><span class="dv">2</span>)</code></pre></div>
+<span class="kw">abline</span>(<span class="dt">h =</span> smodels<span class="op">$</span>bic[min.bic]<span class="op">+</span><span class="dv">2</span>, <span class="dt">lty=</span><span class="dv">2</span>)</code></pre>
 <p><img src="Fish-Forecast_files/figure-html/leaps.bic.plot-1.png" width="672" style="display: block; margin: auto;" /></p>
 <p>These two plots show that there are many models within 2 of the top model. All the best models have Year and FIP, but there are many different 3rd and 4th variables that can be added and give a similar BIC. Interesting SST does not appear in any of the top models, while it was selected by Stergiou and Christou. This suggests that they computed the yearly SST values slightly differently than I did. My remote sensing data source was slightly different and that might be the cause.</p>
 </div>
@@ -506,11 +536,11 @@ min.bic &lt;-<span class="st"> </span><span class="kw">which.min</span>(smodels<
 <h4><span class="header-section-number">6.1.4.1</span> Comparison of models chosen by AIC, AICc and BIC</h4>
 <p><code>step()</code> uses AIC instead of the AICc (corrected for small sample size). In our case, <span class="math inline">\(n=23\)</span> is fairly small and using AICc would be better suited for such a small dataset. leaps does not return AIC or AICc, but we can compute them. Note that Mallow’s Cp asymptotically has the same ordering as AIC, but <span class="math inline">\(n=23\)</span> is small and it does not have the same ordering as AIC in our case.</p>
 <p>First we use <code>summary()</code> to get a matrix showing the best model of each size. This matrix shows what variable is in the best model of each size. Note that this best model does not depend on the metric (BIC, AIC, etc) because we are looking at models with the same number of variables. The metric affects the penalty for different number of variables and thus only affects the models choice when we compare models of different sizes.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">models &lt;-<span class="st"> </span>leaps<span class="op">::</span><span class="kw">regsubsets</span>(anchovy<span class="op">~</span>., <span class="dt">data =</span> df, 
+<pre class="sourceCode r"><code class="sourceCode r">models &lt;-<span class="st"> </span>leaps<span class="op">::</span><span class="kw">regsubsets</span>(anchovy<span class="op">~</span>., <span class="dt">data =</span> df, 
                      <span class="dt">nvmax =</span> <span class="dv">11</span>, <span class="dt">nbest=</span><span class="dv">1</span>,
                      <span class="dt">method =</span> <span class="st">&quot;exhaustive&quot;</span>)
 smodels &lt;-<span class="st"> </span><span class="kw">summary</span>(models)
-<span class="kw">head</span>(smodels<span class="op">$</span>which[,<span class="dv">1</span><span class="op">:</span><span class="dv">10</span>])</code></pre></div>
+<span class="kw">head</span>(smodels<span class="op">$</span>which[,<span class="dv">1</span><span class="op">:</span><span class="dv">10</span>])</code></pre>
 <pre><code>##   (Intercept) Year Trachurus   air   slp   sst  vwnd wspd3   BOP   FIP
 ## 1        TRUE TRUE     FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE
 ## 2        TRUE TRUE     FALSE FALSE FALSE FALSE FALSE FALSE FALSE  TRUE
@@ -519,23 +549,24 @@ smodels &lt;-<span class="st"> </span><span class="kw">summary</span>(models)
 ## 5        TRUE TRUE      TRUE  TRUE FALSE FALSE  TRUE FALSE FALSE  TRUE
 ## 6        TRUE TRUE     FALSE  TRUE FALSE FALSE  TRUE FALSE  TRUE  TRUE</code></pre>
 <p>Next we compute AIC and AICc from BIC. <code>k</code> is the number of parameters. We need to add one more parameter for the estimated variance.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">k &lt;-<span class="st"> </span><span class="kw">apply</span>(smodels<span class="op">$</span>which,<span class="dv">1</span>,sum)<span class="op">+</span><span class="dv">1</span>
-mod.aicc &lt;-<span class="st"> </span>smodels<span class="op">$</span>bic<span class="op">+</span>k<span class="op">*</span>(<span class="dv">2</span><span class="op">+</span>(<span class="dv">2</span><span class="op">*</span>k<span class="op">+</span><span class="dv">2</span>)<span class="op">/</span>(<span class="dv">23</span><span class="op">-</span>k<span class="op">-</span><span class="dv">1</span>))<span class="op">-</span><span class="kw">log</span>(<span class="dv">23</span>)<span class="op">*</span>k
-mod.aic &lt;-<span class="st"> </span>smodels<span class="op">$</span>bic<span class="op">+</span>k<span class="op">*</span><span class="dv">2</span><span class="op">-</span><span class="kw">log</span>(<span class="dv">23</span>)<span class="op">*</span>k</code></pre></div>
-<p>Now we will plot the metrics for each model size. BIC, AICc and Mallow’s Cp all chose models with an intercept and 3 variables: Year, <em>Trachurus</em> and FIP. AIC selects a much larger model, however with <span class="math inline">\(n=23\)</span>, AICc would be a better choice. <img src="Fish-Forecast_files/figure-html/leaps.aicc.plot-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="sourceCode r"><code class="sourceCode r">k &lt;-<span class="st"> </span><span class="kw">apply</span>(smodels<span class="op">$</span>which,<span class="dv">1</span>,sum)<span class="op">+</span><span class="dv">1</span>
+mod.aicc &lt;-<span class="st"> </span>smodels<span class="op">$</span>bic<span class="op">+</span>k<span class="op">*</span>(<span class="dv">2</span><span class="op">+</span>(<span class="dv">2</span><span class="op">*</span>k<span class="op">+</span><span class="dv">2</span>)<span class="op">/</span>(<span class="dv">23</span><span class="op">-</span>k<span class="dv">-1</span>))<span class="op">-</span><span class="kw">log</span>(<span class="dv">23</span>)<span class="op">*</span>k
+mod.aic &lt;-<span class="st"> </span>smodels<span class="op">$</span>bic<span class="op">+</span>k<span class="op">*</span><span class="dv">2</span><span class="op">-</span><span class="kw">log</span>(<span class="dv">23</span>)<span class="op">*</span>k</code></pre>
+<p>Now we will plot the metrics for each model size. BIC, AICc and Mallow’s Cp all chose models with an intercept and 3 variables: Year, <em>Trachurus</em> and FIP. AIC selects a much larger model, however with <span class="math inline">\(n=23\)</span>, AICc would be a better choice.
+<img src="Fish-Forecast_files/figure-html/leaps.aicc.plot-1.png" width="672" style="display: block; margin: auto;" /></p>
 <p>To find the best model, find the row of the <code>smodels</code> matrix where AICc is the smallest. For example, here is the best model with AICc.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">rmin &lt;-<span class="st"> </span><span class="kw">which</span>(mod.aicc<span class="op">==</span><span class="kw">min</span>(mod.aicc))
-<span class="kw">colnames</span>(smodels<span class="op">$</span>which)[smodels<span class="op">$</span>which[rmin,]]</code></pre></div>
+<pre class="sourceCode r"><code class="sourceCode r">rmin &lt;-<span class="st"> </span><span class="kw">which</span>(mod.aicc<span class="op">==</span><span class="kw">min</span>(mod.aicc))
+<span class="kw">colnames</span>(smodels<span class="op">$</span>which)[smodels<span class="op">$</span>which[rmin,]]</code></pre>
 <pre><code>## [1] &quot;(Intercept)&quot; &quot;Year&quot;        &quot;Trachurus&quot;   &quot;FIP&quot;</code></pre>
 <p>In comparison, the best model with AIC is larger.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">rmin &lt;-<span class="st"> </span><span class="kw">which</span>(mod.aic<span class="op">==</span><span class="kw">min</span>(mod.aic))
-<span class="kw">colnames</span>(smodels<span class="op">$</span>which)[smodels<span class="op">$</span>which[rmin,]]</code></pre></div>
+<pre class="sourceCode r"><code class="sourceCode r">rmin &lt;-<span class="st"> </span><span class="kw">which</span>(mod.aic<span class="op">==</span><span class="kw">min</span>(mod.aic))
+<span class="kw">colnames</span>(smodels<span class="op">$</span>which)[smodels<span class="op">$</span>which[rmin,]]</code></pre>
 <pre><code>## [1] &quot;(Intercept)&quot; &quot;Year&quot;        &quot;air&quot;         &quot;vwnd&quot;        &quot;BOP&quot;        
 ## [6] &quot;FIP&quot;         &quot;TOP&quot;</code></pre>
 </div>
 </div>
 <div id="model-selection-with-cross-validationislcv" class="section level3">
-<h3><span class="header-section-number">6.1.5</span> Model selection with cross-validation<a href="#fn3" class="footnoteRef" id="fnref3"><sup>3</sup></a></h3>
+<h3><span class="header-section-number">6.1.5</span> Model selection with cross-validation<a href="#fn3" class="footnote-ref" id="fnref3"><sup>3</sup></a></h3>
 <!--
 https://lagunita.stanford.edu/courses/HumanitiesSciences/StatLearning/Winter2016/about
 
@@ -546,56 +577,56 @@ https://lagunita.stanford.edu/c4x/HumanitiesSciences/StatLearning/asset/ch6.html
 -->
 <p>Variable selection (forward, backward, stepwise) is known to overfit models and variables will be chosen that just happen to have high correlation with your response variable for your particular dataset. The result is models with low out-of-sample predictive accuracy. Cross-validation is a way to try to deal with that problem.</p>
 <p>Model selection with cross-validation estimates the out-of-sample predictive performance of a <em>process</em> for building a model. So for example, you could use cross-validation to ask the question, “If I select a best model with AIC does that approach led to models with better predictive performance over selecting a best model with BIC?”.</p>
-<p>The basic idea behind cross-validation is that part of the data is used for fitting (training) the model and the left-out data is used for assessing predictions. You predict the left-out data and compare the actual data to the predictions. There are two common types of cross-validation: leave-one-out cross-validation (LOOCV) and k-fold cross-validationa.</p>
+<p>The basic idea behind cross-validation is that part of the data is used for fitting (training) the model and the left-out data is used for assessing predictions. You predict the left-out data and compare the actual data to the predictions. There are two common types of cross-validation: leave-one-out cross-validation (LOOCV) and k-fold cross-validation.</p>
 <p>Leave-one-out cross-validation (LOOCV) is a cross-validation where you leave one data point out, fit to the rest of the data, predict the left out data point, and compute the prediction error with prediction minus actual data value. This is repeated for all data points. So you will have <span class="math inline">\(n\)</span> prediction errors if you have <span class="math inline">\(n\)</span> data points. From these errors, you can compute various statistics. Root mean squared error (RMSE), mean squared error (MSE), and mean absolute error (MAE) are common.</p>
 <p>k-fold cross-validation is a cross-validation where you divide the data into k equal fractions. The model is fit k times: each fraction is treated as a test data set and the other k-1 fractions are used as the training data. When the model is fit, you predict the data in the test data and compute the prediction errors. Then you’ll compute the statistics (RMSE, MSE, etc) from the errors from all k training sets. There are many different ways you can split your data into k fractions. Thus one often repeats this process many times and uses the average. This is called repeated cross-validation.</p>
 <div id="example-code" class="section level4 unnumbered">
 <h4>Example code</h4>
 <p>Let’s see an example of this using models fit via stepwise variable selection using <code>leaps::regsubsets()</code>.</p>
-<p>Let’s start by defining a <code>predict</code> function for <code>regsubsets</code> objects<a href="#fn4" class="footnoteRef" id="fnref4"><sup>4</sup></a>.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">predict.regsubsets &lt;-<span class="st"> </span><span class="cf">function</span>(object, newdata, id, ...) {
+<p>Let’s start by defining a <code>predict</code> function for <code>regsubsets</code> objects<a href="#fn4" class="footnote-ref" id="fnref4"><sup>4</sup></a>.</p>
+<pre class="sourceCode r"><code class="sourceCode r">predict.regsubsets &lt;-<span class="st"> </span><span class="cf">function</span>(object, newdata, id, ...) {
     form &lt;-<span class="st"> </span><span class="kw">as.formula</span>(object<span class="op">$</span>call[[<span class="dv">2</span>]])
     mat &lt;-<span class="st"> </span><span class="kw">model.matrix</span>(form, newdata)
     coefi &lt;-<span class="st"> </span>leaps<span class="op">:::</span><span class="kw">coef.regsubsets</span>(object, <span class="dt">id =</span> id)
     mat[, <span class="kw">names</span>(coefi)] <span class="op">%*%</span><span class="st"> </span>coefi
-}</code></pre></div>
+}</code></pre>
 <p>Next we set up a matrix that defines the folds. Each row has numbers 1 to k (folds) which specify which data points are in the test set. The other (non-k) data points will be the training set. Each row of <code>folds</code> is a different replicate of the repeated cross-validation.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">nfolds &lt;-<span class="st"> </span><span class="dv">5</span>
+<pre class="sourceCode r"><code class="sourceCode r">nfolds &lt;-<span class="st"> </span><span class="dv">5</span>
 nreps &lt;-<span class="st"> </span><span class="dv">20</span>
 folds &lt;-<span class="st"> </span><span class="kw">matrix</span>(<span class="ot">NA</span>, nreps, <span class="kw">nrow</span>(df))
 <span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">1</span><span class="op">:</span>nreps) 
-  folds[i,] &lt;-<span class="st"> </span><span class="kw">sample</span>(<span class="kw">rep</span>(<span class="dv">1</span><span class="op">:</span>nfolds, <span class="dt">length =</span> <span class="kw">nrow</span>(df)))</code></pre></div>
+  folds[i,] &lt;-<span class="st"> </span><span class="kw">sample</span>(<span class="kw">rep</span>(<span class="dv">1</span><span class="op">:</span>nfolds, <span class="dt">length =</span> <span class="kw">nrow</span>(df)))</code></pre>
 <p>Now we can use <code>df[folds[r,]==k]</code> to specify the test data for the k-th fold of the r-th replicate. And <code>df[folds[r,]!=k]</code> is the training dataset for the k-th fold of the r-th replicate. The <strong>fold</strong> jargon is just another word for group. We divide the data into k groups and we call each group a <strong>fold</strong>.</p>
 <p>Next we set up a matrix to hold the prediction errors. We will have prediction errors for each fold, each replicate, and each variable (columns).</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">nvmax &lt;-<span class="st"> </span><span class="dv">8</span>
-cv.errors &lt;-<span class="st"> </span><span class="kw">matrix</span>(<span class="dv">0</span>, nreps<span class="op">*</span>nfolds, nvmax)</code></pre></div>
+<pre class="sourceCode r"><code class="sourceCode r">nvmax &lt;-<span class="st"> </span><span class="dv">8</span>
+cv.errors &lt;-<span class="st"> </span><span class="kw">matrix</span>(<span class="dv">0</span>, nreps<span class="op">*</span>nfolds, nvmax)</code></pre>
 <p>Now, we step through each replicate and each fold in each replicate. We find the best fit with <code>regsubsets()</code> applied to the <em>training set</em> for that replicate. Then we predict using that best fit to the test data for that replicate. We compute the errors (prediction minus data) and store. When we are done, we compute the RMSE (or whatever metric we want).</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="cf">for</span>(r <span class="cf">in</span> <span class="dv">1</span><span class="op">:</span>nreps){
+<pre class="sourceCode r"><code class="sourceCode r"><span class="cf">for</span>(r <span class="cf">in</span> <span class="dv">1</span><span class="op">:</span>nreps){
  <span class="cf">for</span> (k <span class="cf">in</span> <span class="dv">1</span><span class="op">:</span>nfolds) {
   traindat &lt;-<span class="st"> </span>df[folds[r,]<span class="op">!=</span>k,]
   testdat &lt;-<span class="st"> </span>df[folds[r,]<span class="op">==</span>k,]
   best.fit &lt;-<span class="st"> </span>leaps<span class="op">::</span><span class="kw">regsubsets</span>(anchovy <span class="op">~</span><span class="st"> </span>., <span class="dt">data=</span>traindat, <span class="dt">nvmax =</span> nvmax, <span class="dt">method =</span> <span class="st">&quot;seqrep&quot;</span>)
   <span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="op">:</span>nvmax) {
     pred &lt;-<span class="st"> </span><span class="kw">predict.regsubsets</span>(best.fit, testdat, <span class="dt">id =</span> i)
-    cv.errors[r<span class="op">+</span>(k<span class="op">-</span><span class="dv">1</span>)<span class="op">*</span>nreps, i] &lt;-<span class="st"> </span>
+    cv.errors[r<span class="op">+</span>(k<span class="dv">-1</span>)<span class="op">*</span>nreps, i] &lt;-<span class="st"> </span>
 <span class="st">      </span><span class="kw">mean</span>((testdat<span class="op">$</span>anchovy <span class="op">-</span><span class="st"> </span>pred)<span class="op">^</span><span class="dv">2</span>)
     }
  }
 }
 rmse.cv &lt;-<span class="st"> </span><span class="kw">sqrt</span>(<span class="kw">apply</span>(cv.errors, <span class="dv">2</span>, mean, <span class="dt">na.rm=</span><span class="ot">TRUE</span>))
-<span class="kw">plot</span>(<span class="dv">1</span><span class="op">:</span>nvmax, rmse.cv, <span class="dt">pch =</span> <span class="dv">19</span>, <span class="dt">type =</span> <span class="st">&quot;b&quot;</span>,<span class="dt">xlab=</span><span class="st">&quot;Number of Variables&quot;</span>, <span class="dt">ylab=</span><span class="st">&quot;RMSE&quot;</span>)</code></pre></div>
+<span class="kw">plot</span>(<span class="dv">1</span><span class="op">:</span>nvmax, rmse.cv, <span class="dt">pch =</span> <span class="dv">19</span>, <span class="dt">type =</span> <span class="st">&quot;b&quot;</span>,<span class="dt">xlab=</span><span class="st">&quot;Number of Variables&quot;</span>, <span class="dt">ylab=</span><span class="st">&quot;RMSE&quot;</span>)</code></pre>
 <p><img src="Fish-Forecast_files/figure-html/cv.code-1.png" width="672" style="display: block; margin: auto;" /></p>
-<p>The model size with the best predictive performance is smaller, intercept plus 2 variables instead of intercept plus 3 variables. This suggests that we should constrain our model size to 2 variables (plus intercept). Note, that with a 5-fold crossvalidation, we were fitting the models to 19 data points instead of 23. However, even with a 23-fold crossvalidation (Leave One Out CV), a model with 2 variables has the lowest RMSE.</p>
+<p>The model size with the best predictive performance is smaller, intercept plus 2 variables instead of intercept plus 3 variables. This suggests that we should constrain our model size to 2 variables (plus intercept). Note, that with a 5-fold cross-validation, we were fitting the models to 19 data points instead of 23. However, even with a 23-fold cross-validation (Leave One Out CV), a model with 2 variables has the lowest RMSE.</p>
 <p>The best fit 2 variable model has Year and FIP.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">best.fit &lt;-<span class="st"> </span>leaps<span class="op">::</span><span class="kw">regsubsets</span>(anchovy <span class="op">~</span><span class="st"> </span>., <span class="dt">data=</span>traindat, <span class="dt">nvmax =</span> <span class="dv">2</span>, <span class="dt">method =</span> <span class="st">&quot;seqrep&quot;</span>)
+<pre class="sourceCode r"><code class="sourceCode r">best.fit &lt;-<span class="st"> </span>leaps<span class="op">::</span><span class="kw">regsubsets</span>(anchovy <span class="op">~</span><span class="st"> </span>., <span class="dt">data=</span>traindat, <span class="dt">nvmax =</span> <span class="dv">2</span>, <span class="dt">method =</span> <span class="st">&quot;seqrep&quot;</span>)
 tmp &lt;-<span class="st"> </span><span class="kw">summary</span>(best.fit)<span class="op">$</span>which
-<span class="kw">colnames</span>(tmp)[tmp[<span class="dv">2</span>,]]</code></pre></div>
+<span class="kw">colnames</span>(tmp)[tmp[<span class="dv">2</span>,]]</code></pre>
 <pre><code>## [1] &quot;(Intercept)&quot; &quot;Year&quot;        &quot;FIP&quot;</code></pre>
 </div>
 <div id="cross-validation-with-caret-package" class="section level4 unnumbered">
 <h4>Cross-validation with caret package</h4>
 <p>The caret package allows us to do this easily. <code>trainControl</code> specifies the type of cross-validation and <code>tuneGrid</code> specifies the parameter over which cross-validation will be done (in this case the size of the model). We use the <code>train()</code> function to fit the models and do the cross-validation.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(caret)
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(caret)
 <span class="co"># Set up repeated k-fold cross-validation</span>
 train.control &lt;-<span class="st"> </span><span class="kw">trainControl</span>(<span class="dt">method =</span> <span class="st">&quot;repeatedcv&quot;</span>, <span class="dt">number=</span><span class="dv">5</span>, <span class="dt">repeats=</span><span class="dv">20</span>)
 <span class="co"># Train the model</span>
@@ -604,9 +635,10 @@ step.model &lt;-<span class="st"> </span><span class="kw">train</span>(anchovy<s
                     <span class="dt">tuneGrid =</span> <span class="kw">data.frame</span>(<span class="dt">nvmax =</span> <span class="dv">1</span><span class="op">:</span>nvmax),
                     <span class="dt">trControl =</span> train.control
                     )
-<span class="kw">plot</span>(step.model<span class="op">$</span>results<span class="op">$</span>RMSE, <span class="dt">pch =</span> <span class="dv">19</span>, <span class="dt">type =</span> <span class="st">&quot;b&quot;</span>, <span class="dt">ylab=</span><span class="st">&quot;RMSE&quot;</span>)</code></pre></div>
-<p><img src="Fish-Forecast_files/figure-html/caret.plot-1.png" width="672" style="display: block; margin: auto;" /> The <code>$results</code> part of the output shows us the cross-validation metrics. Best depends on the metric we use. A 2-parameter model is best for all the error metrics except R-squared.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">step.model<span class="op">$</span>results</code></pre></div>
+<span class="kw">plot</span>(step.model<span class="op">$</span>results<span class="op">$</span>RMSE, <span class="dt">pch =</span> <span class="dv">19</span>, <span class="dt">type =</span> <span class="st">&quot;b&quot;</span>, <span class="dt">ylab=</span><span class="st">&quot;RMSE&quot;</span>)</code></pre>
+<p><img src="Fish-Forecast_files/figure-html/caret.plot-1.png" width="672" style="display: block; margin: auto;" />
+The <code>$results</code> part of the output shows us the cross-validation metrics. Best depends on the metric we use. A 2-parameter model is best for all the error metrics except R-squared.</p>
+<pre class="sourceCode r"><code class="sourceCode r">step.model<span class="op">$</span>results</code></pre>
 <table class="huxtable" style="border-collapse: collapse; margin-bottom: 2em; margin-top: 2em; width: 100%; margin-left: 0%; margin-right: auto; ">
 <col><col><col><col><col><col><col><tr>
 <td style="vertical-align: top; text-align: right; white-space: nowrap; border-style: solid solid solid solid; border-width: 0.4pt 0pt 0.4pt 0.4pt; padding: 4pt 4pt 4pt 4pt; font-weight: bold;">nvmax</td>
@@ -692,7 +724,7 @@ step.model &lt;-<span class="st"> </span><span class="kw">train</span>(anchovy<s
 </table>
 
 <p>The best 2-parameter model has Year and FIP.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">coef</span>(step.model<span class="op">$</span>finalModel, <span class="dt">id=</span><span class="dv">2</span>)</code></pre></div>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">coef</span>(step.model<span class="op">$</span>finalModel, <span class="dt">id=</span><span class="dv">2</span>)</code></pre>
 <pre><code>## (Intercept)        Year         FIP 
 ## -0.01122016  0.07297605  1.04079295</code></pre>
 </div>
@@ -706,21 +738,21 @@ https://www.analyticsvidhya.com/blog/2017/06/a-comprehensive-guide-for-linear-ri
 <p>Another approach to dealing with variance inflation that arises from collinearity and models with many explanatory variable is penalized regression. First, let’s look at ridge regression. The basic idea with penalized regression is that you penalize coefficient estimates that are far from 0. The true coefficients are (likely) not 0 so fundamentally this will lead to biased coefficient estimates but the idea is that the inflated variance of the coefficient estimates is the bigger problem.</p>
 <p>With ridge regression, we will assume that the coefficients have a mean of 0 and a variance of <span class="math inline">\(1/\lambda\)</span>. This is our prior on the coefficients. The <span class="math inline">\(\beta_i\)</span> are the most probable values given the data and the prior. Note, there are many other ways to derive ridge regression.</p>
 <p>We will use the glmnet package to fit the anchovy catch with ridge regression. To fit with a ridge penalty, we set <code>alpha=0</code>.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(glmnet)
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(glmnet)
 resp &lt;-<span class="st"> </span><span class="kw">colnames</span>(dfz)<span class="op">!=</span><span class="st">&quot;anchovy&quot;</span>
 x &lt;-<span class="st"> </span><span class="kw">as.matrix</span>(dfz[,resp])
 y &lt;-<span class="st"> </span><span class="kw">as.matrix</span>(dfz[,<span class="st">&quot;anchovy&quot;</span>])
-fit.ridge &lt;-<span class="st"> </span><span class="kw">glmnet</span>(x, y, <span class="dt">family=</span><span class="st">&quot;gaussian&quot;</span>, <span class="dt">alpha=</span><span class="dv">0</span>)</code></pre></div>
+fit.ridge &lt;-<span class="st"> </span><span class="kw">glmnet</span>(x, y, <span class="dt">family=</span><span class="st">&quot;gaussian&quot;</span>, <span class="dt">alpha=</span><span class="dv">0</span>)</code></pre>
 <p>We need to choose a value for the penalty parameter <span class="math inline">\(\lambda\)</span> (called <code>s</code> in <code>coef.glmnet()</code>). If <span class="math inline">\(\lambda\)</span> is large, then our prior is that the coefficients are very close to 0. If our <span class="math inline">\(\lambda\)</span> is small, then our prior is less informative.</p>
 <p>We can use cross-validation to choose <span class="math inline">\(\lambda\)</span>. This chooses a <span class="math inline">\(\lambda\)</span> that gives us the lowest out of sample errors. <code>cv.glmnet()</code> will do k-fold cross-validation and report the MSE. We pick the <span class="math inline">\(\lambda\)</span> with the lowest MSE (<code>lambda.min</code>) or the largest value of <span class="math inline">\(\lambda\)</span> such that error is within 1 s.e. of the minimum (<code>lambda.1se</code>). This value is computed via cross-validation so will vary. We will take the average over a number of runs; here 20 for speed but 100 is better.</p>
 <p>Once we have a best <span class="math inline">\(\lambda\)</span> to use, we can get the coefficients at that value.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">n &lt;-<span class="st"> </span><span class="dv">20</span>; s &lt;-<span class="st"> </span><span class="dv">0</span>
+<pre class="sourceCode r"><code class="sourceCode r">n &lt;-<span class="st"> </span><span class="dv">20</span>; s &lt;-<span class="st"> </span><span class="dv">0</span>
 <span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">1</span><span class="op">:</span>n) s &lt;-<span class="st"> </span>s <span class="op">+</span><span class="st"> </span><span class="kw">cv.glmnet</span>(x, y, <span class="dt">nfolds=</span><span class="dv">5</span>, <span class="dt">alpha=</span><span class="dv">0</span>)<span class="op">$</span>lambda.min
 s.best.ridge &lt;-<span class="st"> </span>s<span class="op">/</span>n
-<span class="kw">coef</span>(fit.ridge, <span class="dt">s=</span>s.best.ridge)</code></pre></div>
+<span class="kw">coef</span>(fit.ridge, <span class="dt">s=</span>s.best.ridge)</code></pre>
 <pre><code>## 12 x 1 sparse Matrix of class &quot;dgCMatrix&quot;
 ##                         1
-## (Intercept) -9.863888e-15
+## (Intercept) -4.651564e-14
 ## Year         5.210188e-01
 ## Trachurus   -1.707657e-01
 ## air          1.863538e-01
@@ -741,13 +773,14 @@ s.best.ridge &lt;-<span class="st"> </span>s<span class="op">/</span>n
 <h3><span class="header-section-number">6.1.7</span> Penalized regression: Lasso</h3>
 <p>In ridge regression, the coefficients will be shrunk towards 0 but none will be set to 0 (unless the OLS estimate happens to be 0). Lasso is a type of regression that uses a penalty function where 0 is an option. Lasso does a combination of variable selection and shrinkage.</p>
 <p>We can do lasso with <code>glmnet()</code> by setting <code>alpha=1</code>.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">fit.lasso &lt;-<span class="st"> </span><span class="kw">glmnet</span>(x, y, <span class="dt">family=</span><span class="st">&quot;gaussian&quot;</span>, <span class="dt">alpha=</span><span class="dv">1</span>)</code></pre></div>
+<pre class="sourceCode r"><code class="sourceCode r">fit.lasso &lt;-<span class="st"> </span><span class="kw">glmnet</span>(x, y, <span class="dt">family=</span><span class="st">&quot;gaussian&quot;</span>, <span class="dt">alpha=</span><span class="dv">1</span>)</code></pre>
 <p>We select the best <span class="math inline">\(\lambda\)</span> as we did for ridge regression using cross-validation.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">n &lt;-<span class="st"> </span><span class="dv">20</span>; s &lt;-<span class="st"> </span><span class="dv">0</span>
+<pre class="sourceCode r"><code class="sourceCode r">n &lt;-<span class="st"> </span><span class="dv">20</span>; s &lt;-<span class="st"> </span><span class="dv">0</span>
 <span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">1</span><span class="op">:</span>n) s &lt;-<span class="st"> </span>s <span class="op">+</span><span class="st"> </span><span class="kw">cv.glmnet</span>(x, y, <span class="dt">nfolds=</span><span class="dv">5</span>, <span class="dt">alpha=</span><span class="dv">1</span>)<span class="op">$</span>lambda.min
 s.best.lasso &lt;-<span class="st"> </span>s<span class="op">/</span>n
-coef.lasso &lt;-<span class="st"> </span><span class="kw">as.vector</span>(<span class="kw">coef</span>(fit.lasso, <span class="dt">s=</span>s.best.lasso))[<span class="op">-</span><span class="dv">1</span>]</code></pre></div>
-<p>We can compare to the estimates from ridge and OLS and see that the model is now more similar the models we got from stepwise variable selection. The main difference is that slp and air are included as variables.</p>
+coef.lasso &lt;-<span class="st"> </span><span class="kw">as.vector</span>(<span class="kw">coef</span>(fit.lasso, <span class="dt">s=</span>s.best.lasso))[<span class="op">-</span><span class="dv">1</span>]</code></pre>
+<p>We can compare to the estimates from ridge and OLS and see that the model is now more similar the models we got from stepwise variable selection.
+The main difference is that slp and air are included as variables.</p>
 <p><img src="Fish-Forecast_files/figure-html/coef.lasso.plot-1.png" width="672" style="display: block; margin: auto;" /></p>
 <p>Lasso has estimated a model that is similar to what we got with stepwise variable selection without removing the collinear variables from our data set.</p>
 </div>
@@ -757,26 +790,31 @@ coef.lasso &lt;-<span class="st"> </span><span class="kw">as.vector</span>(<span
 https://www.analyticsvidhya.com/blog/2017/06/a-comprehensive-guide-for-linear-ridge-and-lasso-regression/
 -->
 <p>Elastic net is uses both L1 and L2 regularization. Elastic regression generally works well when we have a big dataset. We do not have a big dataset but we will try elastic net. You can tune the amount of L1 and L2 mixing by adjusting <code>alpha</code> but for this example, we will just use <code>alpha=0.5</code>.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">fit.en &lt;-<span class="st"> </span><span class="kw">glmnet</span>(x, y, <span class="dt">family=</span><span class="st">&quot;gaussian&quot;</span>, <span class="dt">alpha=</span><span class="fl">0.5</span>)
+<pre class="sourceCode r"><code class="sourceCode r">fit.en &lt;-<span class="st"> </span><span class="kw">glmnet</span>(x, y, <span class="dt">family=</span><span class="st">&quot;gaussian&quot;</span>, <span class="dt">alpha=</span><span class="fl">0.5</span>)
 n &lt;-<span class="st"> </span><span class="dv">20</span>; s &lt;-<span class="st"> </span><span class="dv">0</span>
 <span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">1</span><span class="op">:</span>n) s &lt;-<span class="st"> </span>s <span class="op">+</span><span class="st"> </span><span class="kw">cv.glmnet</span>(x, y, <span class="dt">nfolds=</span><span class="dv">5</span>, <span class="dt">alpha=</span><span class="fl">0.5</span>)<span class="op">$</span>lambda.min
 s.best.el &lt;-<span class="st"> </span>s<span class="op">/</span>n
-coef.en &lt;-<span class="st"> </span><span class="kw">as.vector</span>(<span class="kw">coef</span>(fit.en, <span class="dt">s=</span>s.best.el))[<span class="op">-</span><span class="dv">1</span>]</code></pre></div>
-<p><img src="Fish-Forecast_files/figure-html/coef.en.plot-1.png" width="672" style="display: block; margin: auto;" /> As we might expect, elastic net is part way between the ridge regression model and the Lasso model.</p>
+coef.en &lt;-<span class="st"> </span><span class="kw">as.vector</span>(<span class="kw">coef</span>(fit.en, <span class="dt">s=</span>s.best.el))[<span class="op">-</span><span class="dv">1</span>]</code></pre>
+<p><img src="Fish-Forecast_files/figure-html/coef.en.plot-1.png" width="672" style="display: block; margin: auto;" />
+As we might expect, elastic net is part way between the ridge regression model and the Lasso model.</p>
 </div>
 <div id="comparing-model-prediction-accuracy" class="section level3">
 <h3><span class="header-section-number">6.1.9</span> Comparing model prediction accuracy</h3>
 <p>We can use cross-validation compare prediction accuracy if we have a set of models to compare. In our case, we do not have a set of models but rather a set of “number of variables”. We cannot use variable selection with our full dataset to chose the variables and then turn around and use cross-validation with the same dataset to test the out-of-sample prediction accuracy. Anytime you double-use your data like that, you will have severe bias problems.</p>
+<!--
+Discussion of this issue
+https://stats.stackexchange.com/questions/27750/feature-selection-and-cross-validation/27751#27751
+-->
 <p>Instead, we will test our models using the two years that we held out for testing, 1988 and 1989 in Stergiou and Christou and 1988-1992 (five years) for comparison. We will use the performance testing procedure in Chapter <a href="5-perf-testing.html#perf-testing">5</a>.</p>
 <p>First we set up the test data frames.</p>
 <p>We can then compute the RMSE for the predictions from one of our linear regression models. Let’s use the model selected by <code>step()</code> using AIC as the metric and stepwise variable regression starting from a full model, <code>step.full</code>.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">fr &lt;-<span class="st"> </span><span class="kw">predict</span>(step.full, <span class="dt">newdata=</span>testdata2)
+<pre class="sourceCode r"><code class="sourceCode r">fr &lt;-<span class="st"> </span><span class="kw">predict</span>(step.full, <span class="dt">newdata=</span>testdata2)
 err &lt;-<span class="st"> </span>fr <span class="op">-</span><span class="st"> </span>testdata2<span class="op">$</span>anchovy
-<span class="kw">sqrt</span>(<span class="kw">mean</span>(err<span class="op">^</span><span class="dv">2</span>))</code></pre></div>
+<span class="kw">sqrt</span>(<span class="kw">mean</span>(err<span class="op">^</span><span class="dv">2</span>))</code></pre>
 <pre><code>## [1] 0.05289656</code></pre>
 <p>We could also use <code>forecast()</code> in the forecast package to compute predictions and then use <code>accuracy()</code> to compute the prediction metrics for the test data.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">fr &lt;-<span class="st"> </span>forecast<span class="op">::</span><span class="kw">forecast</span>(step.full, <span class="dt">newdata=</span>testdata2)
-forecast<span class="op">::</span><span class="kw">accuracy</span>(fr, testdata2)</code></pre></div>
+<pre class="sourceCode r"><code class="sourceCode r">fr &lt;-<span class="st"> </span>forecast<span class="op">::</span><span class="kw">forecast</span>(step.full, <span class="dt">newdata=</span>testdata2)
+forecast<span class="op">::</span><span class="kw">accuracy</span>(fr, testdata2)</code></pre>
 <pre><code>##                       ME       RMSE        MAE         MPE      MAPE
 ## Training set  0.00000000 0.11151614 0.08960780 -0.01540787 0.9925324
 ## Test set     -0.03755081 0.05289656 0.03755081 -0.39104145 0.3910415
@@ -786,11 +824,11 @@ forecast<span class="op">::</span><span class="kw">accuracy</span>(fr, testdata2
 <div id="comparing-the-predictions-for-a-suite-of-models" class="section level4 unnumbered">
 <h4>Comparing the predictions for a suite of models</h4>
 <p>Let’s compare a suite of models and compare predictions for the full out-of-sample data that we have: 1988 to 2007.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">fr.list &lt;-<span class="st"> </span><span class="kw">list</span>()
+<pre class="sourceCode r"><code class="sourceCode r">fr.list &lt;-<span class="st"> </span><span class="kw">list</span>()
 testdat &lt;-<span class="st"> </span>testdata.full &lt;-<span class="st"> </span>df.full[<span class="dv">24</span><span class="op">:</span><span class="kw">nrow</span>(df.full),]
-n.fr &lt;-<span class="st"> </span><span class="kw">length</span>(testdat)</code></pre></div>
+n.fr &lt;-<span class="st"> </span><span class="kw">length</span>(testdat)</code></pre>
 <p>Then we fit the three best lm models chosen via stepwise regression, exhaustive search or cross-validation:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">modelname &lt;-<span class="st"> &quot;Year+FIP&quot;</span>
+<pre class="sourceCode r"><code class="sourceCode r">modelname &lt;-<span class="st"> &quot;Year+FIP&quot;</span>
 fit &lt;-<span class="st"> </span><span class="kw">lm</span>(anchovy<span class="op">~</span>Year<span class="op">+</span>FIP, <span class="dt">data=</span>df)
 fr.list[[modelname]] &lt;-<span class="st"> </span><span class="kw">predict</span>(fit, <span class="dt">newdata=</span>testdat)
 
@@ -800,9 +838,9 @@ fr.list[[modelname]] &lt;-<span class="st"> </span><span class="kw">predict</spa
 
 modelname &lt;-<span class="st"> &quot;6 variables&quot;</span>
 fit &lt;-<span class="st"> </span><span class="kw">lm</span>(anchovy<span class="op">~</span>Year<span class="op">+</span>air<span class="op">+</span>vwnd<span class="op">+</span>BOP<span class="op">+</span>FIP<span class="op">+</span>TOP, <span class="dt">data=</span>df)
-fr.list[[modelname]] &lt;-<span class="st"> </span><span class="kw">predict</span>(fit, <span class="dt">newdata=</span>testdat)</code></pre></div>
+fr.list[[modelname]] &lt;-<span class="st"> </span><span class="kw">predict</span>(fit, <span class="dt">newdata=</span>testdat)</code></pre>
 <p>Then we add the forecasts for Ridge Regression.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(glmnet)
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(glmnet)
 resp &lt;-<span class="st"> </span><span class="kw">colnames</span>(df)<span class="op">!=</span><span class="st">&quot;anchovy&quot;</span>
 x &lt;-<span class="st"> </span><span class="kw">as.matrix</span>(df[,resp])
 y &lt;-<span class="st"> </span><span class="kw">as.matrix</span>(df[,<span class="st">&quot;anchovy&quot;</span>])
@@ -813,27 +851,27 @@ s.best &lt;-<span class="st"> </span>s<span class="op">/</span>n
 
 modelname &lt;-<span class="st"> &quot;Ridge Regression&quot;</span>
 newx &lt;-<span class="st"> </span><span class="kw">as.matrix</span>(testdat[,resp])
-fr.list[[modelname]] &lt;-<span class="st"> </span><span class="kw">predict</span>(fit, <span class="dt">newx=</span>newx, <span class="dt">s=</span>s.best)</code></pre></div>
+fr.list[[modelname]] &lt;-<span class="st"> </span><span class="kw">predict</span>(fit, <span class="dt">newx=</span>newx, <span class="dt">s=</span>s.best)</code></pre>
 <p>LASSO regression,</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">fit &lt;-<span class="st"> </span><span class="kw">glmnet</span>(x, y, <span class="dt">family=</span><span class="st">&quot;gaussian&quot;</span>, <span class="dt">alpha=</span><span class="dv">1</span>)
+<pre class="sourceCode r"><code class="sourceCode r">fit &lt;-<span class="st"> </span><span class="kw">glmnet</span>(x, y, <span class="dt">family=</span><span class="st">&quot;gaussian&quot;</span>, <span class="dt">alpha=</span><span class="dv">1</span>)
 n &lt;-<span class="st"> </span><span class="dv">20</span>; s &lt;-<span class="st"> </span><span class="dv">0</span>
 <span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">1</span><span class="op">:</span>n) s &lt;-<span class="st"> </span>s <span class="op">+</span><span class="st"> </span><span class="kw">cv.glmnet</span>(x, y, <span class="dt">nfolds=</span><span class="dv">5</span>, <span class="dt">alpha=</span><span class="dv">1</span>)<span class="op">$</span>lambda.min
 s.best &lt;-<span class="st"> </span>s<span class="op">/</span>n
 
 modelname &lt;-<span class="st"> &quot;LASSO Regression&quot;</span>
 newx &lt;-<span class="st"> </span><span class="kw">as.matrix</span>(testdat[,resp])
-fr.list[[modelname]] &lt;-<span class="st"> </span><span class="kw">predict</span>(fit, <span class="dt">newx=</span>newx, <span class="dt">s=</span>s.best)</code></pre></div>
+fr.list[[modelname]] &lt;-<span class="st"> </span><span class="kw">predict</span>(fit, <span class="dt">newx=</span>newx, <span class="dt">s=</span>s.best)</code></pre>
 <p>and elastic net regression.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">fit &lt;-<span class="st"> </span><span class="kw">glmnet</span>(x, y, <span class="dt">family=</span><span class="st">&quot;gaussian&quot;</span>, <span class="dt">alpha=</span><span class="fl">0.5</span>)
+<pre class="sourceCode r"><code class="sourceCode r">fit &lt;-<span class="st"> </span><span class="kw">glmnet</span>(x, y, <span class="dt">family=</span><span class="st">&quot;gaussian&quot;</span>, <span class="dt">alpha=</span><span class="fl">0.5</span>)
 n &lt;-<span class="st"> </span><span class="dv">20</span>; s &lt;-<span class="st"> </span><span class="dv">0</span>
 <span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">1</span><span class="op">:</span>n) s &lt;-<span class="st"> </span>s <span class="op">+</span><span class="st"> </span><span class="kw">cv.glmnet</span>(x, y, <span class="dt">nfolds=</span><span class="dv">5</span>, <span class="dt">alpha=</span><span class="fl">0.5</span>)<span class="op">$</span>lambda.min
 s.best &lt;-<span class="st"> </span>s<span class="op">/</span>n
 
 modelname &lt;-<span class="st"> &quot;Elastic net Regression&quot;</span>
 newx &lt;-<span class="st"> </span><span class="kw">as.matrix</span>(testdat[,resp])
-fr.list[[modelname]] &lt;-<span class="st"> </span><span class="kw">predict</span>(fit, <span class="dt">newx=</span>newx, <span class="dt">s=</span>s.best)</code></pre></div>
+fr.list[[modelname]] &lt;-<span class="st"> </span><span class="kw">predict</span>(fit, <span class="dt">newx=</span>newx, <span class="dt">s=</span>s.best)</code></pre>
 <p>Now we can create a table</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">restab &lt;-<span class="st"> </span><span class="kw">as.data.frame</span>(<span class="kw">matrix</span>(<span class="ot">NA</span>,<span class="dv">1</span>,<span class="dv">21</span>))
+<pre class="sourceCode r"><code class="sourceCode r">restab &lt;-<span class="st"> </span><span class="kw">as.data.frame</span>(<span class="kw">matrix</span>(<span class="ot">NA</span>,<span class="dv">1</span>,<span class="dv">21</span>))
 <span class="co">#restab &lt;- data.frame(model=&quot;&quot;, stringsAsFactors=FALSE)</span>
 <span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">1</span><span class="op">:</span><span class="kw">length</span>(fr.list)){
   err &lt;-<span class="st"> </span>fr.list[[i]]<span class="op">-</span>testdat<span class="op">$</span>anchovy
@@ -842,7 +880,7 @@ fr.list[[modelname]] &lt;-<span class="st"> </span><span class="kw">predict</spa
 }
 tmp &lt;-<span class="st"> </span>restab[,<span class="kw">c</span>(<span class="dv">1</span>,<span class="dv">6</span>,<span class="dv">11</span>,<span class="dv">16</span>,<span class="dv">21</span>)]
 <span class="kw">colnames</span>(tmp) &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;model&quot;</span>,<span class="st">&quot;5 yrs&quot;</span>, <span class="st">&quot;10 yrs&quot;</span>, <span class="st">&quot;15 yrs&quot;</span>, <span class="st">&quot;20 yrs&quot;</span>)
-knitr<span class="op">::</span><span class="kw">kable</span>(tmp)</code></pre></div>
+knitr<span class="op">::</span><span class="kw">kable</span>(tmp)</code></pre>
 <table>
 <thead>
 <tr class="header">
@@ -898,11 +936,11 @@ knitr<span class="op">::</span><span class="kw">kable</span>(tmp)</code></pre></
 </tr>
 </tbody>
 </table>
-<p>If we plot the forcasts with the 1965-1987 data (open circles) and the 1988-2007 data (solid circles), we see that the forecasts continue the upward trend in the data while the data level off.</p>
+<p>If we plot the forecasts with the 1965-1987 data (open circles) and the 1988-2007 data (solid circles), we see that the forecasts continue the upward trend in the data while the data level off.</p>
 <p><img src="Fish-Forecast_files/figure-html/unnamed-chunk-92-1.png" width="672" style="display: block; margin: auto;" /></p>
 <p>This illustrates a problem with using “Year” as a covariate. This covariate is deterministically increasing. If it is included in the model, then the forecasts will have an upward or downward trend. When using environmental, biological and effort covariates, one hopes that they covariates explain the trends in the data. It would be wiser to not use “Year” as a covariate.</p>
 <p>LASSO regression with no year,</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">resp &lt;-<span class="st"> </span><span class="kw">colnames</span>(df)<span class="op">!=</span><span class="st">&quot;anchovy&quot;</span> <span class="op">&amp;</span><span class="st"> </span><span class="kw">colnames</span>(df)<span class="op">!=</span><span class="st">&quot;Year&quot;</span>
+<pre class="sourceCode r"><code class="sourceCode r">resp &lt;-<span class="st"> </span><span class="kw">colnames</span>(df)<span class="op">!=</span><span class="st">&quot;anchovy&quot;</span> <span class="op">&amp;</span><span class="st"> </span><span class="kw">colnames</span>(df)<span class="op">!=</span><span class="st">&quot;Year&quot;</span>
 x &lt;-<span class="st"> </span><span class="kw">as.matrix</span>(df[,resp])
 y &lt;-<span class="st"> </span><span class="kw">as.matrix</span>(df[,<span class="st">&quot;anchovy&quot;</span>])
 fit.lasso &lt;-<span class="st"> </span><span class="kw">glmnet</span>(x, y, <span class="dt">family=</span><span class="st">&quot;gaussian&quot;</span>, <span class="dt">alpha=</span><span class="dv">1</span>)
@@ -912,9 +950,9 @@ s.best.lasso &lt;-<span class="st"> </span>s<span class="op">/</span>n
 
 modelname &lt;-<span class="st"> &quot;LASSO Reg no Year&quot;</span>
 newx &lt;-<span class="st"> </span><span class="kw">as.matrix</span>(testdat[,resp])
-fr.list[[modelname]] &lt;-<span class="st"> </span><span class="kw">predict</span>(fit.lasso, <span class="dt">newx=</span>newx, <span class="dt">s=</span>s.best.lasso)</code></pre></div>
+fr.list[[modelname]] &lt;-<span class="st"> </span><span class="kw">predict</span>(fit.lasso, <span class="dt">newx=</span>newx, <span class="dt">s=</span>s.best.lasso)</code></pre>
 <p>Ridge regression with no year,</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">resp &lt;-<span class="st"> </span><span class="kw">colnames</span>(df)<span class="op">!=</span><span class="st">&quot;anchovy&quot;</span> <span class="op">&amp;</span><span class="st"> </span><span class="kw">colnames</span>(df)<span class="op">!=</span><span class="st">&quot;Year&quot;</span>
+<pre class="sourceCode r"><code class="sourceCode r">resp &lt;-<span class="st"> </span><span class="kw">colnames</span>(df)<span class="op">!=</span><span class="st">&quot;anchovy&quot;</span> <span class="op">&amp;</span><span class="st"> </span><span class="kw">colnames</span>(df)<span class="op">!=</span><span class="st">&quot;Year&quot;</span>
 x &lt;-<span class="st"> </span><span class="kw">as.matrix</span>(df[,resp])
 y &lt;-<span class="st"> </span><span class="kw">as.matrix</span>(df[,<span class="st">&quot;anchovy&quot;</span>])
 fit.ridge &lt;-<span class="st"> </span><span class="kw">glmnet</span>(x, y, <span class="dt">family=</span><span class="st">&quot;gaussian&quot;</span>, <span class="dt">alpha=</span><span class="dv">0</span>)
@@ -924,39 +962,40 @@ s.best.ridge &lt;-<span class="st"> </span>s<span class="op">/</span>n
 
 modelname &lt;-<span class="st"> &quot;Ridge Reg no Year&quot;</span>
 newx &lt;-<span class="st"> </span><span class="kw">as.matrix</span>(testdat[,resp])
-fr.list[[modelname]] &lt;-<span class="st"> </span><span class="kw">predict</span>(fit.ridge, <span class="dt">newx=</span>newx, <span class="dt">s=</span>s.best.ridge)</code></pre></div>
+fr.list[[modelname]] &lt;-<span class="st"> </span><span class="kw">predict</span>(fit.ridge, <span class="dt">newx=</span>newx, <span class="dt">s=</span>s.best.ridge)</code></pre>
 <p>Now we can create a table</p>
 <table>
 <thead>
 <tr class="header">
-<th></th>
-<th align="left">model</th>
-<th align="right">5 yrs</th>
-<th align="right">10 yrs</th>
-<th align="right">15 yrs</th>
-<th align="right">20 yrs</th>
+<th align="right">mod</th>
+<th align="left">el</th>
+<th align="center">5 yrs</th>
+<th align="center">10 yrs</th>
+<th align="center">15 yrs</th>
+<th align="center">20 yrs</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td>7</td>
+<td align="right">7</td>
 <td align="left">LASSO Reg no Year</td>
-<td align="right">0.7277462</td>
-<td align="right">0.7200965</td>
-<td align="right">0.7306603</td>
-<td align="right">0.6668768</td>
+<td align="center">0.7277462</td>
+<td align="center">0.7200965</td>
+<td align="center">0.7306603</td>
+<td align="center">0.6668768</td>
 </tr>
 <tr class="even">
-<td>8</td>
+<td align="right">8</td>
 <td align="left">Ridge Reg no Year</td>
-<td align="right">0.9741012</td>
-<td align="right">0.9555257</td>
-<td align="right">0.9792060</td>
-<td align="right">0.9121324</td>
+<td align="center">0.9741012</td>
+<td align="center">0.9555257</td>
+<td align="center">0.9792060</td>
+<td align="center">0.9121324</td>
 </tr>
 </tbody>
 </table>
-<p><img src="Fish-Forecast_files/figure-html/unnamed-chunk-95-1.png" width="672" style="display: block; margin: auto;" /> Without “Year”, the model predicts 1988 well (using 1987 covariates) but then has a large jump upward after which is has a similar “flat-ish” trend as seen after 1989. What happened in 1988 (the covariate year affecting 1989)? The horsepower covariate, along with BOP (total boats) and TOP (boat tonnage), have a sudden upward jump in 1988. This is seen in all the fisheries. This suggests that in 1988 either a large number of new boats entered all the fisheries or what boats were counted as “purse seiners” was changed. Upon looking at the covariates, it seems that something changed in the recording from 1988 to 1996.</p>
+<p><img src="Fish-Forecast_files/figure-html/unnamed-chunk-95-1.png" width="672" style="display: block; margin: auto;" />
+Without “Year”, the model predicts 1988 well (using 1987 covariates) but then has a large jump upward after which is has a similar “flat-ish” trend as seen after 1989. What happened in 1988 (the covariate year affecting 1989)? The horsepower covariate, along with BOP (total boats) and TOP (boat tonnage), have a sudden upward jump in 1988. This is seen in all the fisheries. This suggests that in 1988 either a large number of new boats entered all the fisheries or what boats were counted as “purse seiners” was changed. Upon looking at the covariates, it seems that something changed in the recording from 1988 to 1996.</p>
 <p><img src="Fish-Forecast_files/figure-html/unnamed-chunk-96-1.png" width="672" style="display: block; margin: auto;" /></p>
 <p>If we correct that jump from 1988 to 1989 (subtract the jump from all data 1989 onward), the Lasso and Ridge predictions without year look considerably better.</p>
 <p><img src="Fish-Forecast_files/figure-html/unnamed-chunk-99-1.png" width="672" style="display: block; margin: auto;" /></p>
@@ -964,15 +1003,15 @@ fr.list[[modelname]] &lt;-<span class="st"> </span><span class="kw">predict</spa
 </div>
 <div id="discussion" class="section level3">
 <h3><span class="header-section-number">6.1.10</span> Discussion</h3>
-<p>This chapter illustrates a variety of appoaches for “variable selection”. This is the situation where one has a large number of covariates and one wants to chose the covariates that produce the best predictions. Following Stergiou and Christou, I used mainly linear regressions with variables selected with stepwise variable selection.</p>
+<p>This chapter illustrates a variety of approaches for “variable selection”. This is the situation where one has a large number of covariates and one wants to chose the covariates that produce the best predictions. Following Stergiou and Christou, I used mainly linear regressions with variables selected with stepwise variable selection.</p>
 <p>Keep in mind that stepwise variable selection is generally considered data-dredging and a reviewer who is statistician will almost certainly find fault with this approach. Penalized regression is a more accepted approach for developing a regression model with many covariates. Part of the appeal of penalized regression is that it is robust to collinearity in your covariates. Stepwise variable regression is not robust to collinearity.</p>
 <p>Cross-validation is an approach for testing a <em>process</em> of building a model. In the case of the anchovy data, a model with only two covariates, Year and number of fishers, was selected via cross-validation as having the best (lowest) predictive error. This is considerable smaller than the best model via stepwise variable selection.</p>
 <p>When we tested the models against data completely held out of the analysis and model development (1988-2007), we discovered a number of problems. 1) Using “Year” as a covariate is a bad idea since it is deterministically linear upward. and 2) There is a problem with the effort data between 1988 and 1996. There is a jump in the effort data.</p>
 <p>We used variable selection or penalized regression to select weighting on a large set of covariates. Another approach is to develop a set of covariates from your knowledge of the system and use only covariates that are thought to be important. In Section 4.7.7 of (Harrell 2015), a rule of thumb (based on shrinkage) for the number of predictors that can be used without overfitting is given by: <span class="math inline">\((LR-p)/9\)</span> where <span class="math inline">\(LR\)</span> is the likelihood ratio test <span class="math inline">\(\chi^2\)</span> of the full model against the null model with only intercept and <span class="math inline">\(p\)</span> is the number of variables in the full model.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">null &lt;-<span class="st"> </span><span class="kw">lm</span>(anchovy <span class="op">~</span><span class="st"> </span><span class="dv">1</span>, <span class="dt">data=</span>df)
+<pre class="sourceCode r"><code class="sourceCode r">null &lt;-<span class="st"> </span><span class="kw">lm</span>(anchovy <span class="op">~</span><span class="st"> </span><span class="dv">1</span>, <span class="dt">data=</span>df)
 full &lt;-<span class="st"> </span><span class="kw">lm</span>(anchovy <span class="op">~</span><span class="st"> </span>., <span class="dt">data=</span>df)
 a &lt;-<span class="st"> </span>lmtest<span class="op">::</span><span class="kw">lrtest</span>(null, full)
-(a<span class="op">$</span>Chisq[<span class="dv">2</span>]<span class="op">-</span>a<span class="op">$</span>Df[<span class="dv">2</span>])<span class="op">/</span><span class="dv">9</span></code></pre></div>
+(a<span class="op">$</span>Chisq[<span class="dv">2</span>]<span class="op">-</span>a<span class="op">$</span>Df[<span class="dv">2</span>])<span class="op">/</span><span class="dv">9</span></code></pre>
 <pre><code>## [1] 6.239126</code></pre>
 <p>This rule of thumb suggests that we could include six variables. Another approach to model building would be to select environmental and biological variables based on the known biology of anchovy and to select one effort variable or a composite “effort” based on a combination of the effort variables.</p>
 <hr>
@@ -980,7 +1019,7 @@ a &lt;-<span class="st"> </span>lmtest<span class="op">::</span><span class="kw"
 <div id="cov.df" class="section level3">
 <h3><span class="header-section-number">6.1.11</span> Creating the data frame for model fitting</h3>
 <p>Code to make the <code>df</code> data frame used in the model fitting functions.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># response</span>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="co"># response</span>
 df &lt;-<span class="st"> </span><span class="kw">data.frame</span>(<span class="dt">anchovy=</span>anchovy<span class="op">$</span>log.metric.tons,
                  <span class="dt">Year=</span>anchovy<span class="op">$</span>Year)
 Year1 &lt;-<span class="st"> </span>df<span class="op">$</span>Year[<span class="dv">1</span>]
@@ -988,13 +1027,13 @@ Year2 &lt;-<span class="st"> </span>df<span class="op">$</span>Year[<span class=
 df &lt;-<span class="st"> </span><span class="kw">subset</span>(df, Year<span class="op">&gt;=</span>Year1<span class="op">+</span><span class="dv">1</span> <span class="op">&amp;</span><span class="st"> </span>Year<span class="op">&lt;=</span>Year2)
 <span class="co"># biological covariates</span>
 df.bio &lt;-<span class="st"> </span><span class="kw">subset</span>(landings, Species<span class="op">==</span><span class="st">&quot;Horse.mackerel&quot;</span>)[,<span class="kw">c</span>(<span class="st">&quot;Year&quot;</span>,<span class="st">&quot;log.metric.tons&quot;</span>)]
-df.bio &lt;-<span class="st"> </span><span class="kw">subset</span>(df.bio, Year<span class="op">&gt;=</span>Year1 <span class="op">&amp;</span><span class="st"> </span>Year<span class="op">&lt;=</span>Year2<span class="op">-</span><span class="dv">1</span>)[,<span class="op">-</span><span class="dv">1</span>,drop=<span class="ot">FALSE</span>] <span class="co"># [,-1] to remove year</span>
+df.bio &lt;-<span class="st"> </span><span class="kw">subset</span>(df.bio, Year<span class="op">&gt;=</span>Year1 <span class="op">&amp;</span><span class="st"> </span>Year<span class="op">&lt;=</span>Year2<span class="dv">-1</span>)[,<span class="op">-</span><span class="dv">1</span>,drop=<span class="ot">FALSE</span>] <span class="co"># [,-1] to remove year</span>
 <span class="kw">colnames</span>(df.bio) &lt;-<span class="st"> &quot;Trachurus&quot;</span>
 <span class="co"># environmental covariates</span>
 covsmean.year[,<span class="st">&quot;vwnd.m/s&quot;</span>]&lt;-<span class="st"> </span><span class="kw">abs</span>(covsmean.year[,<span class="st">&quot;vwnd.m/s&quot;</span>])
-df.env &lt;-<span class="st"> </span><span class="kw">log</span>(<span class="kw">subset</span>(covsmean.year, Year<span class="op">&gt;=</span>Year1 <span class="op">&amp;</span><span class="st"> </span>Year<span class="op">&lt;=</span>Year2<span class="op">-</span><span class="dv">1</span>)[,<span class="op">-</span><span class="dv">1</span>])
+df.env &lt;-<span class="st"> </span><span class="kw">log</span>(<span class="kw">subset</span>(covsmean.year, Year<span class="op">&gt;=</span>Year1 <span class="op">&amp;</span><span class="st"> </span>Year<span class="op">&lt;=</span>Year2<span class="dv">-1</span>)[,<span class="op">-</span><span class="dv">1</span>])
 <span class="co"># fishing effort</span>
-df.fish &lt;-<span class="st"> </span><span class="kw">log</span>(<span class="kw">subset</span>(fish.cov, Year<span class="op">&gt;=</span>Year1 <span class="op">&amp;</span><span class="st"> </span>Year<span class="op">&lt;=</span>Year2<span class="op">-</span><span class="dv">1</span>)[,<span class="op">-</span><span class="dv">1</span>])
+df.fish &lt;-<span class="st"> </span><span class="kw">log</span>(<span class="kw">subset</span>(fish.cov, Year<span class="op">&gt;=</span>Year1 <span class="op">&amp;</span><span class="st"> </span>Year<span class="op">&lt;=</span>Year2<span class="dv">-1</span>)[,<span class="op">-</span><span class="dv">1</span>])
 purse.cols &lt;-<span class="st"> </span>stringr<span class="op">::</span><span class="kw">str_detect</span>(<span class="kw">colnames</span>(df.fish),<span class="st">&quot;Purse.seiners&quot;</span>)
 df.fish &lt;-<span class="st"> </span>df.fish[,purse.cols]
 df.fish &lt;-<span class="st"> </span>df.fish[<span class="op">!</span>(<span class="kw">colnames</span>(df.fish)<span class="op">==</span><span class="st">&quot;Purse.seiners.VAP&quot;</span>)]
@@ -1009,17 +1048,17 @@ df &lt;-<span class="st"> </span>df[,<span class="kw">colnames</span>(df)<span c
 <span class="co"># all the data to 2007</span>
 df.full &lt;-<span class="st"> </span>df
 <span class="co"># only training data</span>
-df &lt;-<span class="st"> </span><span class="kw">subset</span>(df, Year<span class="op">&gt;=</span><span class="dv">1965</span><span class="op">-</span><span class="dv">1964</span> <span class="op">&amp;</span><span class="st"> </span>Year<span class="op">&lt;=</span><span class="dv">1987</span><span class="op">-</span><span class="dv">1964</span>)</code></pre></div>
+df &lt;-<span class="st"> </span><span class="kw">subset</span>(df, Year<span class="op">&gt;=</span><span class="dv">1965-1964</span> <span class="op">&amp;</span><span class="st"> </span>Year<span class="op">&lt;=</span><span class="dv">1987-1964</span>)</code></pre>
 
 </div>
 </div>
 <div class="footnotes">
 <hr />
 <ol start="1">
-<li id="fn1"><p><a href="http://www.sthda.com/english/articles/37-model-selection-essentials-in-r/">Model selection essentials in R</a><a href="6-1-multivariate-linear-regression.html#fnref1">↩</a></p></li>
-<li id="fn2"><p>James, Gareth, Daniela Witten, Trevor Hastie, and Robert Tibshirani. 2014. An Introduction to Statistical Learning: With Applications in R. Springer Publishing Company, Incorporated.<a href="6-1-multivariate-linear-regression.html#fnref2">↩</a></p></li>
-<li id="fn3"><p>This section and the R code was adapted from and influenced by Chapter 6 material in Introduction to Statistical Learning by James, Witten, Hastie and Tibshirani. They have an (free) online course and (free) textbook at <a href="http://www-bcf.usc.edu/~gareth/ISL/" class="uri">http://www-bcf.usc.edu/~gareth/ISL/</a><a href="6-1-multivariate-linear-regression.html#fnref3">↩</a></p></li>
-<li id="fn4"><p>This function was copied from the Introduction to Statistical Learning material.<a href="6-1-multivariate-linear-regression.html#fnref4">↩</a></p></li>
+<li id="fn1"><p><a href="http://www.sthda.com/english/articles/37-model-selection-essentials-in-r/">Model selection essentials in R</a><a href="6-1-multivariate-linear-regression.html#fnref1" class="footnote-back">↩</a></p></li>
+<li id="fn2"><p>James, Gareth, Daniela Witten, Trevor Hastie, and Robert Tibshirani. 2014. An Introduction to Statistical Learning: With Applications in R. Springer Publishing Company, Incorporated.<a href="6-1-multivariate-linear-regression.html#fnref2" class="footnote-back">↩</a></p></li>
+<li id="fn3"><p>This section and the R code was adapted from and influenced by <a href="https://lagunita.stanford.edu/c4x/HumanitiesSciences/StatLearning/asset/ch6.html">Chapter 6 material</a> in Introduction to Statistical Learning by James, Witten, Hastie and Tibshirani. They have an (free) online course and (free) textbook at <a href="http://www-bcf.usc.edu/~gareth/ISL/" class="uri">http://www-bcf.usc.edu/~gareth/ISL/</a> .<a href="6-1-multivariate-linear-regression.html#fnref3" class="footnote-back">↩</a></p></li>
+<li id="fn4"><p>This function was copied from the Introduction to Statistical Learning material.<a href="6-1-multivariate-linear-regression.html#fnref4" class="footnote-back">↩</a></p></li>
 </ol>
 </div>
             </section>
@@ -1048,7 +1087,7 @@ gitbook.start({
 "google": false,
 "linkedin": false,
 "weibo": false,
-"instapper": false,
+"instapaper": false,
 "vk": false,
 "all": ["facebook", "google", "twitter", "linkedin", "weibo", "instapaper"]
 },
@@ -1060,6 +1099,10 @@ gitbook.start({
 "edit": {
 "link": "https://github.com/fish-forecast/Fish-Forecast-Bookdown/edit/master/Forecasting-6-2-Covariates-MSEG.Rmd",
 "text": "Edit"
+},
+"history": {
+"link": null,
+"text": null
 },
 "download": null,
 "toc": {
@@ -1074,8 +1117,8 @@ gitbook.start({
   (function () {
     var script = document.createElement("script");
     script.type = "text/javascript";
-    var src = "";
-    if (src === "" || src === "true") src = "https://cdn.bootcss.com/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML";
+    var src = "true";
+    if (src === "" || src === "true") src = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML";
     if (location.protocol !== "file:" && /^https?:/.test(src))
       src = src.replace(/^https?:/, '');
     script.src = src;

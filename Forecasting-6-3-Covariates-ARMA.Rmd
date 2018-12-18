@@ -18,6 +18,23 @@ e_t \sim N(0,\sigma)
 \end{equation}
 where `xreg` is  matrix with $c_{t,1}$ in column 1, $c_{t-2}$ in column 2, etc.  $z_t$ are the ARMA errors.
 
+### Example
+
+Let's fit the three best multivariate regression models.  Then we fit the three best lm models chosen via stepwise regression, exhaustive search or cross-validation:
+```{r linear.reg.model.set}
+modelname <- "Year+FIP"
+fit <- lm(anchovy~Year+FIP, data=df)
+fr.list[[modelname]] <- predict(fit, newdata=testdat)
+
+modelname <- "Year+Trachurus+FIP"
+fit <- lm(anchovy~Year+Trachurus+FIP, data=df)
+fr.list[[modelname]] <- predict(fit, newdata=testdat)
+
+modelname <- "6 variables"
+fit <- lm(anchovy~Year+air+vwnd+BOP+FIP+TOP, data=df)
+fr.list[[modelname]] <- predict(fit, newdata=testdat)
+```
+
 
 ### MREG of first or second differences
 

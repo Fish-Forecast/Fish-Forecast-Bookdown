@@ -5,11 +5,11 @@
 
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>Fisheries Catch Forecasting</title>
+  <title>3.2 Stationarity | Fisheries Catch Forecasting</title>
   <meta name="description" content="This book will show you how to model and forecast annual and seasonal fisheries catches using R and its time-series analysis functions and packages. Forecasting using time-varying regression, ARIMA (Box-Jenkins) models, and expoential smoothing models is demonstrated using real catch time series. The entire process from data evaluation and diagnostics, model fitting, model selection and forecast evaluation is shown. The focus of the book is on univariate time series (annual or seasonal), however multivariate regression with autocorrelated errors and multivariate autoregressive models (MAR) are covered briefly. For multivariate autoregressive models and multivariate autoregressive state-space models for fisheries and environmental sciences, see Holmes, Ward and Scheuerell (2018).">
-  <meta name="generator" content="bookdown 0.7 and GitBook 2.6.7">
+  <meta name="generator" content="bookdown  and GitBook 2.6.7">
 
-  <meta property="og:title" content="Fisheries Catch Forecasting" />
+  <meta property="og:title" content="3.2 Stationarity | Fisheries Catch Forecasting />
   <meta property="og:type" content="book" />
   
   <meta property="og:image" content="images/cover.png" />
@@ -17,7 +17,7 @@
   <meta name="github-repo" content="fish-forecast/Fish-Forecast-Bookdown/" />
 
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="Fisheries Catch Forecasting" />
+  <meta name="twitter:title" content="3.2 Stationarity | Fisheries Catch Forecasting />
   
   <meta name="twitter:description" content="This book will show you how to model and forecast annual and seasonal fisheries catches using R and its time-series analysis functions and packages. Forecasting using time-varying regression, ARIMA (Box-Jenkins) models, and expoential smoothing models is demonstrated using real catch time series. The entire process from data evaluation and diagnostics, model fitting, model selection and forecast evaluation is shown. The focus of the book is on univariate time series (annual or seasonal), however multivariate regression with autocorrelated errors and multivariate autoregressive models (MAR) are covered briefly. For multivariate autoregressive models and multivariate autoregressive state-space models for fisheries and environmental sciences, see Holmes, Ward and Scheuerell (2018)." />
   <meta name="twitter:image" content="images/cover.png" />
@@ -25,7 +25,7 @@
 <meta name="author" content="Elizabeth Holmes">
 
 
-<meta name="date" content="2018-12-06">
+<meta name="date" content="2018-12-17">
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -36,6 +36,7 @@
 <link rel="next" href="3-3-model-structure.html">
 <script src="libs/jquery-2.2.3/jquery.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
@@ -51,41 +52,67 @@
 
 
 <style type="text/css">
-div.sourceCode { overflow-x: auto; }
-table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
-  margin: 0; padding: 0; vertical-align: baseline; border: none; }
-table.sourceCode { width: 100%; line-height: 100%; }
-td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
-td.sourceCode { padding-left: 5px; }
-code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
-code > span.dt { color: #902000; } /* DataType */
-code > span.dv { color: #40a070; } /* DecVal */
-code > span.bn { color: #40a070; } /* BaseN */
-code > span.fl { color: #40a070; } /* Float */
-code > span.ch { color: #4070a0; } /* Char */
-code > span.st { color: #4070a0; } /* String */
-code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
-code > span.ot { color: #007020; } /* Other */
-code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
-code > span.fu { color: #06287e; } /* Function */
-code > span.er { color: #ff0000; font-weight: bold; } /* Error */
-code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
-code > span.cn { color: #880000; } /* Constant */
-code > span.sc { color: #4070a0; } /* SpecialChar */
-code > span.vs { color: #4070a0; } /* VerbatimString */
-code > span.ss { color: #bb6688; } /* SpecialString */
-code > span.im { } /* Import */
-code > span.va { color: #19177c; } /* Variable */
-code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
-code > span.op { color: #666666; } /* Operator */
-code > span.bu { } /* BuiltIn */
-code > span.ex { } /* Extension */
-code > span.pp { color: #bc7a00; } /* Preprocessor */
-code > span.at { color: #7d9029; } /* Attribute */
-code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
-code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
-code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
-code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+a.sourceLine { display: inline-block; line-height: 1.25; }
+a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
+a.sourceLine:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode { white-space: pre; position: relative; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+code.sourceCode { white-space: pre-wrap; }
+a.sourceLine { text-indent: -1em; padding-left: 1em; }
+}
+pre.numberSource a.sourceLine
+  { position: relative; left: -4em; }
+pre.numberSource a.sourceLine::before
+  { content: attr(data-line-number);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; pointer-events: all; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {  }
+@media screen {
+a.sourceLine::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
 </style>
 
 <link rel="stylesheet" href="style.css" type="text/css" />
@@ -273,11 +300,14 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <div id="definition" class="section level3">
 <h3><span class="header-section-number">3.2.1</span> Definition</h3>
 <p>Stationarity means ‘not changing in time’ in the context of time-series models. Typically we test the trend and variance, however more generally all statistical properties of a time-series is time-constant if the time series is ‘stationary’.</p>
-<p>Many ARMA models exhibit stationarity. White noise is one type: <span class="math display">\[x_t = e_t, e_t \sim N(0,\sigma)\]</span></p>
+<p>Many ARMA models exhibit stationarity. White noise is one type:
+<span class="math display">\[x_t = e_t, e_t \sim N(0,\sigma)\]</span></p>
 <pre><code>## Loading required package: gridExtra</code></pre>
 <pre><code>## Loading required package: reshape2</code></pre>
 <p><img src="Fish-Forecast_files/figure-html/fig.stationarity-1.png" width="768" style="display: block; margin: auto;" /></p>
-<p>An AR-1 process with <span class="math inline">\(b&lt;1\)</span> <span class="math display">\[x_t = b x_{t-1} + e_t\]</span> is also stationary.</p>
+<p>An AR-1 process with <span class="math inline">\(b&lt;1\)</span>
+<span class="math display">\[x_t = b x_{t-1} + e_t\]</span>
+is also stationary.</p>
 <p><img src="Fish-Forecast_files/figure-html/fig.stationarity2-1.png" width="768" style="display: block; margin: auto;" /></p>
 <div id="stationarity-around-a-trend" class="section level4 unnumbered">
 <h4>Stationarity around a trend</h4>
@@ -292,7 +322,8 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 </div>
 <div id="non-stationarity" class="section level3">
 <h3><span class="header-section-number">3.2.2</span> Non-stationarity</h3>
-<p>One of the most common forms of non-stationarity that is tested for is ‘unit root’, which means that the process is a random walk: <span class="math display">\[x_t = x_{t-1} + e_t\]</span> .</p>
+<p>One of the most common forms of non-stationarity that is tested for is ‘unit root’, which means that the process is a random walk:
+<span class="math display">\[x_t = x_{t-1} + e_t\]</span> .</p>
 <p><img src="Fish-Forecast_files/figure-html/fig.nonstationarity-1.png" width="768" style="display: block; margin: auto;" /></p>
 <div id="non-stationarity-with-a-trend" class="section level4 unnumbered">
 <h4>Non-stationarity with a trend</h4>
@@ -339,17 +370,23 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <p><img src="Fish-Forecast_files/figure-html/fig.df-1.png" width="768" style="display: block; margin: auto;" /></p>
 <p>Mathematically, here are the null and alternative hypotheses. In each, we are testing if <span class="math inline">\(\delta=0\)</span>.</p>
 <ol style="list-style-type: decimal">
-<li>Null is a random walk with no drift <span class="math inline">\(x_t = x_{t-1}+e_t\)</span></li>
+<li>Null is a random walk with no drift
+<span class="math inline">\(x_t = x_{t-1}+e_t\)</span></li>
 </ol>
-<p>Alternative is a mean-reverting (stationary) process with zero mean. <span class="math inline">\(x_t = \delta x_{t-1}+e_t\)</span></p>
+<p>Alternative is a mean-reverting (stationary) process with zero mean.
+<span class="math inline">\(x_t = \delta x_{t-1}+e_t\)</span></p>
 <ol start="2" style="list-style-type: decimal">
-<li>Null is a random walk with drift (linear STOCHASTIC trend) <span class="math inline">\(x_t = \mu + x_{t-1} + e_t\)</span></li>
+<li>Null is a random walk with drift (linear STOCHASTIC trend)
+<span class="math inline">\(x_t = \mu + x_{t-1} + e_t\)</span></li>
 </ol>
-<p>Alternative is a mean-reverting (stationary) process with non-zero mean and no trend. <span class="math inline">\(x_t = \mu + \delta x_{t-1} + e_t\)</span></p>
+<p>Alternative is a mean-reverting (stationary) process with non-zero mean and no trend.
+<span class="math inline">\(x_t = \mu + \delta x_{t-1} + e_t\)</span></p>
 <ol start="3" style="list-style-type: decimal">
-<li>Null is a random walk with exponential trend <span class="math inline">\(x_t = \mu + at + x_{t-1} + e_t\)</span></li>
+<li>Null is a random walk with exponential trend
+<span class="math inline">\(x_t = \mu + at + x_{t-1} + e_t\)</span></li>
 </ol>
-<p>Alternative is a mean-reverting (stationary) process with non-zero mean and linear DETERMINISTIC trend. <span class="math inline">\(x_t = \mu + at + \delta x_{t-1} + e_t\)</span></p>
+<p>Alternative is a mean-reverting (stationary) process with non-zero mean and linear DETERMINISTIC trend.
+<span class="math inline">\(x_t = \mu + at + \delta x_{t-1} + e_t\)</span></p>
 </div>
 <div id="example-dickey-fuller-test-using-adf.test" class="section level4 unnumbered">
 <h4>Example: Dickey-Fuller test using adf.test()</h4>
@@ -357,22 +394,22 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <pre><code>adf.test(x, alternative = c(&quot;stationary&quot;, &quot;explosive&quot;),
          k = trunc((length(x)-1)^(1/3)))</code></pre>
 <p><code>x</code> is the time-series data in vector or ts form. Here is how to apply this test to the anchovy data</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">tseries<span class="op">::</span><span class="kw">adf.test</span>(anchovy87ts, <span class="dt">k=</span><span class="dv">0</span>)</code></pre></div>
+<pre class="sourceCode r"><code class="sourceCode r">tseries<span class="op">::</span><span class="kw">adf.test</span>(anchovy87ts, <span class="dt">k=</span><span class="dv">0</span>)</code></pre>
 <pre><code>## 
 ##  Augmented Dickey-Fuller Test
 ## 
 ## data:  anchovy87ts
 ## Dickey-Fuller = -2.8685, Lag order = 0, p-value = 0.2415
 ## alternative hypothesis: stationary</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># or tseries::adf.test(anchovy87$log.metric.tons, k=0)</span></code></pre></div>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="co"># or tseries::adf.test(anchovy87$log.metric.tons, k=0)</span></code></pre>
 <p>The null hypothesis is not rejected. That is not what we want.</p>
 </div>
 <div id="example-dickey-fuller-test-using-ur.df" class="section level4 unnumbered">
 <h4>Example: Dickey-Fuller test using ur.df()</h4>
 <p>The <code>urca</code> R package can also be used to apply the Dickey-Fuller tests. Use <code>lags=0</code> for Dickey-Fuller which tests for AR(1) stationarity. We will set <code>type=&quot;trend&quot;</code> to deal with the trend seen in the anchovy data. Note, <code>adf.test()</code> uses this type by default.</p>
 <pre><code>ur.df(y, type = c(&quot;none&quot;, &quot;drift&quot;, &quot;trend&quot;), lags = 0)</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">test =<span class="st"> </span>urca<span class="op">::</span><span class="kw">ur.df</span>(anchovy87ts, <span class="dt">type=</span><span class="st">&quot;trend&quot;</span>, <span class="dt">lags=</span><span class="dv">0</span>)
-test</code></pre></div>
+<pre class="sourceCode r"><code class="sourceCode r">test =<span class="st"> </span>urca<span class="op">::</span><span class="kw">ur.df</span>(anchovy87ts, <span class="dt">type=</span><span class="st">&quot;trend&quot;</span>, <span class="dt">lags=</span><span class="dv">0</span>)
+test</code></pre>
 <pre><code>## 
 ## ############################################################### 
 ## # Augmented Dickey-Fuller Test Unit Root / Cointegration Test # 
@@ -381,11 +418,11 @@ test</code></pre></div>
 ## The value of the test statistic is: -2.8685 4.0886 4.7107</code></pre>
 <p><code>ur.df()</code> will report the test statistic. You can look up the values of the test statistic for different <span class="math inline">\(\alpha\)</span> levels using <code>summary(test)</code> or <code>attr(test, &quot;cval&quot;)</code>. If the test statistic is less than the critical value for <span class="math inline">\(\alpha\)</span>=0.05 (‘5pct’ in cval), it means the null hypothesis of non-stationarity is rejected. For the Dickey-Fuller test, you do want to reject the null hypothesis.</p>
 <p>The test statistic is</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">attr</span>(test, <span class="st">&quot;teststat&quot;</span>)</code></pre></div>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">attr</span>(test, <span class="st">&quot;teststat&quot;</span>)</code></pre>
 <pre><code>##               tau3     phi2    phi3
 ## statistic -2.86847 4.088559 4.71069</code></pre>
 <p>and the critical value at <span class="math inline">\(\alpha = 0.05\)</span> is</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">attr</span>(test,<span class="st">&quot;cval&quot;</span>)</code></pre></div>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">attr</span>(test,<span class="st">&quot;cval&quot;</span>)</code></pre>
 <pre><code>##       1pct  5pct 10pct
 ## tau3 -4.38 -3.60 -3.24
 ## phi2  8.21  5.68  4.67
@@ -403,7 +440,7 @@ test</code></pre></div>
 <div id="example-augmented-dickey-fuller-tests-with-adf.test" class="section level4 unnumbered">
 <h4>Example: Augmented Dickey-Fuller tests with adf.test()</h4>
 <p>With the <code>tseries</code> package, we apply the Augmented Dickey-Fuller test with <code>adf.test()</code>. This function uses the test where the alternative model is stationary around a linear trend: <span class="math inline">\(x_t = \mu + at + \delta x_{t-1} + e_t\)</span>.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">tseries<span class="op">::</span><span class="kw">adf.test</span>(anchovy87ts)</code></pre></div>
+<pre class="sourceCode r"><code class="sourceCode r">tseries<span class="op">::</span><span class="kw">adf.test</span>(anchovy87ts)</code></pre>
 <pre><code>## 
 ##  Augmented Dickey-Fuller Test
 ## 
@@ -418,9 +455,9 @@ test</code></pre></div>
 <p><code>ur.df()</code> allows you to specify which of the 3 alternative hypotheses you want: none (stationary around 0), drift (stationary around a non-zero intercept), trend (stationary around a linear trend).</p>
 <p>Another difference is that by default, <code>ur.df()</code> uses a fixed lag of 1 while by default <code>adf.test()</code> selects the lag based on the length of the time series.</p>
 <p>We will specify “trend” to make the test similar to <code>adf.test()</code>. We will set the lags like <code>adf.test()</code> does also.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">k =<span class="st"> </span><span class="kw">trunc</span>((<span class="kw">length</span>(anchovy87ts)<span class="op">-</span><span class="dv">1</span>)<span class="op">^</span>(<span class="dv">1</span><span class="op">/</span><span class="dv">3</span>))
+<pre class="sourceCode r"><code class="sourceCode r">k =<span class="st"> </span><span class="kw">trunc</span>((<span class="kw">length</span>(anchovy87ts)<span class="op">-</span><span class="dv">1</span>)<span class="op">^</span>(<span class="dv">1</span><span class="op">/</span><span class="dv">3</span>))
 test =<span class="st"> </span>urca<span class="op">::</span><span class="kw">ur.df</span>(anchovy87ts, <span class="dt">type=</span><span class="st">&quot;trend&quot;</span>, <span class="dt">lags=</span>k)
-test</code></pre></div>
+test</code></pre>
 <pre><code>## 
 ## ############################################################### 
 ## # Augmented Dickey-Fuller Test Unit Root / Cointegration Test # 
@@ -438,12 +475,13 @@ test</code></pre></div>
 </div>
 <div id="example-kpss-tests" class="section level4 unnumbered">
 <h4>Example: KPSS tests</h4>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">tseries<span class="op">::</span><span class="kw">kpss.test</span>(anchovy87ts, <span class="dt">null=</span><span class="st">&quot;Trend&quot;</span>)</code></pre></div>
+<pre class="sourceCode r"><code class="sourceCode r">tseries<span class="op">::</span><span class="kw">kpss.test</span>(anchovy87ts, <span class="dt">null=</span><span class="st">&quot;Trend&quot;</span>)</code></pre>
 <pre><code>## 
 ##  KPSS Test for Trend Stationarity
 ## 
 ## data:  anchovy87ts
-## KPSS Trend = 0.22597, Truncation lag parameter = 1, p-value = 0.01</code></pre>
+## KPSS Trend = 0.19182, Truncation lag parameter = 2, p-value =
+## 0.01907</code></pre>
 <p>Here <code>null=&quot;Trend&quot;</code> was included to account for the increasing trend in the data. The null hypothesis of stationarity is rejected. Thus both the KPSS and Dickey-Fuller tests support the hypothesis that the anchovy time series is non-stationary. That’s not what we want.</p>
 <hr />
 </div>
@@ -452,32 +490,32 @@ test</code></pre></div>
 <h3><span class="header-section-number">3.2.4</span> Differencing the data</h3>
 <p>Differencing the data is used to correct non-stationarity. Differencing means to create a new time series <span class="math inline">\(z_t = x_t - x_{t-1}\)</span>. First order differencing means you do this once (so <span class="math inline">\(z_t\)</span>) and second order differencing means you do this twice (so <span class="math inline">\(z_t - z_{t-1}\)</span>).</p>
 <p>The <code>diff()</code> function takes the first difference:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">x &lt;-<span class="st"> </span><span class="kw">diff</span>(<span class="kw">c</span>(<span class="dv">1</span>,<span class="dv">2</span>,<span class="dv">4</span>,<span class="dv">7</span>,<span class="dv">11</span>))
-x</code></pre></div>
+<pre class="sourceCode r"><code class="sourceCode r">x &lt;-<span class="st"> </span><span class="kw">diff</span>(<span class="kw">c</span>(<span class="dv">1</span>,<span class="dv">2</span>,<span class="dv">4</span>,<span class="dv">7</span>,<span class="dv">11</span>))
+x</code></pre>
 <pre><code>## [1] 1 2 3 4</code></pre>
 <p>The second difference is the first difference of the first difference.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">diff</span>(x)</code></pre></div>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">diff</span>(x)</code></pre>
 <pre><code>## [1] 1 1 1</code></pre>
 <p>Here is a plot of the anchovy data and its first difference.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">par</span>(<span class="dt">mfrow=</span><span class="kw">c</span>(<span class="dv">1</span>,<span class="dv">2</span>))
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">par</span>(<span class="dt">mfrow=</span><span class="kw">c</span>(<span class="dv">1</span>,<span class="dv">2</span>))
 <span class="kw">plot</span>(anchovy87ts, <span class="dt">type=</span><span class="st">&quot;l&quot;</span>)
 <span class="kw">title</span>(<span class="st">&quot;Anchovy&quot;</span>)
 <span class="kw">plot</span>(<span class="kw">diff</span>(anchovy87ts), <span class="dt">type=</span><span class="st">&quot;l&quot;</span>)
-<span class="kw">title</span>(<span class="st">&quot;Anchovy first difference&quot;</span>)</code></pre></div>
+<span class="kw">title</span>(<span class="st">&quot;Anchovy first difference&quot;</span>)</code></pre>
 <p><img src="Fish-Forecast_files/figure-html/diff1.plot-1.png" width="768" style="display: block; margin: auto;" /></p>
 <p>Let’s test the anchovy data with one difference using the KPSS test.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">diff.anchovy =<span class="st"> </span><span class="kw">diff</span>(anchovy87ts)
-tseries<span class="op">::</span><span class="kw">kpss.test</span>(diff.anchovy)</code></pre></div>
+<pre class="sourceCode r"><code class="sourceCode r">diff.anchovy =<span class="st"> </span><span class="kw">diff</span>(anchovy87ts)
+tseries<span class="op">::</span><span class="kw">kpss.test</span>(diff.anchovy)</code></pre>
 <pre><code>## Warning in tseries::kpss.test(diff.anchovy): p-value greater than printed
 ## p-value</code></pre>
 <pre><code>## 
 ##  KPSS Test for Level Stationarity
 ## 
 ## data:  diff.anchovy
-## KPSS Level = 0.18309, Truncation lag parameter = 1, p-value = 0.1</code></pre>
+## KPSS Level = 0.28972, Truncation lag parameter = 2, p-value = 0.1</code></pre>
 <p>The null hypothesis of stationairity is not rejected. That is good.</p>
 <p>Let’s test the first difference of the anchovy data using the Augmented Dickey-Fuller test. We do the default test and allow it to chose the number of lags.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">tseries<span class="op">::</span><span class="kw">adf.test</span>(diff.anchovy)</code></pre></div>
+<pre class="sourceCode r"><code class="sourceCode r">tseries<span class="op">::</span><span class="kw">adf.test</span>(diff.anchovy)</code></pre>
 <pre><code>## 
 ##  Augmented Dickey-Fuller Test
 ## 
@@ -485,14 +523,14 @@ tseries<span class="op">::</span><span class="kw">kpss.test</span>(diff.anchovy)
 ## Dickey-Fuller = -4.2126, Lag order = 2, p-value = 0.01584
 ## alternative hypothesis: stationary</code></pre>
 <p>The null hypothesis of non-stationarity is rejected. That is what we want. However, we differenced which removed the trend thus we are testing against a more general model than we need. Let’s test with an alternative hypothesis that has a non-zero mean but not trend. We can do this with <code>ur.df()</code> and <code>type='drift'</code>.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">test &lt;-<span class="st"> </span>urca<span class="op">::</span><span class="kw">ur.df</span>(diff.anchovy, <span class="dt">type=</span><span class="st">&quot;drift&quot;</span>, <span class="dt">lags=</span><span class="dv">2</span>)</code></pre></div>
+<pre class="sourceCode r"><code class="sourceCode r">test &lt;-<span class="st"> </span>urca<span class="op">::</span><span class="kw">ur.df</span>(diff.anchovy, <span class="dt">type=</span><span class="st">&quot;drift&quot;</span>, <span class="dt">lags=</span><span class="dv">2</span>)</code></pre>
 <p>The null hypothesis of NON-stationairity IS rejected. That is good.</p>
 <p>The test statistic is</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">attr</span>(test, <span class="st">&quot;teststat&quot;</span>)</code></pre></div>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">attr</span>(test, <span class="st">&quot;teststat&quot;</span>)</code></pre>
 <pre><code>##                tau2     phi1
 ## statistic -3.492685 6.099778</code></pre>
 <p>and the critical value at <span class="math inline">\(\alpha = 0.05\)</span> is</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">attr</span>(test,<span class="st">&quot;cval&quot;</span>)</code></pre></div>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">attr</span>(test,<span class="st">&quot;cval&quot;</span>)</code></pre>
 <pre><code>##       1pct  5pct 10pct
 ## tau2 -3.75 -3.00 -2.63
 ## phi1  7.88  5.18  4.12</code></pre>
@@ -550,7 +588,7 @@ gitbook.start({
 "google": false,
 "linkedin": false,
 "weibo": false,
-"instapper": false,
+"instapaper": false,
 "vk": false,
 "all": ["facebook", "google", "twitter", "linkedin", "weibo", "instapaper"]
 },
@@ -562,6 +600,10 @@ gitbook.start({
 "edit": {
 "link": "https://github.com/fish-forecast/Fish-Forecast-Bookdown/edit/master/Forecasting-3-2-ARMA-Stationarity.Rmd",
 "text": "Edit"
+},
+"history": {
+"link": null,
+"text": null
 },
 "download": null,
 "toc": {
@@ -576,8 +618,8 @@ gitbook.start({
   (function () {
     var script = document.createElement("script");
     script.type = "text/javascript";
-    var src = "";
-    if (src === "" || src === "true") src = "https://cdn.bootcss.com/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML";
+    var src = "true";
+    if (src === "" || src === "true") src = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML";
     if (location.protocol !== "file:" && /^https?:/.test(src))
       src = src.replace(/^https?:/, '');
     script.src = src;
