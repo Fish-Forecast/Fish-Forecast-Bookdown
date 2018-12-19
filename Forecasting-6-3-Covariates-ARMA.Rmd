@@ -1,11 +1,14 @@
 ## Multivariate linear regression with ARMA errors
 
-```{r f62-load_packages, echo=FALSE, message=FALSE, warning=FALSE}
+```{r f62-load_packages, message=FALSE, warning=FALSE}
 library(ggplot2)
+library(forecast)
+library(astsa)
+library(nlme)
 ```
 
 
-The `stats::arima()` and `forecast::auto.arima()` functions with argument `xreg` fit a multivariate linear regression with ARMA errors.  Note, this is not what is termed a ARMAX model. ARMAX models will be addressed separately.  
+The `stats::arima()` and `forecast::auto.arima()` functions with argument `xreg` fit a multivariate linear regression with ARMA errors.  Note, this is not what is termed a ARMAX model. ARMAX models will be addressed in Section \@ref(ARMAX).  
 
 The model fitted when `xreg` is passed in is:
 
@@ -18,23 +21,60 @@ e_t \sim N(0,\sigma)
 \end{equation}
 where `xreg` is  matrix with $c_{t,1}$ in column 1, $c_{t-2}$ in column 2, etc.  $z_t$ are the ARMA errors.
 
-### Example
+### Example: fitting with auto.arima
 
-Let's fit the three best multivariate regression models.  Then we fit the three best lm models chosen via stepwise regression, exhaustive search or cross-validation:
-```{r linear.reg.model.set}
-modelname <- "Year+FIP"
-fit <- lm(anchovy~Year+FIP, data=df)
-fr.list[[modelname]] <- predict(fit, newdata=testdat)
+Let's fit two of the best multivariate regression models from Section \@ref(stepwise-sel) with ARMA errors.  We can use `auto.arima` to search for an ARMA model for the residuals.
 
-modelname <- "Year+Trachurus+FIP"
-fit <- lm(anchovy~Year+Trachurus+FIP, data=df)
-fr.list[[modelname]] <- predict(fit, newdata=testdat)
-
-modelname <- "6 variables"
-fit <- lm(anchovy~Year+air+vwnd+BOP+FIP+TOP, data=df)
-fr.list[[modelname]] <- predict(fit, newdata=testdat)
+```{r mreg.auto.arima}
+xreg <- as.matrix(df[,c("Year","FIP")])
+forecast::auto.arima(df$anchovy, xreg=xreg)
 ```
 
+The esimated model is a "Regression with ARIMA(0,0,0) errors" which indicates no autoregressive or moving average pattern in the residuals.  We can also see this by looking at an ACF plot of the residuals.
+
+
+```{r mreg.acf}
+lm(anchovy~Year+FIP,data=df) %>%
+  resid %>%
+  acf
+```
+The same pattern is seen with the models with more variables.
+
+```{r mreg.arma.2}
+xreg <- as.matrix(df[,c("Year","Trachurus","FIP")])
+forecast::auto.arima(df$anchovy, xreg=xreg)
+```
+
+### Example: fitting with arima and sarima
+
+If we want to fit a specific ARMA model, for example an AR(1) model for the residuals, we can use `arima`.
+
+```{r mreg.arima}
+xreg <- as.matrix(df[,c("Year","FIP")])
+arima(df$anchovy, xreg=xreg, order = c(1,0,0))
+```
+
+We can also use the `sarima` function in the astsa package.  This plots a nice diagnostics plot with the fit.
+
+```{r mreg.sarima}
+xreg <- as.matrix(df[,c("Year","FIP")])
+astsa::sarima(df$anchovy, 1, 0, 0, xreg=xreg)
+```
+### Example: fitting with gls
+
+We can also fit multivariate regression with autocorrelated errors with the nlme package and function `gls()`. The default fitting method is REML, and to get the same results as `arima()`, we need to specify `method="ML"`.
+
+```{r mreg.arma.gls}
+mod <- gls(anchovy~Year+FIP, data=df, correlation=corAR1(form=~1), method="ML")
+summary(mod)
+```
+
+You can also fit an AR(2) or ARMA with `gls()`:
+
+```{r mreg.arma.gls2}
+mod <- gls(anchovy~Year+FIP, data=df, correlation=corARMA(form = ~1,p=2,q=0), method="ML")
+summary(mod)
+```
 
 ### MREG of first or second differences
 
@@ -43,3 +83,6 @@ We need to think carefully about how we set up a multivariate regression if our 
 
 One recommendation is if $x_t$ is differenced, the same differencing is applied to the covariates.  The idea is if the response variable is stationary, we want to make sure that the independent variables are also stationary.  However, in a fisheries application $x_t - x_{t-1}$ often has a biological meaning, the yearly (or monthly or hourly) rate of change, and that rate of change is what one is trying explain with a covariate.  One would not necessarily expect the first difference to be stationary and one is trying to explain any trend in the one-step rate of change with some set of covariates.  On the other hand, if the response variable, the raw data or the first or second difference, is stationary then trying to explain its variability via a non-stationary covariate will clearly lead to the effect size of the covariates being zero.  We don't need to fit a model to tell us that.
 
+### Discussion
+
+R provides many different functions and packages for fitting a multivariate regression with autoregressive errors.  In the case of the anchovy time series, the errors are not autoregressive. In general, the first step to determining whether a model with correlated errors is required is to look at diagnostics for the residuals.  Select a model (see previous section) and then examine the residuals for evidence of autocorrelation. However another approach is to include a model with autocorrelated errors in your model set and compare via model selection. If this latter approach is taken, you must be careful to that the model selection criteria (AIC, BIC etc) are comparable. If you use functions from different packages, they authors have often left off a constant in their model selection criteria formulas. If you need to use different packages, you will carefully test the model selection criteria from the same model with different functions and adjust for the missing constants.

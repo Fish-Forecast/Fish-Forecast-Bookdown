@@ -36,6 +36,7 @@ library(stringr)
 library(caret)
 library(leaps)
 library(forecast)
+library(relaimpo)
 ```
 
 ### Covariates used in Stergiou and Christou
@@ -91,7 +92,7 @@ df <- df[,colnames(df)!="VAP"]
 df.full <- df
 # only training data
 df <- subset(df, Year>=1965-1964 & Year<=1987-1964)
-save(df, df.full, "MREG_Data.RData")
+save(df, df.full, file="MREG_Data.RData")
 ```
 
 We will model anchovy landings as the response variable.  The covariates are lagged by one year, following Stergiou and Christou.  This means that the catch in year $t$ is regressed against the covariates in year $t-1$. We set up our data frame as follows. We use the 1965 to 1987 catch data as the response. We use 1964 to 1986, so year prior, for all the explanatory variables and we log transform the explanatory variables (following Stergiou and Christou). We use $t$ 1 to 23 as a "year" covariate. Our data frame will have the following columns:
@@ -183,7 +184,7 @@ summary(fit.full)
 
 Stergiou and Christou do not state how (if at all) they address the collinearity in the explanatory variables, but it is clearly present.
 
-### Model selection with stepwise variable selection
+### Model selection with stepwise variable selection {#stepwise-sel}
 
 <!--
 http://www.sthda.com/english/articles/37-model-selection-essentials-in-r/154-stepwise-regression-essentials-in-r/
@@ -575,6 +576,28 @@ par(op)
 ```
 As we might expect, elastic net is part way between the ridge regression model and the Lasso model.
 
+### Relative importance metrics for linear regression
+
+Another approach to linear regression with multiple collinear regressors is to compute relative importance metrics[^relimp]. 
+
+[^relimp]: Groemping, U. (2006) Relative Importance for Linear Regression in R: The Package relaimpo Journal of Statistical Software 17, Issue 1. Downloadable at http://www.jstatsoft.org/v17/i01
+
+This gives a somewhat different picture with year, Trachurus and the effort metrics most important while the environmental variables have low importance.
+
+```{r relimp}
+reli <- calc.relimp(anchovy~.,data=df)
+plot(reli)
+```
+
+The pattern remains the same without Year as a response variable.
+
+```{r relimp.noYear}
+reli <- calc.relimp(anchovy~.-Year,data=df)
+plot(reli)
+```
+
+
+
 ### Comparing model prediction accuracy
 
 We can use cross-validation compare prediction accuracy if we have a set of models to compare.  In our case, we do not have a set of models but rather a set of "number of variables".  We cannot use variable selection with our full dataset to chose the variables and then turn around and use cross-validation with the same dataset to test the out-of-sample prediction accuracy.  Anytime you double-use your data like that, you will have severe bias problems.
@@ -778,7 +801,7 @@ testdatc <- testdat
 testdatc$BOP[(testdat$Year+1964)>1988]<-testdatc$BOP[(testdat$Year+1964)>1988]-0.083
 testdatc$HPP[(testdat$Year+1964)>1988]<-testdatc$HPP[(testdat$Year+1964)>1988]-0.28285
 testdatc$TOP[(testdat$Year+1964)>1988]<-testdatc$TOP[(testdat$Year+1964)>1988]-0.295
-save(df, df.full, testdatc, "MREG_Data.RData")
+save(df, df.full, testdatc, file="MREG_Data.RData")
 ```
 
 ```{r echo=FALSE}

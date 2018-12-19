@@ -1,0 +1,27 @@
+## ARMAX Models {#ARMAX}
+
+```{r f64-load_packages, message=FALSE, warning=FALSE}
+library(MARSS)
+```
+
+
+The `stats::arima()` and `forecast::auto.arima()` functions with argument `xreg` fit a multivariate linear regression with ARMA errors.  Note, this is not what is termed a ARMAX model. ARMAX models will be addressed separately.  
+
+[^Hyndsight]:https://robjhyndman.com/hyndsight/arimax/
+
+The model fitted when `xreg` is passed in is:
+
+\begin{equation}
+\begin{gathered}
+x_t = \alpha + \phi_1 c_{t,1} + \phi_2 c_{t,2} + \dots + z_t \\
+z_t = \beta_1 z_{t-1} + \dots + \beta_p z_{t-p} + e_t + \theta_1 e_{t-1} + \dots + \theta_q e_{t-q}\\
+e_t \sim N(0,\sigma)
+\end{gathered}
+\end{equation}
+where `xreg` is  matrix with $c_{t,1}$ in column 1, $c_{t-2}$ in column 2, etc.  $z_t$ are the ARMA errors.
+
+
+
+### Discussion
+
+R provides many different functions and packages for fitting a multivariate regression with autoregressive errors.  In the case of the anchovy time series, the errors are not autoregressive. In general, the first step to determining whether a model with correlated errors is required is to look at diagnostics for the residuals.  Select a model (see previous section) and then examine the residuals for evidence of autocorrelation. However another approach is to include a model with autocorrelated errors in your model set and compare via model selection. If this latter approach is taken, you must be careful to that the model selection criteria (AIC, BIC etc) are comparable. If you use functions from different packages, they authors have often left off a constant in their model selection criteria formulas. If you need to use different packages, you will carefully test the model selection criteria from the same model with different functions and adjust for the missing constants.
