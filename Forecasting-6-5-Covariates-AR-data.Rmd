@@ -1,0 +1,114 @@
+---
+title: "Autocorrelated Data in Regression Models"
+author: "EE Holmes"
+date: "2/15/2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+
+Create some simulated data for a linear regression against one predictor variable:
+$$y_i = \alpha + \beta x_i + e_i \\e_i \sim N(0,\sigma)$$
+The errors $e_i$ are i.i.d.  These $y_i$ perfectly fit the assumption in a generic linear regression model.
+
+```{r}
+n <- 100
+alpha <- 1
+beta <- 2
+cov <- rnorm(n)
+err <- rnorm(n, 0, 1)
+y <- alpha + beta*cov + err
+plot(cov, y)
+```
+
+Now fit a linear regression and look at the standard errors for the parameter estimates.
+
+```{r}
+dat <- data.frame(y=y, x=cov)
+fit <- lm(y~x, data=dat)
+summary(fit)
+```
+
+Let's imagine that each $i$ is a site where we have measured $y_i$ and $x_i$.  Let's imagine that instead of measuring $y$ and $x$ once at each site, we measure $y$ and $x$ three times.  Let's imagine also that the error $e$ is site dependent, i.e. that there is a $e_i$ for each site, and the $x$ are the same at each site.  So that $y_{i,1}=y_{i,2}=y_{i,3}$.  Obviously, the $y$ are not independent of each other now.  The $y_{i,j}$ are all exactly the same.  Let's see what happens when we estimate the parameters.
+
+We'll create our data by replicating $y$ and $x$ three times.  We'll randomize the order too.
+```{r}
+ord <- sample(3*n) #random order
+y3 <- c(y,y,y)[ord]
+cov3 <- c(cov, cov, cov)[ord]
+dat3 <- data.frame(y=y3, x=cov3)
+fit3 <- lm(y~x, data=dat3)
+summary(fit3)
+```
+
+The standard errors of our parameters have gone down.  But that is not correct since we do not actually have $3\times n$ data points.  We really have $n$ data points.
+
+We can see the problem in a histogram of the residuals and a plot of residuals against covariate value.
+
+```{r}
+par(mfrow=c(1,2))
+resids <- residuals(fit3)
+hist(resids, main="not normal")
+plot(resids[order(cov3)], main="resids vs cov")
+```
+
+The residuals also do not pass a normality test---although that can happen for many reasons.
+
+```{r}
+shapiro.test(residuals(fit))
+```
+
+This was an extreme example where $e_{i,1}=e_{i,2}=e_{i,3}$, but the same problem would arise if the $e_i$ were less than perfectly correlated.
+
+### Linear regression of autoregressive data
+
+A similar problem arises when our data are a time-series and are autocorrelated---in addition to being a function of the covariate.  
+
+$$y_t = \alpha + \beta x_t + \phi y_{t-1} + e_t$$
+If $\phi$ is close to 0, then there is not much autocorrelation and we don't see a problem in the ACF.
+
+```{r}
+phi <- 0.1
+yar <- y[2:n]+phi*y[1:(n-1)]
+acf(yar)
+```
+
+If $\phi$ is close to 1, then the autocorrelation is apparent.
+
+
+```{r}
+phi <- 0.8
+yar <- y[2:n]+phi*y[1:(n-1)]
+acf(yar)
+```
+
+If $\phi$ is close to 1, our relation between $y$ and $x$ also looks peculiar and non-linear.
+
+```{r}
+par(mfrow=c(1,2))
+plot(y,cov, main="uncorrelated y")
+plot(yar, cov[2:n], main="correlated y")
+```
+
+Now fit:
+
+```{r}
+datar <- data.frame(y=yar, x=cov[2:n])
+fitar <- lm(y ~ x, data=datar)
+summary(fitar)
+```
+
+
+Let's fit to $y_{1:n-1}$ and $yar$
+
+### Autocorrelated predictor variable
+
+```{r}
+covar <- as.vector(arima.sim(n, model=list(ar=0.7)))
+y2 <- alpha + beta*covar + err
+dat2 <- data.frame(y=y2, x=covar)
+```
