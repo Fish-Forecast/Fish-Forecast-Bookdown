@@ -101,16 +101,22 @@ colnames(df)
 ```
 In total, there are `r ncol(df)-1` covariates and `r nrow(df)` years of data---which is not much data per explanatory variable.  Section \@ref(cov.df) shows the R code to create the `df` data frame with the response variable and all the explanatory variables. 
 
-For most of the analyses, we will use the untransformed variables, however for some analyses, we will want the effect sizes (the estimated $\beta$'s) to be on the same scale.  For these analyses, we will use the z-scored variables, which will be stored in data frame `dfz`.  z-scoring removes the mean and normalizes the variance to 1.
+For most of the analyses, we will use the untransformed variables, however for some analyses, we will want the effect sizes (the estimated $\beta$'s) to be on the same scale.  For these analyses, we will use the z-scored variables, which will be stored in data frame `dfz`.  z-scoring removes the mean and normalizes the variance to 1. Here is a loop to demean and rescale our data frame.
 
 ```{r z.score}
 dfz <- df
 n <- nrow(df)
 for(i in colnames(df)){
-  pop_sd <- sd(df[,i])*sqrt(n-1)/n
+  pop_sd <- sd(df[,i])*sqrt((n-1)/n)
   pop_mean <- mean(df[,i])
   dfz[,i] <- (df[,i]-pop_mean)/pop_sd
 }
+```
+
+The function `scale()` will do a scaling to the unbiased variance instead of the sample variance (divide by $n-1$ instead of $n$) and will return a matrix. We will scale to the sample variance as we will need this for Principal Components Analysis at the end of this chapter.
+
+```{r scale, eval=FALSE}
+dfz <- as.data.frame(scale(df))
 ```
 
 ### Collinearity
@@ -128,6 +134,14 @@ pairs(df[,c(2,9:12)])
 The environmental covariates look generally ok.
 ```{r pairs.env}
 pairs(df[,c(2,4:8)])
+```
+
+Another way that we can visualize the problem is by looking at the correlation matrix using the **corrplot** package.
+
+```{r}
+library(corrplot)
+X <- as.matrix(df[,colnames(df)!="anchovy"])
+corrplot(cor(X))
 ```
 
 #### Variance inflation factors {-}
@@ -822,6 +836,104 @@ for(i in 1:2){
 }
 points(Year1+testdat$Year,testdat$anchovy, pch=20)
 legend("topleft", mnames, cex=.5, col=1:2, lty=1:2, bty="n")
+```
+
+### Orthogonalization
+
+The last approach that we will discuss for dealing with collinearity is orthogonalization. With this technique, we replace the set of collinear covariates $X$  with a set of orthogonal, i.e. independent, covariates $\tilde{X}$, which are linear combinations of the original, collinear, covariates. Principal Components Analysis (PCA) is an example of using orthogonalization to deal with collinear covariates. Another example is when we use the `poly()` function to do polynomial regression. In this case, we are replacing a set of collinear variates,  $x$, $x^2$, $x^3$, etc., with a set of orthogonal covariates. 
+
+The ways that you can create a set of orthogonal covariates is not unique. There are many different sets of orthogonal covariates. We will show three ways you might create your orthogonal set: PCA, Gram-Schmidt Orthogonalization, and residuals from a linear regressions.
+
+First let's run with the collinear covariates and look at the effect sizes. We will use the standardized covariates with the mean removed and variance scaled to 1. 
+
+```{r}
+raw <- lm(anchovy ~ ., data=dfz)
+summary(raw)
+```
+
+#### Principal component regression
+
+Principal component regression is a linear regression in which you transform your collinear covariates using the othogonal variates created by Principal Components Analysis (PCA). PCA uses an orthogonal set of variates $\tilde{X}$ in which the first variate accounts for as much of the variability in the variate dataset as possible, the second accounts for as much of the remaining variance as possible, the third accounts for as much of the variance remaining after the first two, etc., etc. Each variate is orthogonal to the preceding variate. 
+
+Singular value decomposition is a standard way to compute $\tilde{X}$ for PCA.
+
+
+$$\tilde{X} = XV$$
+where $V$ is the right singular vector from the singular value decomposition of the matrix of covariates ($X=UDV'$).  The $V$ is the 'loadings' matrix in a PCA. The orthogonal covariates $\tilde{X}$ are linear combinations of the original, collinear, covariates. PCA covariates have the nice feature that they are ordered in terms of the amount of variance they explain, but the orthogonal variates, called axes in a PCA, can be a bit hard to interpret.
+
+Let's see an example with our data set. First we will create a matrix of our collinear variates.  We need to use the scaled variates.
+
+```{r otho1}
+X <- as.matrix(dfz[,colnames(dfz)!="anchovy"])
+```
+
+We create our orthogonal PCA variates using the `svd()` function which does a singular value decomposition. We will re-label the variates as 'axes'. A corrplot shows that our variates are now uncorrelated.
+
+```{r}
+loadings <- svd(X)$v
+rownames(loadings) <- colnames(X)
+Z <- X%*%loadings
+colnames(Z) <- paste0("axis", 1:ncol(Z))
+corrplot(cor(Z))
+```
+
+Now we have a set of orthogonal variates, but some of them do not explain much of the variance. We know this should be the case because we have collinearity in our data. The $X$ were scaled by $1/sqrt(n)$ so that $X^\top X$ is the correlation matrix.  The average singular value for a correlation matrix is 1.  Any singlular value much less than one is small.
+
+```{r}
+plot(svd(X/sqrt(n))$d, xlab="axis", ylab="singular value")
+abline(h=1, col="red")
+```
+
+We could run a linear regression with all the orthogonal variates, but that would not be helpful. The point of orthogonalization is to find a smaller set of variates that explains the structure in the larger set of collinear variates. Based on the singular value plot, we will use the first 5 axes.
+
+```{r}
+dfpca <- data.frame(anchovy=dfz$anchovy, Z)
+pcalm <- lm(anchovy ~ ., data=dfpca)
+summary(pcalm)
+```
+
+We can recover the original effect sizes from $V\tilde{\beta}$.
+
+```{r}
+coef(mod)
+svd(X)$v %*% coef(mod1)[-1]
+```
+
+```{r}
+library(reshape2)
+meltR = melt(loadings)
+ggplot(meltR, aes(x=Var1, y = value)) + 
+  geom_bar(stat="identity") + 
+  coord_flip() + 
+  facet_wrap(. ~ Var2) +
+  ggtitle("Loadings")
+```
+
+#### Gram-Schmidt Orthogonalization
+
+The Gram-Schmidt orthogonalization treats the variates in a specific order. The first variate will be the first variate, the second will be the variation in the second variate that is not explained by the first, the third will be the variation in the third variate that is not explained by the first two, etc. This makes your orthogonal variates easier to interpret if they have some natural or desired ordering. For example, you want to include variate 1 and want to know if adding variate 2 improves the model.
+
+Let $Z$ be the matrix of orthogonal variates and $X$ be the matrix of original, collinear, covariates. The first column of $Z$ is $Z_1 = X_1$.
+The second column of $Z$ is 
+$$Z_2 = X_2 - Z_1(Z_1^\top Z_1)Z_1^\top X_2.$$
+The third column of $Z$ is 
+$$Z_3 = X_3 - Z_1(Z_1^\top Z_1)Z_1^\top X_3 - Z_2(Z_2^\top Z_2)Z_2^\top X_3.$$
+
+```{r}
+pr <- function(y, x){ x%*%solve(t(x)%*%x)%*%t(x)%*%y }
+Z <- cbind(X[,1], 0, 0)
+Z[,2] <- X[,2] - pr(X[,2], Z[,1])
+Z[,3] <- X[,3] - pr(X[,3], Z[,1]) - pr(X[,3], Z[,2]) 
+zapsmall(crossprod(Z))
+
+```
+
+
+```{r}
+colnames(Z) <- colnames(X)
+dat <- data.frame(Z, IQ=class$IQ)
+mod <- lm(IQ ~ height + weight + age, data=dat)
+summary(mod)
 ```
 
 ### Discussion
