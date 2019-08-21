@@ -32,16 +32,47 @@ corrplot(cor(X))
 
 Another way is to look for collinearity is to compute the variance inflation factors (VIF). The variance inflation factor is an estimate of how much larger the variance of a coefficient estimate is compared to if the variable were uncorrelated with the other explanatory variables in the model.  If the VIF of variable $i$ is $z$, then the standard error of the $\beta_i$ for variable $i$ is $\sqrt{z}$ times larger than if variable $i$ were uncorrelated with the other variables. For example, if VIF=10, the standard error of the coefficient estimate is 3.16 times larger (inflated).  The rule of thumb is that any of the variables with VIF greater than 10 have collinearity problems.
 
-The `vif()` function in the car package will compute VIFs for us.  
+The `vif()` function in the **car** package will compute VIFs for us.  
 
 ```{r vif.car}
 full <- lm(anchovy ~ ., data=df)
 car::vif(full)
 ```
 
+The `ols_vif_tol()` function in the **olsrr** [package](https://cran.r-project.org/package=olsrr) also computes the VIF.
+
+```{r vif.olsrr}
+olsrr::ols_vif_tol(full)
+```
+
 This shows that Year, HPP and TOP have severe collinearity problems, and BOP and *Trachusus* also have collinearity issues, though lesser.
 
-#### redun()
+#### Condition indices {-}
+
+Condition indices are computed from the eigenvalues of the correlation matrix of the variates. The size of the index will be greatly affected by whether you have standardized the variance of your covariates, unlike the other tests described here.
+
+$$ci = \sqrt{max(eigenvalue)/eigenvalue}$$
+
+```{r}
+vars <- as.matrix(dfz[,-1])
+res <- eigen(crossprod(vars))$values
+sqrt(max(res)/res)
+```
+
+```{r}
+vars <- as.matrix(dfz[,-1])
+res <- eigen(crossprod(vars))$values
+sqrt(max(res)/res)
+```
+
+See the information from the olsrr package on [condition indices](https://cran.r-project.org/web/packages/olsrr/vignettes/regression_diagnostics.html) on how to use condition indices to spot collinearity.  Basically you are looking for condition indices greater than 30 whether the proportion of variance for the covariate is greater than 0.5.  In the table below, this criteria identifies Year, BOP, and TOP. Note that the test was done with the standardized covariates (`dfz`).
+
+```{r}
+model <- lm(anchovy ~ ., data=dfz)
+round(ols_eigen_cindex(model), digit=2)
+```
+
+#### redun() {-}
 
 The Hmisc library also has a redundancy function (`redun()`) that can help identify which variables are redundant.  This identifies variables that can be explained with an $R^2>0.9$ by a linear (or non-linear) combination of other variables.  We are fitting a linear model, so we set `nk=0` to force `redun()` to only look at linear combinations.
 
