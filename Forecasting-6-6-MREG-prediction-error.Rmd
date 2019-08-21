@@ -1,4 +1,4 @@
-## Model Prediction Accuracy {#MREGPREDICT}
+## Prediction accuracy {#MREGPREDICT}
 
 <!--
 if(file.exists("Fish-Forecast.Rmd")) file.remove("Fish-Forecast.Rmd")

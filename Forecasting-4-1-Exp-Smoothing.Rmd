@@ -11,6 +11,8 @@ Although this looks similar to an AR model with a constraint on the $\beta$ term
 $$x_{t} = \alpha x_{t-1} + \alpha (1-\alpha)^2 x_{t-2} + \alpha (1-\alpha)^3 x_{t-3} + \dots + e_t$$
 The goal is to find the $\alpha$ that minimizes $x_t - \hat{x}_t$, i.e. the forecast error.  The issues regarding stationarity do not arise because we are not fitting a stationary process model.  We are not fitting a process model at all.
 
+## Overview
+
 ### Naive model
 
 Let's start with a simple example, an exponential smoothing model with $\alpha=1$.  This is called the Naive model:
@@ -46,7 +48,6 @@ A plot of the forecast shows the forecast and the prediction intervals.
 plot(fr.rwf)
 ```
 
----
 
 ### Exponential smoothing
 
@@ -59,15 +60,34 @@ title("more weight put on more recent values\nfor 1988 forecast")
 ```
 
 
-A *Smoother* is another word for a filter, which in time series parlance means a weighted sum of sequential values in a time series:
+A *smoother* is another word for a filter, which in time series parlance means a weighted sum of sequential values in a time series:
 $$w_1 x_t + w_2 x_{t-1} + w_3 x_{t-2} + \dots$$
-An exponential smoother is a filter where the weights decline exponentially.
+An exponential smoother is a filter (weighted sum) where the weights decline exponentially (Figure \@ref(fig:ets.alpha)).
 
-```{r exp.smoother, echo=FALSE}
+```{r ets.alpha, echo=FALSE, fig.cap="Weighting function for exponential smoothing filter. The shape is determined by $\alpha$."}
 alpha <- 0.5
 plot(-1:-24, alpha*(1-alpha)^(1:24-1), lwd=2, ylab="weight", xlab="lag", type="l")
 title("weight on x at t + lag")
 ```
 
-Our goal when fitting an exponential smoothing model is to find the the $\alpha$, which determines the shape of the weighting function, that minimizes the forecast errors.
+
+### Exponential smoothing model
+
+A simple exponential smoothing model is like the naive model that just uses the last value to make the forecast, but instead of only using the last value it will use values farther in the past also. The weighting function falls off exponentially as shown above.  Our goal when fitting an exponential smoothing model is to find the the $\alpha$, which determines the shape of the weighting function (Figure \@ref(fig:ets.alpha2)), that minimizes the forecast errors.
+
+```{r ets.alpha2, echo=FALSE, fig.cap="The size of $\alpha$ determines how past values affect the forecast."}
+alpha <- 1
+wts <- alpha*(1-alpha)^(0:23)
+plot(1987:1964, wts/sum(wts), lwd=2, ylab="weight", xlab="", type="l")
+alpha <- 0.5
+wts <- alpha*(1-alpha)^(0:23)
+lines(1987:1964, wts/sum(wts), lwd=2, col="blue")
+alpha <- 0.05
+wts <- alpha*(1-alpha)^(0:23)
+lines(1987:1964, wts/sum(wts), lwd=2, col="red")
+legend("topleft", c("alpha=1 like naive","alpha=0.5","alpha=0.05 like mean"),lwd=2, col=c("black","blue","red"))
+title("more weight put on more recent values\nfor 1988 forecast")
+```
+
+
 

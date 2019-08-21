@@ -12,7 +12,6 @@ For each model, we will do the same steps:
 
 Note when you compare models, you can use both 'training data/test data' and use time-series cross-validation, but report the metrics in separate columns.  Example, 'RMSE from tsCV' and 'RMSE from test data'.
 
----
 
 ### Fit each of our candidate models
 
@@ -132,7 +131,6 @@ modelnames <- names(fit.list)
 modelnames
 ```
 
----
 
 ### Metrics for each model
 

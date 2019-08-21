@@ -102,7 +102,6 @@ p6 = ggplot(dat, aes(x=t, y=ar1ti)) + geom_line() + ggtitle("with linear trend")
 grid.arrange(p1, p4, p2, p5, p3, p6, ncol = 2)
 ```
 
----
 
 ### Non-stationarity
 
@@ -152,7 +151,6 @@ p3 = ggplot(dat, aes(x=t, y=yti)) + geom_line() + ggtitle("with linear trend add
 gridExtra::grid.arrange(p1, p2, p3, ncol = 1)
 ```
 
----
 
 ### Stationarity tests
 
@@ -387,7 +385,6 @@ tseries::kpss.test(anchovy87ts, null="Trend")
 
 Here `null="Trend"` was included to account for the increasing trend in the data.  The null hypothesis of stationarity is rejected.  Thus both the KPSS and Dickey-Fuller tests support the hypothesis that the anchovy time series is non-stationary.  That's not what we want.
 
----
 
 ### Differencing the data
 
@@ -449,7 +446,6 @@ and the critical value at $\alpha = 0.05$ is
 attr(test,"cval")
 ```
 
----
 
 ### Summary
 

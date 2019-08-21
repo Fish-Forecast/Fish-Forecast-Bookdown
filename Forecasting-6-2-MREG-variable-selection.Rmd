@@ -1,4 +1,4 @@
-## Variable Selection {#MREGVAR}
+## Variable selection {#MREGVAR}
 
 <!--
 if(file.exists("Fish-Forecast.Rmd")) file.remove("Fish-Forecast.Rmd")

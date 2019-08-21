@@ -19,7 +19,6 @@ C. Model checking
 
 *Much of this will be automated when we use the forecast package*
 
----
 
 ### AR and MA lags
 
@@ -31,7 +30,6 @@ Step A4  is to determine the number of $q$ lags in the MA part of the model:
 
 $$e_t = \eta_t + \theta_1 \eta_{t-1} + \theta_2 \eta_{t-2} + ... + \theta_q \eta_{t-q},\quad \eta_t \sim N(0, \sigma)$$
 
----
 
 ### Model order
 
@@ -63,7 +61,6 @@ which is the same as
 
 $$x_t = x_{t-1} + e_t$$
 
----
 
 ### Choosing the AR and MA levels
 
@@ -188,7 +185,6 @@ for(i in 1:100){
 table(save.fits)
 ```
 
----
 
 ### Trace = TRUE
 
@@ -197,7 +193,6 @@ You can see what models that `auto.arima()` tried using `trace=TRUE`.  The model
 ```{r}
 forecast::auto.arima(anchovy87ts, trace=TRUE)
 ```
----
 
 ### stepwise = FALSE
 
@@ -207,7 +202,6 @@ By default, step-wise selection is used and an approximation is used for the mod
 forecast::auto.arima(anchovy87ts, stepwise=FALSE, approximation=FALSE)
 ```
 
---- 
 
 ### Summary
 

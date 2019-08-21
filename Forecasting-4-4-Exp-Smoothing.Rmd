@@ -9,7 +9,6 @@ traindat <- window(anchovyts,1964,1987)
 testdat <- window(anchovyts,1988,1989)
 ```
 
----
 
 ### Test forecast performance
 
@@ -112,7 +111,6 @@ MAE: mean absolute error
 mae <- mean(abs(e), na.rm=TRUE)
 ```
 
----
 
 ### Testing a specific ets model
 

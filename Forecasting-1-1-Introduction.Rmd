@@ -31,18 +31,14 @@ This course will focus on three of these methods: time-varying regression, ARIMA
 
 These three methods will be demonstrated by replicating the work in Stergiou and Christou (1996) *Modelling and forecasting annual fisheries catches: comparison of regression, univariate and multivariate time series methods*. Fisheries Research 25: 105-136.
 
-![Stergiou and Christou 1996](./figs/StergiouChristou1996.png)
-
-
-
----
+![](./figs/StergiouChristou1996.png)
 
 ### Hellenic landings data {#landingsdata}
 
 We will use the annual landings data from Hellenic (Greek) waters (Figure \@ref(fig:greece)) that were used in Stergiou and Christou (1996).  Stergiou and Christou analyzed 16 species.  We will look at just two of the species: Anchovy and Sardine.  Stergiou and Christou used the data from 1964-1989.  We have the data up to 2007, but will focus mainly on 1964-1989 (the first half of the time series) to replicate Stergiou and Christou's analyses.
 
 
-```{r greece, fig.cap="Location of the fishery."}
+```{r greece, fig.cap="Location of the fishery.", echo=FALSE}
 knitr::include_graphics("./figs/Greece.png")
 ```
 
@@ -82,7 +78,6 @@ The data in a ts object cannot have any missing time steps.  For example, if you
 
 All the non-seasonal examples shown will work on a plain vector of numbers, and it it is not necessary to convert a non-seasonal time series into a ts object.  That said, if you do not convert to a ts object, you will miss out on all the plotting and subsetting functions that are written for ts objects.  Also when you do multivariate regression with covariates, having your data and covariates stored as a ts object will make regressing against lagged covariates (covariate values in the past) easier.
 
----
 
 ### `ts()` function
 
@@ -122,7 +117,6 @@ aa
 plot(aa, type="p")
 ```
 
----
 
 ### ggplot and ts objects
 
@@ -154,7 +148,6 @@ autoplot(aa) +
   geom_point() 
 ```
 
----
 
 ### Plotting using a data frame
 

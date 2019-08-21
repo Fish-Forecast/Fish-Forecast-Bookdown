@@ -15,14 +15,12 @@ To work with seasonal data, we need to turn our data into a ts object, which is 
 
 The months are in order and the years are in order.
 
----
 ## Chinook data
 
 We will illustrate the analysis of seasonal catch data using a data set of monthly chinook salmon from Washington state.
 
----
 
-### Load the chinook salmon data set
+### Load the chinook salmon data set {-}
 
 ```{r}
 load("chinook.RData")
@@ -46,9 +44,8 @@ ts(chinook, start=c(10,5), frequency=24)
 
 Use `?ts` to see more examples of how to set up ts objects.
 
----
 
-### Plot seasonal data
+### Plot seasonal data {-}
 
 Now that we have specified our seasonal data as a ts object, it is easy to plot because R knows what the season is.
 

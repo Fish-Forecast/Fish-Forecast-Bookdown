@@ -1,4 +1,4 @@
-## Fitting time-varying regressions
+## Fitting
 
 Fitting a time-varying regression is done with the `lm()` function.  For example, here is how to fit a 4th-order polynomial for time to the anchovy data.  We are fitting this model:
 
@@ -33,7 +33,6 @@ Let's look at the fit.
 summary(model)
 ```
 
----
 
 ### Orthogonal polynomials
 
@@ -41,7 +40,7 @@ None of the time effects are significant despite an obvious linear temporal tren
 
 You could try fitting the first degree model $x_t = \alpha + \beta t + e_t$, then the second $x_t = \alpha + \beta_1 t + \beta_2 t^2 + e_t$, then the third.  This would reveal that in the first and second order fits, we get significant effects of time in our model.  However the correct way to do this would be to use orthogonal polynomials.
 
-#### `poly()` function
+#### `poly()` function {-}
 
 The `poly()` function creates orthogonal covariates for your polynomial.  What does that mean? Let's say you want to fit a model with a 2nd order polynomial of $t$.  It has $t$ and $t^2$, but using these as covariates directly lead to using two covariates that are highly correlated.  Instead we want a covariate that explains $t$ and another that explains the part of $t^2$ that cannot be explained by $t$.  `poly()` creates these orthogonal covariates.  The `poly()` function creates covariates with mean zero and identical variances.  Covariates with different means and variances makes it hard to compare the estimated effect sizes.  
 

@@ -1,4 +1,4 @@
-## Forecasting with a time-varying regression model
+## Forecasting
 
 Forecasting is easy in R once you have a fitted model.  Let's say for the anchovy, we fit the model
 
@@ -27,7 +27,6 @@ coef(model)[1]+coef(model)[2]*25
 
 log metric tons.
 
----
 
 ### The forecast package
 
@@ -121,9 +120,7 @@ plotforecasttv(model, ylims=c(8,17))
 ```
 
 
----
-
-### Summary
+## Summary
 
 * Time-varying regression is a simple approach to forecasting that allows a non-linear trend.
 * The uncertainty in your forecast is determined by how much error there is between the fit an the data.

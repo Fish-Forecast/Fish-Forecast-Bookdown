@@ -5,7 +5,7 @@ The basic idea in an ARMA model is that past values in the time series have info
 $$x_t = \phi_1 x_{t-1} + \phi_2 x_{t-2} + ... + \phi_p x_{t-p} + e_t$$
 
 
-![Species Plot](./figs/SpeciesPlot.jpeg)
+![](./figs/SpeciesPlot.jpeg)
 
 ## Overview
 
@@ -62,7 +62,6 @@ plot(rn[2:TT],rn[1:(TT-1)],type="p")
 title("random normal")
 ```
 
----
 
 ### Box-Jenkins method
 
@@ -79,7 +78,6 @@ B. Parameter estimation
 
 C. Model checking
 
----
 
 ### ACF and PACF functions
 

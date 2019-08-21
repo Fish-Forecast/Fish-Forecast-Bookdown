@@ -1,4 +1,4 @@
-## Assessing colinearity in covariates {#collinear}
+## Collinearity {#collinear}
 
 <!--
 if(file.exists("Fish-Forecast.Rmd")) file.remove("Fish-Forecast.Rmd")

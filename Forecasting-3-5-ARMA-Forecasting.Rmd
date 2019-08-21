@@ -47,7 +47,6 @@ anchovy87ts[24]+coef(fit)[1]*(anchovy87ts[24]-anchovy87ts[23])+
   coef(fit)[2]*(anchovy87ts[23]-anchovy87ts[22])
 ```
 
----
 
 ### Forecasting with `forecast()`
 
@@ -65,7 +64,6 @@ We can plot our forecast with prediction intervals.  Here is the sardine forecas
 plot(fr, xlab="Year")
 ```
 
----
 
 #### Forecast for anchovy {-}
 
@@ -75,7 +73,6 @@ fr <- forecast::forecast(fit, h=5)
 plot(fr)
 ```
 
----
 
 #### Forecasts for chub mackerel {-}
 
@@ -90,7 +87,6 @@ fr <- forecast::forecast(fit, h=5)
 plot(fr, ylim=c(6,10))
 ```
 
----
 
 ### Missing values
 
@@ -104,7 +100,6 @@ fr <- forecast::forecast(fit, h=5)
 plot(fr)
 ```
 
----
 
 ### Null forecast models
 
@@ -126,7 +121,6 @@ fr.naive <- forecast::forecast(fit.naive, h=5)
 plot(fr.naive)
 ```
 
----
 
 #### The "Naive" forecast with drift {-}
 
@@ -143,7 +137,6 @@ fr.rwf <- forecast::forecast(fit.rwf, h=5)
 plot(fr.rwf)
 ```
 
----
 
 #### The "mean" forecast {-}
 

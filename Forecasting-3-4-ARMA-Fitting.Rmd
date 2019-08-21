@@ -12,7 +12,6 @@ A. Model form selection
 B. **Parameter estimation**
 C. **Model checking**
 
----
 
 ### Fitting with `auto.arima()`
 
@@ -121,7 +120,6 @@ fitdf=2 is from the number of parameters estimated.
 
 BIC is in `fit$BIC`.  Why is BIC different? Because there is a missing constant, which is fairly common.  The absolute value of BIC is unimportant.  Only its value relative to other models that you tested is important.
 
----
 
 ### Outputting the models tested
 
@@ -131,7 +129,6 @@ Pass in `trace=TRUE` to see a list of the models tested in `auto.arima()`'s sear
 forecast::auto.arima(anchovy87ts, trace=TRUE)
 ```
 
----
 
 ### Repeat with the sardine data
 
@@ -179,7 +176,6 @@ df <- data.frame(Model="(0,1,0)", theta1=-1*coef(fit)[1], drift=coef(fit)[2], R2
 knitr::kable(df, row.names=FALSE, format='html')
 ```
 
----
 
 ### Missing values
 
@@ -192,7 +188,6 @@ fit <- auto.arima(anchovy.miss)
 fit
 ```
 
----
 
 ### Fit a specific ARIMA model
 
@@ -205,7 +200,6 @@ fit.AR2 <- forecast::Arima(anchovy87ts, order=c(2,0,0))
 fit.AR2
 ```
 
----
 
 ### Model checking
 
@@ -237,7 +231,6 @@ fit <- forecast::auto.arima(anchovy87ts)
 checkresiduals(fit)
 ```
 
----
 
 ### Workflow for non-seasonal data
 
@@ -253,7 +246,6 @@ checkresiduals(fit)
 
 * Test candidate models for forecast performance with cross-validation (next lecture).
 
----
 
 ### Stepwise vs exhaustive model selection
 
@@ -263,7 +255,6 @@ Stepwise model selection is fast and useful if you need to explore many models a
 forecast::auto.arima(anchovy87ts, stepwise=FALSE, approximation=FALSE)
 ```
 
----
 
 ### Summary
 

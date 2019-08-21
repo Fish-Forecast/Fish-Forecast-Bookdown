@@ -1,4 +1,4 @@
-## Penalized Regression {#MREGPR}
+## Penalized regression {#MREGPR}
 
 <!--
 if(file.exists("Fish-Forecast.Rmd")) file.remove("Fish-Forecast.Rmd")

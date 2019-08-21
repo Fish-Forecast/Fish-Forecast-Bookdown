@@ -1,16 +1,14 @@
 # Testing forecast accuracy {#perf-testing}
 
-Once you have found a set of possible forecast models, you are ready to compare forecasts from a variety of models and choose a forecast model.  
+Once you have found a set of possible forecast models, you are ready to compare forecasts from a variety of models and choose a forecast model. To quantify the forecast performance, we need to create forecasts for data that we have so that we can compare the forecast to actual data.  There are two approaches to this: holding out data for testing and cross-validation.
+  
 ```{r f36-load_data, message=FALSE, warning=FALSE, echo=FALSE}
 library(ggplot2)
 load("landings.RData")
 ```
 
-To quantify the forecast performance, we need to create forecasts for data that we have so that we can compare the forecast to actual data.  There are two approaches to this.
 
----
-
-### Training set/test set
+## Training set/test set
 
 One approach is to 'hold out' some of your data as the test data and did not use it at all in your fitting.  To measure the forecast performance, you fit to your training data and test the forecast against the data in the test set.  This is the approach that Stergiou and Christou used.
 
@@ -21,7 +19,7 @@ traindat <- window(anchovyts, 1964, 1987)
 testdat <- window(anchovyts, 1988, 1989)
 ```
 
-#### Forecast versus actual {-}
+### Forecast versus actual
 
 We will fit to the training data and make a forecast for the test data.  We can then compare the forecast to the actual values in the test data.
 
@@ -39,13 +37,12 @@ points(testdat, pch=2, col="red")
 legend("topleft", c("forecast","actual"), pch=c(20,2), col=c("blue","red"))
 ```
 
----
 
-### Cross-Validation
+## Cross-Validation
 
 An alternate approach to is to use cross-validation.  This approach uses windows or shorter segments of the whole time series to make a series of single forecasts.  We can use either a variable length or a fixed length window.
 
-#### Variable window {-}
+### Variable window
 
 For the variable length window approach applied to  the Anchovy time series, we would fit the model 1964-1973 and forecast 1974, then 1964-1974 and forecast 1975, then 1964-1975 and forecast 1976, and continue up to 1964-1988 and forecast 1989.  This would create 16 forecasts which we would compare to the actual landings.  The window is 'variable' because the length of the time series used for fitting the model, keeps increasing by 1.
 
@@ -62,7 +59,7 @@ gridExtra::grid.arrange(
 )
 ```
 
-#### Fixed window {-}
+### Fixed window
 
 Another approach uses a fixed window.  For example, a 10-year window.
 
@@ -79,7 +76,7 @@ gridExtra::grid.arrange(
 )
 ```
 
-#### Cross-validation farther in future {-}
+### Cross-validation farther into the future
 
 Sometimes it makes more sense to test the performance for forecasts that are farther in the future.  For example, if the data from your catch surveys takes some time to process, then you might need to make forecasts that are farther than 1 year from your last data point.
 

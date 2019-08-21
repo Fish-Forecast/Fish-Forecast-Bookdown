@@ -1,26 +1,6 @@
-### Exponential smoothing with no trend
+## `ets()` function
 
-Simple exponential smoothing is like the naive model that just uses the last value to make the forecast, but instead of only using the last value it will use values farther in the past also. The weighting fall off exponentially.  The objective when fitting a simple exponential smoothing model is to estimate the best weighting ( $\alpha$ ):
-
-```{r echo=FALSE}
-alpha <- 1
-wts <- alpha*(1-alpha)^(0:23)
-plot(1987:1964, wts/sum(wts), lwd=2, ylab="weight", xlab="", type="l")
-alpha <- 0.5
-wts <- alpha*(1-alpha)^(0:23)
-lines(1987:1964, wts/sum(wts), lwd=2, col="blue")
-alpha <- 0.05
-wts <- alpha*(1-alpha)^(0:23)
-lines(1987:1964, wts/sum(wts), lwd=2, col="red")
-legend("topleft", c("alpha=1 like naive","alpha=0.5","alpha=0.05 like mean"),lwd=2, col=c("black","blue","red"))
-title("more weight put on more recent values\nfor 1988 forecast")
-```
-
----
-
-### Fit a ETS model
-
-The `ets()` function in the forecast package fits a simple exponential smoothing model.
+The `ets()` function in the **forecast** package fits  exponential smoothing models and produces forecasts from the fitted models. It also includes functions for plotting forecasts.
 
 Load the data.
 
@@ -32,11 +12,16 @@ Fit the model.
 
 ```{r fit.ann}
 fit <- forecast::ets(anchovy87ts, model="ANN")
-fr <- forecast::forecast(fit, h=5)
 ```
 `model="ANN"` specifies the simple exponential smoothing model.
 
+Create a forecast for 5 time steps into the future.
 
+```{r fr.ann}
+fr <- forecast::forecast(fit, h=5)
+```
+
+Plot the forecast.
 ```{r}
 plot(fr)
 ```
@@ -47,22 +32,22 @@ Look at the estimates
 fit
 ```
 
-#### The weighting function {-}
+### The weighting function
 
-```{r ann.weighting, echo=FALSE}
+The first coefficient of the ets fit is the $\alpha$ parameter for the weighting function.
+
+```{r ann.weighting, fig.cap="Weighting function for the simple exponential smoothing model for anchovy."}
 alpha <- coef(fit)[1]
 wts <- alpha*(1-alpha)^(0:23)
 plot(1987:1964, wts/sum(wts), lwd=2, ylab="weight", xlab="", type="l")
-title("Weighting for simple exp. smooth of anchovy")
 ```
 
----
 
 ### Decomposing your model fit
 
 Sometimes you would like to see the smoothed level that the model estimated. You can see that with `plot(fit)` or `autoplot(fit)`.
 
-```{r fig.height=4}
+```{r fig.height=4, fig.cap="Decompositon of an ets fit."}
 autoplot(fit)
 ```
 
