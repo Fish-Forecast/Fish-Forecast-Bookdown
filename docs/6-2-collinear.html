@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>6.2 Assessing colinearity in covariates | Fisheries Catch Forecasting</title>
+  <meta name="description" content="This book will show you how to model and forecast annual and seasonal fisheries catches using R and its time-series analysis functions and packages. Forecasting using time-varying regression, ARIMA (Box-Jenkins) models, and expoential smoothing models is demonstrated using real catch time series. The entire process from data evaluation and diagnostics, model fitting, model selection and forecast evaluation is shown. The focus of the book is on univariate time series (annual or seasonal), however multivariate regression with autocorrelated errors and multivariate autoregressive models (MAR) are covered briefly. For multivariate autoregressive models and multivariate autoregressive state-space models for fisheries and environmental sciences, see Holmes, Ward and Scheuerell (2018)." />
+  <meta name="generator" content="bookdown 0.12 and GitBook 2.6.7" />
+
+  <meta property="og:title" content="6.2 Assessing colinearity in covariates | Fisheries Catch Forecasting" />
+  <meta property="og:type" content="book" />
+  
+  <meta property="og:image" content="images/cover.png" />
+  <meta property="og:description" content="This book will show you how to model and forecast annual and seasonal fisheries catches using R and its time-series analysis functions and packages. Forecasting using time-varying regression, ARIMA (Box-Jenkins) models, and expoential smoothing models is demonstrated using real catch time series. The entire process from data evaluation and diagnostics, model fitting, model selection and forecast evaluation is shown. The focus of the book is on univariate time series (annual or seasonal), however multivariate regression with autocorrelated errors and multivariate autoregressive models (MAR) are covered briefly. For multivariate autoregressive models and multivariate autoregressive state-space models for fisheries and environmental sciences, see Holmes, Ward and Scheuerell (2018)." />
+  <meta name="github-repo" content="fish-forecast/Fish-Forecast-Bookdown/" />
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="6.2 Assessing colinearity in covariates | Fisheries Catch Forecasting" />
+  
+  <meta name="twitter:description" content="This book will show you how to model and forecast annual and seasonal fisheries catches using R and its time-series analysis functions and packages. Forecasting using time-varying regression, ARIMA (Box-Jenkins) models, and expoential smoothing models is demonstrated using real catch time series. The entire process from data evaluation and diagnostics, model fitting, model selection and forecast evaluation is shown. The focus of the book is on univariate time series (annual or seasonal), however multivariate regression with autocorrelated errors and multivariate autoregressive models (MAR) are covered briefly. For multivariate autoregressive models and multivariate autoregressive state-space models for fisheries and environmental sciences, see Holmes, Ward and Scheuerell (2018)." />
+  <meta name="twitter:image" content="images/cover.png" />
+
+<meta name="author" content="Elizabeth Holmes" />
+
+
+<meta name="date" content="2019-08-20" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  
+  
+<link rel="prev" href="6-1-covariates-used-in-stergiou-and-christou.html">
+<link rel="next" href="6-3-MREGVAR.html">
+<script src="libs/jquery-2.2.3/jquery.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+
+
+
+
+
+
+
+<link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
+
+
+<style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+</style>
+
+<link rel="stylesheet" href="style.css" type="text/css" />
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li><a href="./index.html"><img src="./images/fish-forecast.jpg" width=50></a></li>
+
+<li class="divider"></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i>Preface</a></li>
+<li class="chapter" data-level="1" data-path="1-introduction.html"><a href="1-introduction.html"><i class="fa fa-check"></i><b>1</b> Introduction</a><ul>
+<li class="chapter" data-level="1.1" data-path="1-1-stergiou-and-christou-1996.html"><a href="1-1-stergiou-and-christou-1996.html"><i class="fa fa-check"></i><b>1.1</b> Stergiou and Christou 1996</a><ul>
+<li class="chapter" data-level="1.1.1" data-path="1-1-stergiou-and-christou-1996.html"><a href="1-1-stergiou-and-christou-1996.html#landingsdata"><i class="fa fa-check"></i><b>1.1.1</b> Hellenic landings data</a></li>
+</ul></li>
+<li class="chapter" data-level="1.2" data-path="1-2-the-landings-data-landings-rdata.html"><a href="1-2-the-landings-data-landings-rdata.html"><i class="fa fa-check"></i><b>1.2</b> The landings data, landings.RData</a></li>
+<li class="chapter" data-level="1.3" data-path="1-3-ts-objects.html"><a href="1-3-ts-objects.html"><i class="fa fa-check"></i><b>1.3</b> ts objects</a><ul>
+<li class="chapter" data-level="1.3.1" data-path="1-3-ts-objects.html"><a href="1-3-ts-objects.html#ts-function"><i class="fa fa-check"></i><b>1.3.1</b> <code>ts()</code> function</a></li>
+<li class="chapter" data-level="1.3.2" data-path="1-3-ts-objects.html"><a href="1-3-ts-objects.html#ggplot-and-ts-objects"><i class="fa fa-check"></i><b>1.3.2</b> ggplot and ts objects</a></li>
+<li class="chapter" data-level="1.3.3" data-path="1-3-ts-objects.html"><a href="1-3-ts-objects.html#plotting-using-a-data-frame"><i class="fa fa-check"></i><b>1.3.3</b> Plotting using a data frame</a></li>
+</ul></li>
+<li class="chapter" data-level="1.4" data-path="1-4-packages.html"><a href="1-4-packages.html"><i class="fa fa-check"></i><b>1.4</b> Packages</a></li>
+<li class="chapter" data-level="1.5" data-path="1-5-references.html"><a href="1-5-references.html"><i class="fa fa-check"></i><b>1.5</b> References</a></li>
+</ul></li>
+<li class="chapter" data-level="2" data-path="2-time-varying-regression.html"><a href="2-time-varying-regression.html"><i class="fa fa-check"></i><b>2</b> Time-varying regression</a><ul>
+<li class="chapter" data-level="2.1" data-path="2-1-fitting-time-varying-regressions.html"><a href="2-1-fitting-time-varying-regressions.html"><i class="fa fa-check"></i><b>2.1</b> Fitting time-varying regressions</a><ul>
+<li class="chapter" data-level="2.1.1" data-path="2-1-fitting-time-varying-regressions.html"><a href="2-1-fitting-time-varying-regressions.html#orthogonal-polynomials"><i class="fa fa-check"></i><b>2.1.1</b> Orthogonal polynomials</a></li>
+<li class="chapter" data-level="2.1.2" data-path="2-1-fitting-time-varying-regressions.html"><a href="2-1-fitting-time-varying-regressions.html#residual-diagnostics"><i class="fa fa-check"></i><b>2.1.2</b> Residual diagnostics</a></li>
+<li class="chapter" data-level="2.1.3" data-path="2-1-fitting-time-varying-regressions.html"><a href="2-1-fitting-time-varying-regressions.html#compare-to-stergiou-and-christou"><i class="fa fa-check"></i><b>2.1.3</b> Compare to Stergiou and Christou</a></li>
+<li class="chapter" data-level="2.1.4" data-path="2-1-fitting-time-varying-regressions.html"><a href="2-1-fitting-time-varying-regressions.html#summary"><i class="fa fa-check"></i><b>2.1.4</b> Summary</a></li>
+</ul></li>
+<li class="chapter" data-level="2.2" data-path="2-2-forecasting-with-a-time-varying-regression-model.html"><a href="2-2-forecasting-with-a-time-varying-regression-model.html"><i class="fa fa-check"></i><b>2.2</b> Forecasting with a time-varying regression model</a><ul>
+<li class="chapter" data-level="2.2.1" data-path="2-2-forecasting-with-a-time-varying-regression-model.html"><a href="2-2-forecasting-with-a-time-varying-regression-model.html#the-forecast-package"><i class="fa fa-check"></i><b>2.2.1</b> The forecast package</a></li>
+<li class="chapter" data-level="2.2.2" data-path="2-2-forecasting-with-a-time-varying-regression-model.html"><a href="2-2-forecasting-with-a-time-varying-regression-model.html#summary-1"><i class="fa fa-check"></i><b>2.2.2</b> Summary</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="3" data-path="3-arima-models.html"><a href="3-arima-models.html"><i class="fa fa-check"></i><b>3</b> ARIMA Models</a><ul>
+<li class="chapter" data-level="3.1" data-path="3-1-overview.html"><a href="3-1-overview.html"><i class="fa fa-check"></i><b>3.1</b> Overview</a><ul>
+<li class="chapter" data-level="3.1.1" data-path="3-1-overview.html"><a href="3-1-overview.html#components-of-an-arima-model"><i class="fa fa-check"></i><b>3.1.1</b> Components of an ARIMA model</a></li>
+<li class="chapter" data-level="3.1.2" data-path="3-1-overview.html"><a href="3-1-overview.html#box-jenkins-method"><i class="fa fa-check"></i><b>3.1.2</b> Box-Jenkins method</a></li>
+<li class="chapter" data-level="3.1.3" data-path="3-1-overview.html"><a href="3-1-overview.html#acf-and-pacf-functions"><i class="fa fa-check"></i><b>3.1.3</b> ACF and PACF functions</a></li>
+</ul></li>
+<li class="chapter" data-level="3.2" data-path="3-2-stationarity.html"><a href="3-2-stationarity.html"><i class="fa fa-check"></i><b>3.2</b> Stationarity</a><ul>
+<li class="chapter" data-level="3.2.1" data-path="3-2-stationarity.html"><a href="3-2-stationarity.html#definition"><i class="fa fa-check"></i><b>3.2.1</b> Definition</a></li>
+<li class="chapter" data-level="3.2.2" data-path="3-2-stationarity.html"><a href="3-2-stationarity.html#non-stationarity"><i class="fa fa-check"></i><b>3.2.2</b> Non-stationarity</a></li>
+<li class="chapter" data-level="3.2.3" data-path="3-2-stationarity.html"><a href="3-2-stationarity.html#stationarity-tests"><i class="fa fa-check"></i><b>3.2.3</b> Stationarity tests</a></li>
+<li class="chapter" data-level="3.2.4" data-path="3-2-stationarity.html"><a href="3-2-stationarity.html#differencing-the-data"><i class="fa fa-check"></i><b>3.2.4</b> Differencing the data</a></li>
+<li class="chapter" data-level="3.2.5" data-path="3-2-stationarity.html"><a href="3-2-stationarity.html#summary-2"><i class="fa fa-check"></i><b>3.2.5</b> Summary</a></li>
+</ul></li>
+<li class="chapter" data-level="3.3" data-path="3-3-model-structure.html"><a href="3-3-model-structure.html"><i class="fa fa-check"></i><b>3.3</b> Model structure</a><ul>
+<li class="chapter" data-level="3.3.1" data-path="3-3-model-structure.html"><a href="3-3-model-structure.html#ar-and-ma-lags"><i class="fa fa-check"></i><b>3.3.1</b> AR and MA lags</a></li>
+<li class="chapter" data-level="3.3.2" data-path="3-3-model-structure.html"><a href="3-3-model-structure.html#model-order"><i class="fa fa-check"></i><b>3.3.2</b> Model order</a></li>
+<li class="chapter" data-level="3.3.3" data-path="3-3-model-structure.html"><a href="3-3-model-structure.html#choosing-the-ar-and-ma-levels"><i class="fa fa-check"></i><b>3.3.3</b> Choosing the AR and MA levels</a></li>
+<li class="chapter" data-level="3.3.4" data-path="3-3-model-structure.html"><a href="3-3-model-structure.html#trace-true"><i class="fa fa-check"></i><b>3.3.4</b> Trace = TRUE</a></li>
+<li class="chapter" data-level="3.3.5" data-path="3-3-model-structure.html"><a href="3-3-model-structure.html#stepwise-false"><i class="fa fa-check"></i><b>3.3.5</b> stepwise = FALSE</a></li>
+<li class="chapter" data-level="3.3.6" data-path="3-3-model-structure.html"><a href="3-3-model-structure.html#summary-3"><i class="fa fa-check"></i><b>3.3.6</b> Summary</a></li>
+</ul></li>
+<li class="chapter" data-level="3.4" data-path="3-4-fitting-arima-models.html"><a href="3-4-fitting-arima-models.html"><i class="fa fa-check"></i><b>3.4</b> Fitting ARIMA models</a><ul>
+<li class="chapter" data-level="3.4.1" data-path="3-4-fitting-arima-models.html"><a href="3-4-fitting-arima-models.html#fitting-with-auto.arima"><i class="fa fa-check"></i><b>3.4.1</b> Fitting with <code>auto.arima()</code></a></li>
+<li class="chapter" data-level="3.4.2" data-path="3-4-fitting-arima-models.html"><a href="3-4-fitting-arima-models.html#outputting-the-models-tested"><i class="fa fa-check"></i><b>3.4.2</b> Outputting the models tested</a></li>
+<li class="chapter" data-level="3.4.3" data-path="3-4-fitting-arima-models.html"><a href="3-4-fitting-arima-models.html#repeat-with-the-sardine-data"><i class="fa fa-check"></i><b>3.4.3</b> Repeat with the sardine data</a></li>
+<li class="chapter" data-level="3.4.4" data-path="3-4-fitting-arima-models.html"><a href="3-4-fitting-arima-models.html#missing-values"><i class="fa fa-check"></i><b>3.4.4</b> Missing values</a></li>
+<li class="chapter" data-level="3.4.5" data-path="3-4-fitting-arima-models.html"><a href="3-4-fitting-arima-models.html#fit-a-specific-arima-model"><i class="fa fa-check"></i><b>3.4.5</b> Fit a specific ARIMA model</a></li>
+<li class="chapter" data-level="3.4.6" data-path="3-4-fitting-arima-models.html"><a href="3-4-fitting-arima-models.html#model-checking"><i class="fa fa-check"></i><b>3.4.6</b> Model checking</a></li>
+<li class="chapter" data-level="3.4.7" data-path="3-4-fitting-arima-models.html"><a href="3-4-fitting-arima-models.html#workflow-for-non-seasonal-data"><i class="fa fa-check"></i><b>3.4.7</b> Workflow for non-seasonal data</a></li>
+<li class="chapter" data-level="3.4.8" data-path="3-4-fitting-arima-models.html"><a href="3-4-fitting-arima-models.html#stepwise-vs-exhaustive-model-selection"><i class="fa fa-check"></i><b>3.4.8</b> Stepwise vs exhaustive model selection</a></li>
+<li class="chapter" data-level="3.4.9" data-path="3-4-fitting-arima-models.html"><a href="3-4-fitting-arima-models.html#summary-4"><i class="fa fa-check"></i><b>3.4.9</b> Summary</a></li>
+</ul></li>
+<li class="chapter" data-level="3.5" data-path="3-5-forecasting.html"><a href="3-5-forecasting.html"><i class="fa fa-check"></i><b>3.5</b> Forecasting</a><ul>
+<li class="chapter" data-level="3.5.1" data-path="3-5-forecasting.html"><a href="3-5-forecasting.html#forecasting-with-forecast"><i class="fa fa-check"></i><b>3.5.1</b> Forecasting with <code>forecast()</code></a></li>
+<li class="chapter" data-level="3.5.2" data-path="3-5-forecasting.html"><a href="3-5-forecasting.html#missing-values-1"><i class="fa fa-check"></i><b>3.5.2</b> Missing values</a></li>
+<li class="chapter" data-level="3.5.3" data-path="3-5-forecasting.html"><a href="3-5-forecasting.html#null-forecast-models"><i class="fa fa-check"></i><b>3.5.3</b> Null forecast models</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="4" data-path="4-exponential-smoothing-models.html"><a href="4-exponential-smoothing-models.html"><i class="fa fa-check"></i><b>4</b> Exponential smoothing models</a><ul>
+<li class="chapter" data-level="4.0.1" data-path="4-exponential-smoothing-models.html"><a href="4-exponential-smoothing-models.html#naive-model"><i class="fa fa-check"></i><b>4.0.1</b> Naive model</a></li>
+<li class="chapter" data-level="4.0.2" data-path="4-exponential-smoothing-models.html"><a href="4-exponential-smoothing-models.html#exponential-smoothing"><i class="fa fa-check"></i><b>4.0.2</b> Exponential smoothing</a></li>
+<li class="chapter" data-level="4.0.3" data-path="4-exponential-smoothing-models.html"><a href="4-exponential-smoothing-models.html#exponential-smoothing-with-no-trend"><i class="fa fa-check"></i><b>4.0.3</b> Exponential smoothing with no trend</a></li>
+<li class="chapter" data-level="4.0.4" data-path="4-exponential-smoothing-models.html"><a href="4-exponential-smoothing-models.html#fit-a-ets-model"><i class="fa fa-check"></i><b>4.0.4</b> Fit a ETS model</a></li>
+<li class="chapter" data-level="4.0.5" data-path="4-exponential-smoothing-models.html"><a href="4-exponential-smoothing-models.html#decomposing-your-model-fit"><i class="fa fa-check"></i><b>4.0.5</b> Decomposing your model fit</a></li>
+<li class="chapter" data-level="4.1" data-path="4-1-simple-exponential-smoothing-with-trend.html"><a href="4-1-simple-exponential-smoothing-with-trend.html"><i class="fa fa-check"></i><b>4.1</b> Simple Exponential Smoothing with Trend</a><ul>
+<li class="chapter" data-level="4.1.1" data-path="4-1-simple-exponential-smoothing-with-trend.html"><a href="4-1-simple-exponential-smoothing-with-trend.html#exponential-smoothing-model-with-trend"><i class="fa fa-check"></i><b>4.1.1</b> Exponential smoothing model with trend</a></li>
+<li class="chapter" data-level="4.1.2" data-path="4-1-simple-exponential-smoothing-with-trend.html"><a href="4-1-simple-exponential-smoothing-with-trend.html#simple-ets-models-with-ets"><i class="fa fa-check"></i><b>4.1.2</b> Simple ETS models with <code>ets()</code></a></li>
+<li class="chapter" data-level="4.1.3" data-path="4-1-simple-exponential-smoothing-with-trend.html"><a href="4-1-simple-exponential-smoothing-with-trend.html#produce-forecast-using-a-previous-fit"><i class="fa fa-check"></i><b>4.1.3</b> Produce forecast using a previous fit</a></li>
+</ul></li>
+<li class="chapter" data-level="4.2" data-path="4-2-forecast-performance.html"><a href="4-2-forecast-performance.html"><i class="fa fa-check"></i><b>4.2</b> Forecast performance</a><ul>
+<li class="chapter" data-level="4.2.1" data-path="4-2-forecast-performance.html"><a href="4-2-forecast-performance.html#test-forecast-performance"><i class="fa fa-check"></i><b>4.2.1</b> Test forecast performance</a></li>
+<li class="chapter" data-level="4.2.2" data-path="4-2-forecast-performance.html"><a href="4-2-forecast-performance.html#testing-a-specific-ets-model"><i class="fa fa-check"></i><b>4.2.2</b> Testing a specific ets model</a></li>
+</ul></li>
+<li class="chapter" data-level="4.3" data-path="4-3-further-reading.html"><a href="4-3-further-reading.html"><i class="fa fa-check"></i><b>4.3</b> Further Reading</a></li>
+</ul></li>
+<li class="chapter" data-level="5" data-path="5-perf-testing.html"><a href="5-perf-testing.html"><i class="fa fa-check"></i><b>5</b> Testing forecast accuracy</a><ul>
+<li class="chapter" data-level="5.0.1" data-path="5-perf-testing.html"><a href="5-perf-testing.html#training-settest-set"><i class="fa fa-check"></i><b>5.0.1</b> Training set/test set</a></li>
+<li class="chapter" data-level="5.0.2" data-path="5-perf-testing.html"><a href="5-perf-testing.html#cross-validation"><i class="fa fa-check"></i><b>5.0.2</b> Cross-Validation</a></li>
+<li class="chapter" data-level="5.1" data-path="5-1-metrics.html"><a href="5-1-metrics.html"><i class="fa fa-check"></i><b>5.1</b> Metrics</a><ul>
+<li class="chapter" data-level="5.1.1" data-path="5-1-metrics.html"><a href="5-1-metrics.html#accuracy-function"><i class="fa fa-check"></i><b>5.1.1</b> <code>accuracy()</code> function</a></li>
+<li class="chapter" data-level="5.1.2" data-path="5-1-metrics.html"><a href="5-1-metrics.html#test-multiple-models"><i class="fa fa-check"></i><b>5.1.2</b> Test multiple models</a></li>
+<li class="chapter" data-level="5.1.3" data-path="5-1-metrics.html"><a href="5-1-metrics.html#cross-validation-1"><i class="fa fa-check"></i><b>5.1.3</b> Cross-validation</a></li>
+</ul></li>
+<li class="chapter" data-level="5.2" data-path="5-2-candidate-model-set.html"><a href="5-2-candidate-model-set.html"><i class="fa fa-check"></i><b>5.2</b> Candidate model set</a></li>
+<li class="chapter" data-level="5.3" data-path="5-3-testing-the-candidate-model-set.html"><a href="5-3-testing-the-candidate-model-set.html"><i class="fa fa-check"></i><b>5.3</b> Testing the candidate model set</a><ul>
+<li class="chapter" data-level="5.3.1" data-path="5-3-testing-the-candidate-model-set.html"><a href="5-3-testing-the-candidate-model-set.html#fit-each-of-our-candidate-models"><i class="fa fa-check"></i><b>5.3.1</b> Fit each of our candidate models</a></li>
+</ul></li>
+<li class="chapter" data-level="5.4" data-path="5-4-models-fit.html"><a href="5-4-models-fit.html"><i class="fa fa-check"></i><b>5.4</b> Models fit</a><ul>
+<li class="chapter" data-level="5.4.1" data-path="5-4-models-fit.html"><a href="5-4-models-fit.html#metrics-for-each-model"><i class="fa fa-check"></i><b>5.4.1</b> Metrics for each model</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="6" data-path="6-covariates.html"><a href="6-covariates.html"><i class="fa fa-check"></i><b>6</b> Covariates</a><ul>
+<li class="chapter" data-level="6.1" data-path="6-1-covariates-used-in-stergiou-and-christou.html"><a href="6-1-covariates-used-in-stergiou-and-christou.html"><i class="fa fa-check"></i><b>6.1</b> Covariates used in Stergiou and Christou</a><ul>
+<li class="chapter" data-level="" data-path="6-1-covariates-used-in-stergiou-and-christou.html"><a href="6-1-covariates-used-in-stergiou-and-christou.html#preparing-the-data-frame"><i class="fa fa-check"></i>Preparing the data frame</a></li>
+<li class="chapter" data-level="6.1.1" data-path="6-1-covariates-used-in-stergiou-and-christou.html"><a href="6-1-covariates-used-in-stergiou-and-christou.html#cov.df"><i class="fa fa-check"></i><b>6.1.1</b> Creating the data frame for model fitting</a></li>
+</ul></li>
+<li class="chapter" data-level="6.2" data-path="6-2-collinear.html"><a href="6-2-collinear.html"><i class="fa fa-check"></i><b>6.2</b> Assessing colinearity in covariates</a><ul>
+<li class="chapter" data-level="6.2.1" data-path="6-2-collinear.html"><a href="6-2-collinear.html#effect-of-collinearity"><i class="fa fa-check"></i><b>6.2.1</b> Effect of collinearity</a></li>
+</ul></li>
+<li class="chapter" data-level="6.3" data-path="6-3-MREGVAR.html"><a href="6-3-MREGVAR.html"><i class="fa fa-check"></i><b>6.3</b> Variable Selection</a><ul>
+<li class="chapter" data-level="6.3.1" data-path="6-3-MREGVAR.html"><a href="6-3-MREGVAR.html#stepwise-sel"><i class="fa fa-check"></i><b>6.3.1</b> Model selection with stepwise variable selection</a></li>
+<li class="chapter" data-level="6.3.2" data-path="6-3-MREGVAR.html"><a href="6-3-MREGVAR.html#model-selection-with-cross-validationislcv"><i class="fa fa-check"></i><b>6.3.2</b> Model selection with cross-validation</a></li>
+</ul></li>
+<li class="chapter" data-level="6.4" data-path="6-4-MREGPR.html"><a href="6-4-MREGPR.html"><i class="fa fa-check"></i><b>6.4</b> Penalized Regression</a><ul>
+<li class="chapter" data-level="6.4.1" data-path="6-4-MREGPR.html"><a href="6-4-MREGPR.html#ridge-regression"><i class="fa fa-check"></i><b>6.4.1</b> Ridge Regression</a></li>
+<li class="chapter" data-level="6.4.2" data-path="6-4-MREGPR.html"><a href="6-4-MREGPR.html#lasso"><i class="fa fa-check"></i><b>6.4.2</b> Lasso</a></li>
+<li class="chapter" data-level="6.4.3" data-path="6-4-MREGPR.html"><a href="6-4-MREGPR.html#elastic-net"><i class="fa fa-check"></i><b>6.4.3</b> Elastic net</a></li>
+</ul></li>
+<li class="chapter" data-level="6.5" data-path="6-5-MREGRELPO.html"><a href="6-5-MREGRELPO.html"><i class="fa fa-check"></i><b>6.5</b> Relative importance metrics</a></li>
+<li class="chapter" data-level="6.6" data-path="6-6-MREGORTHO.html"><a href="6-6-MREGORTHO.html"><i class="fa fa-check"></i><b>6.6</b> Orthogonalization</a></li>
+<li class="chapter" data-level="6.7" data-path="6-7-MREGPREDICT.html"><a href="6-7-MREGPREDICT.html"><i class="fa fa-check"></i><b>6.7</b> Model Prediction Accuracy</a></li>
+<li class="chapter" data-level="6.8" data-path="6-8-discussion.html"><a href="6-8-discussion.html"><i class="fa fa-check"></i><b>6.8</b> Discussion</a></li>
+</ul></li>
+<li class="chapter" data-level="7" data-path="7-auto-regressive-models-with-covariates.html"><a href="7-auto-regressive-models-with-covariates.html"><i class="fa fa-check"></i><b>7</b> Auto-regressive models with covariates</a><ul>
+<li class="chapter" data-level="7.1" data-path="7-1-MREGARMA.html"><a href="7-1-MREGARMA.html"><i class="fa fa-check"></i><b>7.1</b> Multivariate linear regression with ARMA errors</a><ul>
+<li class="chapter" data-level="7.1.1" data-path="7-1-MREGARMA.html"><a href="7-1-MREGARMA.html#example-fitting-with-auto.arima"><i class="fa fa-check"></i><b>7.1.1</b> Example: fitting with auto.arima</a></li>
+<li class="chapter" data-level="7.1.2" data-path="7-1-MREGARMA.html"><a href="7-1-MREGARMA.html#example-fitting-with-arima-and-sarima"><i class="fa fa-check"></i><b>7.1.2</b> Example: fitting with arima and sarima</a></li>
+<li class="chapter" data-level="7.1.3" data-path="7-1-MREGARMA.html"><a href="7-1-MREGARMA.html#example-fitting-with-gls"><i class="fa fa-check"></i><b>7.1.3</b> Example: fitting with gls</a></li>
+<li class="chapter" data-level="7.1.4" data-path="7-1-MREGARMA.html"><a href="7-1-MREGARMA.html#mreg-of-first-or-second-differences"><i class="fa fa-check"></i><b>7.1.4</b> MREG of first or second differences</a></li>
+<li class="chapter" data-level="7.1.5" data-path="7-1-MREGARMA.html"><a href="7-1-MREGARMA.html#discussion-1"><i class="fa fa-check"></i><b>7.1.5</b> Discussion</a></li>
+</ul></li>
+<li class="chapter" data-level="7.2" data-path="7-2-ARMAX.html"><a href="7-2-ARMAX.html"><i class="fa fa-check"></i><b>7.2</b> ARMAX Models</a><ul>
+<li class="chapter" data-level="7.2.1" data-path="7-2-ARMAX.html"><a href="7-2-ARMAX.html#discussion-2"><i class="fa fa-check"></i><b>7.2.1</b> Discussion</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="8" data-path="8-seasonality.html"><a href="8-seasonality.html"><i class="fa fa-check"></i><b>8</b> Seasonality</a><ul>
+<li class="chapter" data-level="8.0.1" data-path="8-seasonality.html"><a href="8-seasonality.html#load-the-chinook-salmon-data-set"><i class="fa fa-check"></i><b>8.0.1</b> Load the chinook salmon data set</a></li>
+<li class="chapter" data-level="8.0.2" data-path="8-seasonality.html"><a href="8-seasonality.html#plot-seasonal-data"><i class="fa fa-check"></i><b>8.0.2</b> Plot seasonal data</a></li>
+<li class="chapter" data-level="8.1" data-path="8-1-seasonal-exponential-smoothing-model.html"><a href="8-1-seasonal-exponential-smoothing-model.html"><i class="fa fa-check"></i><b>8.1</b> Seasonal Exponential Smoothing Model</a><ul>
+<li class="chapter" data-level="8.1.1" data-path="8-1-seasonal-exponential-smoothing-model.html"><a href="8-1-seasonal-exponential-smoothing-model.html#force-seasonality-to-evolve-more"><i class="fa fa-check"></i><b>8.1.1</b> Force seasonality to evolve more</a></li>
+</ul></li>
+<li class="chapter" data-level="8.2" data-path="8-2-seasonal-arima-model.html"><a href="8-2-seasonal-arima-model.html"><i class="fa fa-check"></i><b>8.2</b> Seasonal ARIMA model</a></li>
+<li class="chapter" data-level="8.3" data-path="8-3-missing-values-2.html"><a href="8-3-missing-values-2.html"><i class="fa fa-check"></i><b>8.3</b> Missing values</a></li>
+<li class="chapter" data-level="8.4" data-path="8-4-forecast-evaluation.html"><a href="8-4-forecast-evaluation.html"><i class="fa fa-check"></i><b>8.4</b> Forecast evaluation</a></li>
+</ul></li>
+<li class="chapter" data-level="" data-path="references-1.html"><a href="references-1.html"><i class="fa fa-check"></i>References</a></li>
+<li class="appendix"><span><b>Appendix</b></span></li>
+<li class="chapter" data-level="A" data-path="A-inputting-data.html"><a href="A-inputting-data.html"><i class="fa fa-check"></i><b>A</b> Inputting data</a><ul>
+<li class="chapter" data-level="" data-path="A-inputting-data.html"><a href="A-inputting-data.html#one-response-variable"><i class="fa fa-check"></i>one response variable</a></li>
+<li class="chapter" data-level="" data-path="A-inputting-data.html"><a href="A-inputting-data.html#many-response-variables"><i class="fa fa-check"></i>Many response variables</a></li>
+<li class="chapter" data-level="" data-path="A-inputting-data.html"><a href="A-inputting-data.html#many-response-variables-two-time-variables"><i class="fa fa-check"></i>Many response variables, two time variables</a></li>
+<li class="chapter" data-level="" data-path="A-inputting-data.html"><a href="A-inputting-data.html#one-response-variable-multiple-explanatory-variables"><i class="fa fa-check"></i>One response variable, multiple explanatory variables</a></li>
+</ul></li>
+<li class="chapter" data-level="B" data-path="B-downloading-icoads-covariates.html"><a href="B-downloading-icoads-covariates.html"><i class="fa fa-check"></i><b>B</b> Downloading ICOADS covariates</a></li>
+<li class="divider"></li>
+<li><a href="https://github.com/rstudio/bookdown" target="blank">Published with bookdown</a></li>
+
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Fisheries Catch Forecasting</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="collinear" class="section level2">
+<h2><span class="header-section-number">6.2</span> Assessing colinearity in covariates</h2>
+<!--
+if(file.exists("Fish-Forecast.Rmd")) file.remove("Fish-Forecast.Rmd")
+bookdown::preview_chapter("Forecasting-6-2-Covariates-MSEG.Rmd")
+-->
+<p>Collinearity is near-linear relationships among the explanatory variables. Collinearity causes many problems such as inflated standard errors of the coefficients and correspondingly unbiased but highly imprecise estimates of the coefficients, false p-values, and poor predictive accuracy of the model. Thus it is important to evaluate the level of collinearity in your explanatory variables.</p>
+<div id="pairs-plot" class="section level4 unnumbered">
+<h4>Pairs plot</h4>
+<p>One way to see this is visually is with the <code>pairs()</code> plot. A pairs plot of fishing effort covariates reveals high correlations between Year, HPP and TOP.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">pairs</span>(df[,<span class="kw">c</span>(<span class="dv">2</span>,<span class="dv">9</span><span class="op">:</span><span class="dv">12</span>)])</code></pre></div>
+<p><img src="Fish-Forecast_files/figure-html/pairs.fish-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>The environmental covariates look generally ok.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">pairs</span>(df[,<span class="kw">c</span>(<span class="dv">2</span>,<span class="dv">4</span><span class="op">:</span><span class="dv">8</span>)])</code></pre></div>
+<p><img src="Fish-Forecast_files/figure-html/pairs.env-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>Another way that we can visualize the problem is by looking at the correlation matrix using the <strong>corrplot</strong> package.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(corrplot)</code></pre></div>
+<pre><code>## corrplot 0.84 loaded</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">X &lt;-<span class="st"> </span><span class="kw">as.matrix</span>(df[,<span class="kw">colnames</span>(df)<span class="op">!=</span><span class="st">&quot;anchovy&quot;</span>])
+<span class="kw">corrplot</span>(<span class="kw">cor</span>(X))</code></pre></div>
+<p><img src="Fish-Forecast_files/figure-html/unnamed-chunk-87-1.png" width="672" style="display: block; margin: auto;" /></p>
+</div>
+<div id="variance-inflation-factors" class="section level4 unnumbered">
+<h4>Variance inflation factors</h4>
+<p>Another way is to look for collinearity is to compute the variance inflation factors (VIF). The variance inflation factor is an estimate of how much larger the variance of a coefficient estimate is compared to if the variable were uncorrelated with the other explanatory variables in the model. If the VIF of variable <span class="math inline">\(i\)</span> is <span class="math inline">\(z\)</span>, then the standard error of the <span class="math inline">\(\beta_i\)</span> for variable <span class="math inline">\(i\)</span> is <span class="math inline">\(\sqrt{z}\)</span> times larger than if variable <span class="math inline">\(i\)</span> were uncorrelated with the other variables. For example, if VIF=10, the standard error of the coefficient estimate is 3.16 times larger (inflated). The rule of thumb is that any of the variables with VIF greater than 10 have collinearity problems.</p>
+<p>The <code>vif()</code> function in the car package will compute VIFs for us.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">full &lt;-<span class="st"> </span><span class="kw">lm</span>(anchovy <span class="op">~</span><span class="st"> </span>., <span class="dt">data=</span>df)
+car<span class="op">::</span><span class="kw">vif</span>(full)</code></pre></div>
+<pre><code>##       Year  Trachurus        air        slp        sst       vwnd 
+## 103.922970  18.140279   3.733963   3.324463   2.476689   2.010485 
+##      wspd3        BOP        FIP        HPP        TOP 
+##   1.909992  13.676208   8.836446  63.507170 125.295727</code></pre>
+<p>This shows that Year, HPP and TOP have severe collinearity problems, and BOP and <em>Trachusus</em> also have collinearity issues, though lesser.</p>
+</div>
+<div id="redun" class="section level4">
+<h4><span class="header-section-number">6.2.0.1</span> redun()</h4>
+<p>The Hmisc library also has a redundancy function (<code>redun()</code>) that can help identify which variables are redundant. This identifies variables that can be explained with an <span class="math inline">\(R^2&gt;0.9\)</span> by a linear (or non-linear) combination of other variables. We are fitting a linear model, so we set <code>nk=0</code> to force <code>redun()</code> to only look at linear combinations.</p>
+<p>We use <code>redun()</code> only on the explanatory variables and thus remove the first column, which is our response variable (anchovy).</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">a &lt;-<span class="st"> </span>Hmisc<span class="op">::</span><span class="kw">redun</span>(<span class="op">~</span><span class="st"> </span>.,<span class="dt">data=</span>df[,<span class="op">-</span><span class="dv">1</span>], <span class="dt">nk=</span><span class="dv">0</span>)
+a<span class="op">$</span>Out</code></pre></div>
+<pre><code>## [1] &quot;TOP&quot; &quot;HPP&quot;</code></pre>
+<p>This indicates that TOP and HPP can be explained by the other variables.</p>
+</div>
+<div id="effect-of-collinearity" class="section level3">
+<h3><span class="header-section-number">6.2.1</span> Effect of collinearity</h3>
+<p>One thing that happens when we have collinearity is that we will get “complementary” (negative matched by positive) and very large coefficients in the variables that are collinear. We see this when we fit a linear regression with all the variables. I use the z-scored data so that the effect sizes (x-axis) are on the same scale.</p>
+<p><img src="Fish-Forecast_files/figure-html/coef.full-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>The Year coefficients is very large and the TOP and HPP coefficients are negative and very large. If we look at the fit, we see the at the standard errors for Year, TOP and HPP are very large. The p-value for Year is significant, however in the presence of severe collinearity, reported p-values should not be trusted.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">summary</span>(fit.full)</code></pre></div>
+<pre><code>## 
+## Call:
+## lm(formula = anchovy ~ ., data = dfz)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -0.4112 -0.1633 -0.0441  0.1459  0.5009 
+## 
+## Coefficients:
+##               Estimate Std. Error t value Pr(&gt;|t|)  
+## (Intercept) -9.171e-15  7.003e-02   0.000   1.0000  
+## Year         2.118e+00  7.139e-01   2.966   0.0128 *
+## Trachurus   -6.717e-02  2.983e-01  -0.225   0.8260  
+## air          2.987e-01  1.353e-01   2.207   0.0495 *
+## slp         -5.023e-02  1.277e-01  -0.393   0.7016  
+## sst         -7.250e-02  1.102e-01  -0.658   0.5242  
+## vwnd         1.530e-01  9.930e-02   1.540   0.1517  
+## wspd3        6.086e-02  9.679e-02   0.629   0.5423  
+## BOP          3.137e-01  2.590e-01   1.211   0.2512  
+## FIP          1.347e-01  2.082e-01   0.647   0.5309  
+## HPP         -5.202e-01  5.581e-01  -0.932   0.3713  
+## TOP         -8.068e-01  7.839e-01  -1.029   0.3255  
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 0.3359 on 11 degrees of freedom
+## Multiple R-squared:  0.946,  Adjusted R-squared:  0.8921 
+## F-statistic: 17.53 on 11 and 11 DF,  p-value: 2.073e-05</code></pre>
+<p>Stergiou and Christou do not state how (if at all) they address the collinearity in the explanatory variables, but it is clearly present. In the next chapter, I will show how to develop a multivariate regression model using variable selection. This is the approach used by Stergiou and Christou. Keep in mind that variable selection will not perform well when there is collinearity in your covariates and that variable selection is prone to over-fitting and selecting covariates due to chance.</p>
+
+</div>
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="6-1-covariates-used-in-stergiou-and-christou.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="6-3-MREGVAR.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/lunr.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": {
+"github": false,
+"facebook": true,
+"twitter": true,
+"google": false,
+"linkedin": false,
+"weibo": false,
+"instapaper": false,
+"vk": false,
+"all": ["facebook", "google", "twitter", "linkedin", "weibo", "instapaper"]
+},
+"fontsettings": {
+"theme": "white",
+"family": "sans",
+"size": 2
+},
+"edit": {
+"link": "https://github.com/fish-forecast/Fish-Forecast-Bookdown/edit/master/Forecasting-6-1-colinearity.Rmd",
+"text": "Edit"
+},
+"history": {
+"link": null,
+"text": null
+},
+"download": null,
+"toc": {
+"collapse": "section"
+}
+});
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "";
+    if (src === "" || src === "true") src = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:" && /^https?:/.test(src))
+      src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+</body>
+
+</html>

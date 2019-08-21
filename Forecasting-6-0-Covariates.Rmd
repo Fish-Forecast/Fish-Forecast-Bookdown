@@ -1,0 +1,103 @@
+
+```{r f60-load_packages, echo=FALSE, message=FALSE, warning=FALSE}
+library(ggplot2)
+```
+
+# Covariates
+
+Often we want to explain the variability in our data using covariates or exogenous variables.  We may want to do this in order to create forecasts using information from the covariates in time step $t-1$ or $t$ to help forecast at time $t$.  Or we may want to understand what causes variability in our data in order to help understand the underlying process.
+
+We can include covariates in the time-varying regression model and the ARIMA models.  We cannot include covariates in an exponential smoothing model.  That doesn't make sense as a exponential model is a type of filter of the data not a 'process' model.
+
+In this chapter, I show a number of approaches for including covariates in a multivariate regression model (MREG) with temporally independent errors. This is not a time series model per se, but rather a multivariate regression applied to time-ordered data. MREG models with auto-regressive errors and auto-regressive models with covariates will be addressed in a separate chapter.  
+
+I illustrate a variety of approaches for developing a set of covariate for a MREG model.  The first approach is variable selection, which was the approach used by Stergiou and Christou for their MREG models (\@ref(MREGVAR)). The other approaches are penalized regression (\@ref(MREGPR)), relative importance metrics (\@ref(MREGRELPO)), and orthogonalization (\@ref(MREGORTHO)). These approaches all deal with the problem of selecting a set of covariates to include in your model.  
+
+Before discussing models with covariates, I will show a variety of approaches for evaluating the collinearity in your covariate set. Collinearity will dramatically affect your inferences concerning the effect of your covariates and needs to be assessed before you begin modeling.
+
+## Covariates used in Stergiou and Christou
+
+Stergiou and Christou used five environmental covariates: air temperature (air), sea-level pressure (slp), sea surface temperature (sst), vertical wind speed (vwnd), and wind speed cubed (wspd3).  I downloaded monthly values for these covariates from the three 1 degree boxes used by Stergiou and Christou from the ICOADS database. I then computed a yearly average over all months in the three boxes.  These yearly average environmental covariates are in `covsmean.year`, which is part of `landings.RData`.
+
+```{r f37-load_data}
+load("landings.RData")
+colnames(covsmean.year)
+```
+
+The covariates are those in Stergiou and Christou with the following differences. I used the ICOADS data not the COADS data.  The boxes are 1 degree but on 1 degree centers not 0.5 centers.  Thus the box is 39.5-40.5 not 39-40.  ICOADS does not include 'vertical wind'.  I used NS winds which may be different.  The code to download the ICOADS data is in the appendix.
+
+In addition to the environmental covariates, Stergiou and Christou used many covariates of fishing effort for trawlers, purse seiners, beach seiners, other coastal boats and demersal (sum of trawlers, beach seiners and other coastal boats).  For each fishery type, they used data on number of fishers (FI), number of boats (BO), total engine horse power (HP), total boat tonnage (TO).  They also used an economic variable: value (VA) of catch for trawlers, purse seiners, beach seiners, other coastal boats. These fishery covariates were extracted from the Greek Statistical Reports  (\@ref(landingsdata)).
+
+```{r fish.cov}
+colnames(fish.cov)
+```
+For anchovy, the fishery effort metrics from the purse seine fishery were used. Lastly, biological covariates were included which were the landings of other species.  Stergiou and Christou state (page 118) that the other species modeled by VAR (page 114) was included. This would imply that sardine was used as an explanatory variable.  However in Table 3 (page 119), it appears that *Trachurus* (Horse mackerel) was included.  It is not clear if sardine was also included but not chosen as an important variable.  I included *Trachurus* and not sardine as the biological explanatory variable.
+
+### Preparing the data frame {-}
+
+```{r cov.dataframe, echo=FALSE}
+# response
+df <- data.frame(anchovy=anchovy$log.metric.tons,
+                 Year=anchovy$Year)
+Year1 <- df$Year[1]
+Year2 <- df$Year[length(df$Year)]
+df <- subset(df, Year>=Year1+1 & Year<=Year2)
+# biological covariates
+df.bio <- subset(landings, Species=="Horse.mackerel")[,c("Year","log.metric.tons")]
+df.bio <- subset(df.bio, Year>=Year1 & Year<=Year2-1)[,-1,drop=FALSE] # [,-1] to remove year
+colnames(df.bio) <- "Trachurus"
+# environmental covariates
+covsmean.year[,"vwnd.m/s"]<- abs(covsmean.year[,"vwnd.m/s"])
+df.env <- log(subset(covsmean.year, Year>=Year1 & Year<=Year2-1)[,-1])
+# fishing effort
+df.fish <- log(subset(fish.cov, Year>=Year1 & Year<=Year2-1)[,-1])
+purse.cols <- stringr::str_detect(colnames(df.fish),"Purse.seiners")
+df.fish <- df.fish[,purse.cols]
+df.fish <- df.fish[!(colnames(df.fish)=="Purse.seiners.VAP")]
+# assemble
+df <- data.frame(
+            df, df.bio, df.env, df.fish
+            )
+df$Year <- df$Year-df$Year[1]+1
+colnames(df) <- sapply(colnames(df), function(x){rev(stringr::str_split(x,"Purse.seiners.")[[1]])[1]})
+colnames(df) <- sapply(colnames(df), function(x){stringr::str_split(x,"[.]")[[1]][1]})
+df <- df[,colnames(df)!="VAP"]
+# all the data to 2007
+df.full <- df
+# only training data
+df <- subset(df, Year>=1965-1964 & Year<=1987-1964)
+save(df, df.full, file="MREG_Data.RData")
+```
+
+We will model anchovy landings as the response variable.  The covariates are lagged by one year, following Stergiou and Christou.  This means that the catch in year $t$ is regressed against the covariates in year $t-1$. We set up our data frame as follows. We use the 1965 to 1987 catch data as the response. We use 1964 to 1986, so year prior, for all the explanatory variables and we log transform the explanatory variables (following Stergiou and Christou). We use $t$ 1 to 23 as a "year" covariate. Our data frame will have the following columns:
+```{r df.columns}
+colnames(df)
+```
+In total, there are `r ncol(df)-1` covariates and `r nrow(df)` years of data---which is not much data per explanatory variable.  Section \@ref(cov.df) shows the R code to create the `df` data frame with the response variable and all the explanatory variables. 
+
+For most of the analyses, we will use the untransformed variables, however for some analyses, we will want the effect sizes (the estimated $\beta$'s) to be on the same scale.  For these analyses, we will use the z-scored variables, which will be stored in data frame `dfz`.  z-scoring removes the mean and normalizes the variance to 1. Here is a loop to demean and rescale our data frame.
+
+```{r z.score}
+dfz <- df
+n <- nrow(df)
+for(i in colnames(df)){
+  pop_sd <- sd(df[,i])*sqrt((n-1)/n)
+  pop_mean <- mean(df[,i])
+  dfz[,i] <- (df[,i]-pop_mean)/pop_sd
+}
+```
+
+The function `scale()` will also do a scaling to the unbiased variance instead of the sample variance (divide by $n-1$ instead of $n$) and will return a matrix. We will use `dfz` which is scaled to the sample variance as we will need this for the chapter on Principal Components Regression.
+
+```{r scale, eval=FALSE}
+df.scale <- as.data.frame(scale(df))
+```
+
+<hr>
+
+### Creating the data frame for model fitting {#cov.df}
+
+Code to make the `df` data frame used in the model fitting functions.
+
+```{r ref.label="cov.dataframe",eval=FALSE}
+```

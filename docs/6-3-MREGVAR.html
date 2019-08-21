@@ -1,0 +1,688 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>6.3 Variable Selection | Fisheries Catch Forecasting</title>
+  <meta name="description" content="This book will show you how to model and forecast annual and seasonal fisheries catches using R and its time-series analysis functions and packages. Forecasting using time-varying regression, ARIMA (Box-Jenkins) models, and expoential smoothing models is demonstrated using real catch time series. The entire process from data evaluation and diagnostics, model fitting, model selection and forecast evaluation is shown. The focus of the book is on univariate time series (annual or seasonal), however multivariate regression with autocorrelated errors and multivariate autoregressive models (MAR) are covered briefly. For multivariate autoregressive models and multivariate autoregressive state-space models for fisheries and environmental sciences, see Holmes, Ward and Scheuerell (2018)." />
+  <meta name="generator" content="bookdown 0.12 and GitBook 2.6.7" />
+
+  <meta property="og:title" content="6.3 Variable Selection | Fisheries Catch Forecasting" />
+  <meta property="og:type" content="book" />
+  
+  <meta property="og:image" content="images/cover.png" />
+  <meta property="og:description" content="This book will show you how to model and forecast annual and seasonal fisheries catches using R and its time-series analysis functions and packages. Forecasting using time-varying regression, ARIMA (Box-Jenkins) models, and expoential smoothing models is demonstrated using real catch time series. The entire process from data evaluation and diagnostics, model fitting, model selection and forecast evaluation is shown. The focus of the book is on univariate time series (annual or seasonal), however multivariate regression with autocorrelated errors and multivariate autoregressive models (MAR) are covered briefly. For multivariate autoregressive models and multivariate autoregressive state-space models for fisheries and environmental sciences, see Holmes, Ward and Scheuerell (2018)." />
+  <meta name="github-repo" content="fish-forecast/Fish-Forecast-Bookdown/" />
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="6.3 Variable Selection | Fisheries Catch Forecasting" />
+  
+  <meta name="twitter:description" content="This book will show you how to model and forecast annual and seasonal fisheries catches using R and its time-series analysis functions and packages. Forecasting using time-varying regression, ARIMA (Box-Jenkins) models, and expoential smoothing models is demonstrated using real catch time series. The entire process from data evaluation and diagnostics, model fitting, model selection and forecast evaluation is shown. The focus of the book is on univariate time series (annual or seasonal), however multivariate regression with autocorrelated errors and multivariate autoregressive models (MAR) are covered briefly. For multivariate autoregressive models and multivariate autoregressive state-space models for fisheries and environmental sciences, see Holmes, Ward and Scheuerell (2018)." />
+  <meta name="twitter:image" content="images/cover.png" />
+
+<meta name="author" content="Elizabeth Holmes" />
+
+
+<meta name="date" content="2019-08-20" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  
+  
+<link rel="prev" href="6-2-collinear.html">
+<link rel="next" href="6-4-MREGPR.html">
+<script src="libs/jquery-2.2.3/jquery.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+
+
+
+
+
+
+
+<link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
+
+
+<style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+</style>
+
+<link rel="stylesheet" href="style.css" type="text/css" />
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li><a href="./index.html"><img src="./images/fish-forecast.jpg" width=50></a></li>
+
+<li class="divider"></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i>Preface</a></li>
+<li class="chapter" data-level="1" data-path="1-introduction.html"><a href="1-introduction.html"><i class="fa fa-check"></i><b>1</b> Introduction</a><ul>
+<li class="chapter" data-level="1.1" data-path="1-1-stergiou-and-christou-1996.html"><a href="1-1-stergiou-and-christou-1996.html"><i class="fa fa-check"></i><b>1.1</b> Stergiou and Christou 1996</a><ul>
+<li class="chapter" data-level="1.1.1" data-path="1-1-stergiou-and-christou-1996.html"><a href="1-1-stergiou-and-christou-1996.html#landingsdata"><i class="fa fa-check"></i><b>1.1.1</b> Hellenic landings data</a></li>
+</ul></li>
+<li class="chapter" data-level="1.2" data-path="1-2-the-landings-data-landings-rdata.html"><a href="1-2-the-landings-data-landings-rdata.html"><i class="fa fa-check"></i><b>1.2</b> The landings data, landings.RData</a></li>
+<li class="chapter" data-level="1.3" data-path="1-3-ts-objects.html"><a href="1-3-ts-objects.html"><i class="fa fa-check"></i><b>1.3</b> ts objects</a><ul>
+<li class="chapter" data-level="1.3.1" data-path="1-3-ts-objects.html"><a href="1-3-ts-objects.html#ts-function"><i class="fa fa-check"></i><b>1.3.1</b> <code>ts()</code> function</a></li>
+<li class="chapter" data-level="1.3.2" data-path="1-3-ts-objects.html"><a href="1-3-ts-objects.html#ggplot-and-ts-objects"><i class="fa fa-check"></i><b>1.3.2</b> ggplot and ts objects</a></li>
+<li class="chapter" data-level="1.3.3" data-path="1-3-ts-objects.html"><a href="1-3-ts-objects.html#plotting-using-a-data-frame"><i class="fa fa-check"></i><b>1.3.3</b> Plotting using a data frame</a></li>
+</ul></li>
+<li class="chapter" data-level="1.4" data-path="1-4-packages.html"><a href="1-4-packages.html"><i class="fa fa-check"></i><b>1.4</b> Packages</a></li>
+<li class="chapter" data-level="1.5" data-path="1-5-references.html"><a href="1-5-references.html"><i class="fa fa-check"></i><b>1.5</b> References</a></li>
+</ul></li>
+<li class="chapter" data-level="2" data-path="2-time-varying-regression.html"><a href="2-time-varying-regression.html"><i class="fa fa-check"></i><b>2</b> Time-varying regression</a><ul>
+<li class="chapter" data-level="2.1" data-path="2-1-fitting-time-varying-regressions.html"><a href="2-1-fitting-time-varying-regressions.html"><i class="fa fa-check"></i><b>2.1</b> Fitting time-varying regressions</a><ul>
+<li class="chapter" data-level="2.1.1" data-path="2-1-fitting-time-varying-regressions.html"><a href="2-1-fitting-time-varying-regressions.html#orthogonal-polynomials"><i class="fa fa-check"></i><b>2.1.1</b> Orthogonal polynomials</a></li>
+<li class="chapter" data-level="2.1.2" data-path="2-1-fitting-time-varying-regressions.html"><a href="2-1-fitting-time-varying-regressions.html#residual-diagnostics"><i class="fa fa-check"></i><b>2.1.2</b> Residual diagnostics</a></li>
+<li class="chapter" data-level="2.1.3" data-path="2-1-fitting-time-varying-regressions.html"><a href="2-1-fitting-time-varying-regressions.html#compare-to-stergiou-and-christou"><i class="fa fa-check"></i><b>2.1.3</b> Compare to Stergiou and Christou</a></li>
+<li class="chapter" data-level="2.1.4" data-path="2-1-fitting-time-varying-regressions.html"><a href="2-1-fitting-time-varying-regressions.html#summary"><i class="fa fa-check"></i><b>2.1.4</b> Summary</a></li>
+</ul></li>
+<li class="chapter" data-level="2.2" data-path="2-2-forecasting-with-a-time-varying-regression-model.html"><a href="2-2-forecasting-with-a-time-varying-regression-model.html"><i class="fa fa-check"></i><b>2.2</b> Forecasting with a time-varying regression model</a><ul>
+<li class="chapter" data-level="2.2.1" data-path="2-2-forecasting-with-a-time-varying-regression-model.html"><a href="2-2-forecasting-with-a-time-varying-regression-model.html#the-forecast-package"><i class="fa fa-check"></i><b>2.2.1</b> The forecast package</a></li>
+<li class="chapter" data-level="2.2.2" data-path="2-2-forecasting-with-a-time-varying-regression-model.html"><a href="2-2-forecasting-with-a-time-varying-regression-model.html#summary-1"><i class="fa fa-check"></i><b>2.2.2</b> Summary</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="3" data-path="3-arima-models.html"><a href="3-arima-models.html"><i class="fa fa-check"></i><b>3</b> ARIMA Models</a><ul>
+<li class="chapter" data-level="3.1" data-path="3-1-overview.html"><a href="3-1-overview.html"><i class="fa fa-check"></i><b>3.1</b> Overview</a><ul>
+<li class="chapter" data-level="3.1.1" data-path="3-1-overview.html"><a href="3-1-overview.html#components-of-an-arima-model"><i class="fa fa-check"></i><b>3.1.1</b> Components of an ARIMA model</a></li>
+<li class="chapter" data-level="3.1.2" data-path="3-1-overview.html"><a href="3-1-overview.html#box-jenkins-method"><i class="fa fa-check"></i><b>3.1.2</b> Box-Jenkins method</a></li>
+<li class="chapter" data-level="3.1.3" data-path="3-1-overview.html"><a href="3-1-overview.html#acf-and-pacf-functions"><i class="fa fa-check"></i><b>3.1.3</b> ACF and PACF functions</a></li>
+</ul></li>
+<li class="chapter" data-level="3.2" data-path="3-2-stationarity.html"><a href="3-2-stationarity.html"><i class="fa fa-check"></i><b>3.2</b> Stationarity</a><ul>
+<li class="chapter" data-level="3.2.1" data-path="3-2-stationarity.html"><a href="3-2-stationarity.html#definition"><i class="fa fa-check"></i><b>3.2.1</b> Definition</a></li>
+<li class="chapter" data-level="3.2.2" data-path="3-2-stationarity.html"><a href="3-2-stationarity.html#non-stationarity"><i class="fa fa-check"></i><b>3.2.2</b> Non-stationarity</a></li>
+<li class="chapter" data-level="3.2.3" data-path="3-2-stationarity.html"><a href="3-2-stationarity.html#stationarity-tests"><i class="fa fa-check"></i><b>3.2.3</b> Stationarity tests</a></li>
+<li class="chapter" data-level="3.2.4" data-path="3-2-stationarity.html"><a href="3-2-stationarity.html#differencing-the-data"><i class="fa fa-check"></i><b>3.2.4</b> Differencing the data</a></li>
+<li class="chapter" data-level="3.2.5" data-path="3-2-stationarity.html"><a href="3-2-stationarity.html#summary-2"><i class="fa fa-check"></i><b>3.2.5</b> Summary</a></li>
+</ul></li>
+<li class="chapter" data-level="3.3" data-path="3-3-model-structure.html"><a href="3-3-model-structure.html"><i class="fa fa-check"></i><b>3.3</b> Model structure</a><ul>
+<li class="chapter" data-level="3.3.1" data-path="3-3-model-structure.html"><a href="3-3-model-structure.html#ar-and-ma-lags"><i class="fa fa-check"></i><b>3.3.1</b> AR and MA lags</a></li>
+<li class="chapter" data-level="3.3.2" data-path="3-3-model-structure.html"><a href="3-3-model-structure.html#model-order"><i class="fa fa-check"></i><b>3.3.2</b> Model order</a></li>
+<li class="chapter" data-level="3.3.3" data-path="3-3-model-structure.html"><a href="3-3-model-structure.html#choosing-the-ar-and-ma-levels"><i class="fa fa-check"></i><b>3.3.3</b> Choosing the AR and MA levels</a></li>
+<li class="chapter" data-level="3.3.4" data-path="3-3-model-structure.html"><a href="3-3-model-structure.html#trace-true"><i class="fa fa-check"></i><b>3.3.4</b> Trace = TRUE</a></li>
+<li class="chapter" data-level="3.3.5" data-path="3-3-model-structure.html"><a href="3-3-model-structure.html#stepwise-false"><i class="fa fa-check"></i><b>3.3.5</b> stepwise = FALSE</a></li>
+<li class="chapter" data-level="3.3.6" data-path="3-3-model-structure.html"><a href="3-3-model-structure.html#summary-3"><i class="fa fa-check"></i><b>3.3.6</b> Summary</a></li>
+</ul></li>
+<li class="chapter" data-level="3.4" data-path="3-4-fitting-arima-models.html"><a href="3-4-fitting-arima-models.html"><i class="fa fa-check"></i><b>3.4</b> Fitting ARIMA models</a><ul>
+<li class="chapter" data-level="3.4.1" data-path="3-4-fitting-arima-models.html"><a href="3-4-fitting-arima-models.html#fitting-with-auto.arima"><i class="fa fa-check"></i><b>3.4.1</b> Fitting with <code>auto.arima()</code></a></li>
+<li class="chapter" data-level="3.4.2" data-path="3-4-fitting-arima-models.html"><a href="3-4-fitting-arima-models.html#outputting-the-models-tested"><i class="fa fa-check"></i><b>3.4.2</b> Outputting the models tested</a></li>
+<li class="chapter" data-level="3.4.3" data-path="3-4-fitting-arima-models.html"><a href="3-4-fitting-arima-models.html#repeat-with-the-sardine-data"><i class="fa fa-check"></i><b>3.4.3</b> Repeat with the sardine data</a></li>
+<li class="chapter" data-level="3.4.4" data-path="3-4-fitting-arima-models.html"><a href="3-4-fitting-arima-models.html#missing-values"><i class="fa fa-check"></i><b>3.4.4</b> Missing values</a></li>
+<li class="chapter" data-level="3.4.5" data-path="3-4-fitting-arima-models.html"><a href="3-4-fitting-arima-models.html#fit-a-specific-arima-model"><i class="fa fa-check"></i><b>3.4.5</b> Fit a specific ARIMA model</a></li>
+<li class="chapter" data-level="3.4.6" data-path="3-4-fitting-arima-models.html"><a href="3-4-fitting-arima-models.html#model-checking"><i class="fa fa-check"></i><b>3.4.6</b> Model checking</a></li>
+<li class="chapter" data-level="3.4.7" data-path="3-4-fitting-arima-models.html"><a href="3-4-fitting-arima-models.html#workflow-for-non-seasonal-data"><i class="fa fa-check"></i><b>3.4.7</b> Workflow for non-seasonal data</a></li>
+<li class="chapter" data-level="3.4.8" data-path="3-4-fitting-arima-models.html"><a href="3-4-fitting-arima-models.html#stepwise-vs-exhaustive-model-selection"><i class="fa fa-check"></i><b>3.4.8</b> Stepwise vs exhaustive model selection</a></li>
+<li class="chapter" data-level="3.4.9" data-path="3-4-fitting-arima-models.html"><a href="3-4-fitting-arima-models.html#summary-4"><i class="fa fa-check"></i><b>3.4.9</b> Summary</a></li>
+</ul></li>
+<li class="chapter" data-level="3.5" data-path="3-5-forecasting.html"><a href="3-5-forecasting.html"><i class="fa fa-check"></i><b>3.5</b> Forecasting</a><ul>
+<li class="chapter" data-level="3.5.1" data-path="3-5-forecasting.html"><a href="3-5-forecasting.html#forecasting-with-forecast"><i class="fa fa-check"></i><b>3.5.1</b> Forecasting with <code>forecast()</code></a></li>
+<li class="chapter" data-level="3.5.2" data-path="3-5-forecasting.html"><a href="3-5-forecasting.html#missing-values-1"><i class="fa fa-check"></i><b>3.5.2</b> Missing values</a></li>
+<li class="chapter" data-level="3.5.3" data-path="3-5-forecasting.html"><a href="3-5-forecasting.html#null-forecast-models"><i class="fa fa-check"></i><b>3.5.3</b> Null forecast models</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="4" data-path="4-exponential-smoothing-models.html"><a href="4-exponential-smoothing-models.html"><i class="fa fa-check"></i><b>4</b> Exponential smoothing models</a><ul>
+<li class="chapter" data-level="4.0.1" data-path="4-exponential-smoothing-models.html"><a href="4-exponential-smoothing-models.html#naive-model"><i class="fa fa-check"></i><b>4.0.1</b> Naive model</a></li>
+<li class="chapter" data-level="4.0.2" data-path="4-exponential-smoothing-models.html"><a href="4-exponential-smoothing-models.html#exponential-smoothing"><i class="fa fa-check"></i><b>4.0.2</b> Exponential smoothing</a></li>
+<li class="chapter" data-level="4.0.3" data-path="4-exponential-smoothing-models.html"><a href="4-exponential-smoothing-models.html#exponential-smoothing-with-no-trend"><i class="fa fa-check"></i><b>4.0.3</b> Exponential smoothing with no trend</a></li>
+<li class="chapter" data-level="4.0.4" data-path="4-exponential-smoothing-models.html"><a href="4-exponential-smoothing-models.html#fit-a-ets-model"><i class="fa fa-check"></i><b>4.0.4</b> Fit a ETS model</a></li>
+<li class="chapter" data-level="4.0.5" data-path="4-exponential-smoothing-models.html"><a href="4-exponential-smoothing-models.html#decomposing-your-model-fit"><i class="fa fa-check"></i><b>4.0.5</b> Decomposing your model fit</a></li>
+<li class="chapter" data-level="4.1" data-path="4-1-simple-exponential-smoothing-with-trend.html"><a href="4-1-simple-exponential-smoothing-with-trend.html"><i class="fa fa-check"></i><b>4.1</b> Simple Exponential Smoothing with Trend</a><ul>
+<li class="chapter" data-level="4.1.1" data-path="4-1-simple-exponential-smoothing-with-trend.html"><a href="4-1-simple-exponential-smoothing-with-trend.html#exponential-smoothing-model-with-trend"><i class="fa fa-check"></i><b>4.1.1</b> Exponential smoothing model with trend</a></li>
+<li class="chapter" data-level="4.1.2" data-path="4-1-simple-exponential-smoothing-with-trend.html"><a href="4-1-simple-exponential-smoothing-with-trend.html#simple-ets-models-with-ets"><i class="fa fa-check"></i><b>4.1.2</b> Simple ETS models with <code>ets()</code></a></li>
+<li class="chapter" data-level="4.1.3" data-path="4-1-simple-exponential-smoothing-with-trend.html"><a href="4-1-simple-exponential-smoothing-with-trend.html#produce-forecast-using-a-previous-fit"><i class="fa fa-check"></i><b>4.1.3</b> Produce forecast using a previous fit</a></li>
+</ul></li>
+<li class="chapter" data-level="4.2" data-path="4-2-forecast-performance.html"><a href="4-2-forecast-performance.html"><i class="fa fa-check"></i><b>4.2</b> Forecast performance</a><ul>
+<li class="chapter" data-level="4.2.1" data-path="4-2-forecast-performance.html"><a href="4-2-forecast-performance.html#test-forecast-performance"><i class="fa fa-check"></i><b>4.2.1</b> Test forecast performance</a></li>
+<li class="chapter" data-level="4.2.2" data-path="4-2-forecast-performance.html"><a href="4-2-forecast-performance.html#testing-a-specific-ets-model"><i class="fa fa-check"></i><b>4.2.2</b> Testing a specific ets model</a></li>
+</ul></li>
+<li class="chapter" data-level="4.3" data-path="4-3-further-reading.html"><a href="4-3-further-reading.html"><i class="fa fa-check"></i><b>4.3</b> Further Reading</a></li>
+</ul></li>
+<li class="chapter" data-level="5" data-path="5-perf-testing.html"><a href="5-perf-testing.html"><i class="fa fa-check"></i><b>5</b> Testing forecast accuracy</a><ul>
+<li class="chapter" data-level="5.0.1" data-path="5-perf-testing.html"><a href="5-perf-testing.html#training-settest-set"><i class="fa fa-check"></i><b>5.0.1</b> Training set/test set</a></li>
+<li class="chapter" data-level="5.0.2" data-path="5-perf-testing.html"><a href="5-perf-testing.html#cross-validation"><i class="fa fa-check"></i><b>5.0.2</b> Cross-Validation</a></li>
+<li class="chapter" data-level="5.1" data-path="5-1-metrics.html"><a href="5-1-metrics.html"><i class="fa fa-check"></i><b>5.1</b> Metrics</a><ul>
+<li class="chapter" data-level="5.1.1" data-path="5-1-metrics.html"><a href="5-1-metrics.html#accuracy-function"><i class="fa fa-check"></i><b>5.1.1</b> <code>accuracy()</code> function</a></li>
+<li class="chapter" data-level="5.1.2" data-path="5-1-metrics.html"><a href="5-1-metrics.html#test-multiple-models"><i class="fa fa-check"></i><b>5.1.2</b> Test multiple models</a></li>
+<li class="chapter" data-level="5.1.3" data-path="5-1-metrics.html"><a href="5-1-metrics.html#cross-validation-1"><i class="fa fa-check"></i><b>5.1.3</b> Cross-validation</a></li>
+</ul></li>
+<li class="chapter" data-level="5.2" data-path="5-2-candidate-model-set.html"><a href="5-2-candidate-model-set.html"><i class="fa fa-check"></i><b>5.2</b> Candidate model set</a></li>
+<li class="chapter" data-level="5.3" data-path="5-3-testing-the-candidate-model-set.html"><a href="5-3-testing-the-candidate-model-set.html"><i class="fa fa-check"></i><b>5.3</b> Testing the candidate model set</a><ul>
+<li class="chapter" data-level="5.3.1" data-path="5-3-testing-the-candidate-model-set.html"><a href="5-3-testing-the-candidate-model-set.html#fit-each-of-our-candidate-models"><i class="fa fa-check"></i><b>5.3.1</b> Fit each of our candidate models</a></li>
+</ul></li>
+<li class="chapter" data-level="5.4" data-path="5-4-models-fit.html"><a href="5-4-models-fit.html"><i class="fa fa-check"></i><b>5.4</b> Models fit</a><ul>
+<li class="chapter" data-level="5.4.1" data-path="5-4-models-fit.html"><a href="5-4-models-fit.html#metrics-for-each-model"><i class="fa fa-check"></i><b>5.4.1</b> Metrics for each model</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="6" data-path="6-covariates.html"><a href="6-covariates.html"><i class="fa fa-check"></i><b>6</b> Covariates</a><ul>
+<li class="chapter" data-level="6.1" data-path="6-1-covariates-used-in-stergiou-and-christou.html"><a href="6-1-covariates-used-in-stergiou-and-christou.html"><i class="fa fa-check"></i><b>6.1</b> Covariates used in Stergiou and Christou</a><ul>
+<li class="chapter" data-level="" data-path="6-1-covariates-used-in-stergiou-and-christou.html"><a href="6-1-covariates-used-in-stergiou-and-christou.html#preparing-the-data-frame"><i class="fa fa-check"></i>Preparing the data frame</a></li>
+<li class="chapter" data-level="6.1.1" data-path="6-1-covariates-used-in-stergiou-and-christou.html"><a href="6-1-covariates-used-in-stergiou-and-christou.html#cov.df"><i class="fa fa-check"></i><b>6.1.1</b> Creating the data frame for model fitting</a></li>
+</ul></li>
+<li class="chapter" data-level="6.2" data-path="6-2-collinear.html"><a href="6-2-collinear.html"><i class="fa fa-check"></i><b>6.2</b> Assessing colinearity in covariates</a><ul>
+<li class="chapter" data-level="6.2.1" data-path="6-2-collinear.html"><a href="6-2-collinear.html#effect-of-collinearity"><i class="fa fa-check"></i><b>6.2.1</b> Effect of collinearity</a></li>
+</ul></li>
+<li class="chapter" data-level="6.3" data-path="6-3-MREGVAR.html"><a href="6-3-MREGVAR.html"><i class="fa fa-check"></i><b>6.3</b> Variable Selection</a><ul>
+<li class="chapter" data-level="6.3.1" data-path="6-3-MREGVAR.html"><a href="6-3-MREGVAR.html#stepwise-sel"><i class="fa fa-check"></i><b>6.3.1</b> Model selection with stepwise variable selection</a></li>
+<li class="chapter" data-level="6.3.2" data-path="6-3-MREGVAR.html"><a href="6-3-MREGVAR.html#model-selection-with-cross-validationislcv"><i class="fa fa-check"></i><b>6.3.2</b> Model selection with cross-validation</a></li>
+</ul></li>
+<li class="chapter" data-level="6.4" data-path="6-4-MREGPR.html"><a href="6-4-MREGPR.html"><i class="fa fa-check"></i><b>6.4</b> Penalized Regression</a><ul>
+<li class="chapter" data-level="6.4.1" data-path="6-4-MREGPR.html"><a href="6-4-MREGPR.html#ridge-regression"><i class="fa fa-check"></i><b>6.4.1</b> Ridge Regression</a></li>
+<li class="chapter" data-level="6.4.2" data-path="6-4-MREGPR.html"><a href="6-4-MREGPR.html#lasso"><i class="fa fa-check"></i><b>6.4.2</b> Lasso</a></li>
+<li class="chapter" data-level="6.4.3" data-path="6-4-MREGPR.html"><a href="6-4-MREGPR.html#elastic-net"><i class="fa fa-check"></i><b>6.4.3</b> Elastic net</a></li>
+</ul></li>
+<li class="chapter" data-level="6.5" data-path="6-5-MREGRELPO.html"><a href="6-5-MREGRELPO.html"><i class="fa fa-check"></i><b>6.5</b> Relative importance metrics</a></li>
+<li class="chapter" data-level="6.6" data-path="6-6-MREGORTHO.html"><a href="6-6-MREGORTHO.html"><i class="fa fa-check"></i><b>6.6</b> Orthogonalization</a></li>
+<li class="chapter" data-level="6.7" data-path="6-7-MREGPREDICT.html"><a href="6-7-MREGPREDICT.html"><i class="fa fa-check"></i><b>6.7</b> Model Prediction Accuracy</a></li>
+<li class="chapter" data-level="6.8" data-path="6-8-discussion.html"><a href="6-8-discussion.html"><i class="fa fa-check"></i><b>6.8</b> Discussion</a></li>
+</ul></li>
+<li class="chapter" data-level="7" data-path="7-auto-regressive-models-with-covariates.html"><a href="7-auto-regressive-models-with-covariates.html"><i class="fa fa-check"></i><b>7</b> Auto-regressive models with covariates</a><ul>
+<li class="chapter" data-level="7.1" data-path="7-1-MREGARMA.html"><a href="7-1-MREGARMA.html"><i class="fa fa-check"></i><b>7.1</b> Multivariate linear regression with ARMA errors</a><ul>
+<li class="chapter" data-level="7.1.1" data-path="7-1-MREGARMA.html"><a href="7-1-MREGARMA.html#example-fitting-with-auto.arima"><i class="fa fa-check"></i><b>7.1.1</b> Example: fitting with auto.arima</a></li>
+<li class="chapter" data-level="7.1.2" data-path="7-1-MREGARMA.html"><a href="7-1-MREGARMA.html#example-fitting-with-arima-and-sarima"><i class="fa fa-check"></i><b>7.1.2</b> Example: fitting with arima and sarima</a></li>
+<li class="chapter" data-level="7.1.3" data-path="7-1-MREGARMA.html"><a href="7-1-MREGARMA.html#example-fitting-with-gls"><i class="fa fa-check"></i><b>7.1.3</b> Example: fitting with gls</a></li>
+<li class="chapter" data-level="7.1.4" data-path="7-1-MREGARMA.html"><a href="7-1-MREGARMA.html#mreg-of-first-or-second-differences"><i class="fa fa-check"></i><b>7.1.4</b> MREG of first or second differences</a></li>
+<li class="chapter" data-level="7.1.5" data-path="7-1-MREGARMA.html"><a href="7-1-MREGARMA.html#discussion-1"><i class="fa fa-check"></i><b>7.1.5</b> Discussion</a></li>
+</ul></li>
+<li class="chapter" data-level="7.2" data-path="7-2-ARMAX.html"><a href="7-2-ARMAX.html"><i class="fa fa-check"></i><b>7.2</b> ARMAX Models</a><ul>
+<li class="chapter" data-level="7.2.1" data-path="7-2-ARMAX.html"><a href="7-2-ARMAX.html#discussion-2"><i class="fa fa-check"></i><b>7.2.1</b> Discussion</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="8" data-path="8-seasonality.html"><a href="8-seasonality.html"><i class="fa fa-check"></i><b>8</b> Seasonality</a><ul>
+<li class="chapter" data-level="8.0.1" data-path="8-seasonality.html"><a href="8-seasonality.html#load-the-chinook-salmon-data-set"><i class="fa fa-check"></i><b>8.0.1</b> Load the chinook salmon data set</a></li>
+<li class="chapter" data-level="8.0.2" data-path="8-seasonality.html"><a href="8-seasonality.html#plot-seasonal-data"><i class="fa fa-check"></i><b>8.0.2</b> Plot seasonal data</a></li>
+<li class="chapter" data-level="8.1" data-path="8-1-seasonal-exponential-smoothing-model.html"><a href="8-1-seasonal-exponential-smoothing-model.html"><i class="fa fa-check"></i><b>8.1</b> Seasonal Exponential Smoothing Model</a><ul>
+<li class="chapter" data-level="8.1.1" data-path="8-1-seasonal-exponential-smoothing-model.html"><a href="8-1-seasonal-exponential-smoothing-model.html#force-seasonality-to-evolve-more"><i class="fa fa-check"></i><b>8.1.1</b> Force seasonality to evolve more</a></li>
+</ul></li>
+<li class="chapter" data-level="8.2" data-path="8-2-seasonal-arima-model.html"><a href="8-2-seasonal-arima-model.html"><i class="fa fa-check"></i><b>8.2</b> Seasonal ARIMA model</a></li>
+<li class="chapter" data-level="8.3" data-path="8-3-missing-values-2.html"><a href="8-3-missing-values-2.html"><i class="fa fa-check"></i><b>8.3</b> Missing values</a></li>
+<li class="chapter" data-level="8.4" data-path="8-4-forecast-evaluation.html"><a href="8-4-forecast-evaluation.html"><i class="fa fa-check"></i><b>8.4</b> Forecast evaluation</a></li>
+</ul></li>
+<li class="chapter" data-level="" data-path="references-1.html"><a href="references-1.html"><i class="fa fa-check"></i>References</a></li>
+<li class="appendix"><span><b>Appendix</b></span></li>
+<li class="chapter" data-level="A" data-path="A-inputting-data.html"><a href="A-inputting-data.html"><i class="fa fa-check"></i><b>A</b> Inputting data</a><ul>
+<li class="chapter" data-level="" data-path="A-inputting-data.html"><a href="A-inputting-data.html#one-response-variable"><i class="fa fa-check"></i>one response variable</a></li>
+<li class="chapter" data-level="" data-path="A-inputting-data.html"><a href="A-inputting-data.html#many-response-variables"><i class="fa fa-check"></i>Many response variables</a></li>
+<li class="chapter" data-level="" data-path="A-inputting-data.html"><a href="A-inputting-data.html#many-response-variables-two-time-variables"><i class="fa fa-check"></i>Many response variables, two time variables</a></li>
+<li class="chapter" data-level="" data-path="A-inputting-data.html"><a href="A-inputting-data.html#one-response-variable-multiple-explanatory-variables"><i class="fa fa-check"></i>One response variable, multiple explanatory variables</a></li>
+</ul></li>
+<li class="chapter" data-level="B" data-path="B-downloading-icoads-covariates.html"><a href="B-downloading-icoads-covariates.html"><i class="fa fa-check"></i><b>B</b> Downloading ICOADS covariates</a></li>
+<li class="divider"></li>
+<li><a href="https://github.com/rstudio/bookdown" target="blank">Published with bookdown</a></li>
+
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Fisheries Catch Forecasting</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="MREGVAR" class="section level2">
+<h2><span class="header-section-number">6.3</span> Variable Selection</h2>
+<!--
+if(file.exists("Fish-Forecast.Rmd")) file.remove("Fish-Forecast.Rmd")
+bookdown::preview_chapter("Forecasting-6-2-Covariates-MSEG.Rmd")
+-->
+<p>In this chapter, I will illustrate developing a forecasting model using a multivariate regression (MREG). I will show the variable selection approach that Stergiou and Christou used to develop MREG models. More background on the methods discussed in this chapter can be found in the references in the endnotes.<a href="#fn1" class="footnoteRef" id="fnref1"><sup>1</sup></a> <a href="#fn2" class="footnoteRef" id="fnref2"><sup>2</sup></a> <a href="#fn3" class="footnoteRef" id="fnref3"><sup>3</sup></a> <a href="#fn4" class="footnoteRef" id="fnref4"><sup>4</sup></a> <a href="#fn5" class="footnoteRef" id="fnref5"><sup>5</sup></a>.</p>
+<p>A multivariate linear regression model with Gaussian errors takes the form:</p>
+<span class="math display">\[\begin{equation}
+\begin{gathered}
+x_t = \alpha + \phi_1 c_{t,1} + \phi_2 c_{t,2} + \dots + e_t \\
+e_t \sim N(0,\sigma)
+\end{gathered}
+\end{equation}\]</span>
+<p>In R, we can fit this model with <code>lm()</code>, which uses ordinary least squares (OLS). For model selection (determining what explanatory variables to include), there are a variety of approaches we can take. I will show approaches that use a few different packages.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(ggplot2)
+<span class="kw">library</span>(MASS)
+<span class="kw">library</span>(car)
+<span class="kw">library</span>(glmnet)
+<span class="kw">library</span>(Hmisc)
+<span class="kw">library</span>(stringr)
+<span class="kw">library</span>(caret)
+<span class="kw">library</span>(leaps)
+<span class="kw">library</span>(forecast)
+<span class="kw">library</span>(relaimpo)</code></pre></div>
+<div id="stepwise-sel" class="section level3">
+<h3><span class="header-section-number">6.3.1</span> Model selection with stepwise variable selection</h3>
+<!--
+http://www.sthda.com/english/articles/37-model-selection-essentials-in-r/154-stepwise-regression-essentials-in-r/
+-->
+<p>Stergiou and Christou state that the covariates to include were selected with stepwise variable selection. Stepwise variable selection is a type of automatic variable selection. Stepwise variable selection has many statistical problems and the problems are worse when the covariates are collinear as they are in our case (see this <a href="https://www.stata.com/support/faqs/statistics/stepwise-regression-problems/">link</a> for a review of the problems with stepwise variable selection). The gist of the problem is one of over-fitting. A stepwise selection procedure will tend to choose variables that, by chance, have large coefficients. With only 23 data points and high collinearity, this is likely to be a rather large problem for our dataset. As we saw, collinearity tends to cause very large positive effect sizes offset by large negative effect sizes. However I use stepwise variable selection here to replicate Stergiou and Christou. I will follow this with an example of other more robust approaches to model selection for linear regression.</p>
+<p>Stergiou and Christou do not give specifics on how they implemented stepwise variable selection. Stepwise variable selection refers to a forward-backward search, however there are many ways we can implement this and different approaches give different answers. The starting model in particular will have a large effect on the ending model.</p>
+<div id="step" class="section level4 unnumbered">
+<h4>step()</h4>
+<p>When using the <code>step()</code> function in the stats package (and the related <code>stepAIC()</code> function in the MASS package) , we specify the starting model and the scope of the search, i.e., the smallest model and the largest model. We set direction equal to “both” to specify stepwise variable selection. We also need to specify the selection criteria. The default is to use AIC.</p>
+<p>Let’s start with a search that starts with a full model which has all the explanatory variables. The first argument to <code>step()</code> is the starting model and <code>scope</code> specifies the maximum and minimum models as a list. <code>direction=&quot;both&quot;</code> is stepwise variable selection. <code>trace=0</code> turns off the reporting.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">null &lt;-<span class="st"> </span><span class="kw">lm</span>(anchovy <span class="op">~</span><span class="st"> </span><span class="dv">1</span>, <span class="dt">data=</span>df)
+full &lt;-<span class="st"> </span><span class="kw">lm</span>(anchovy <span class="op">~</span><span class="st"> </span>., <span class="dt">data=</span>df)
+step.full &lt;-<span class="st"> </span><span class="kw">step</span>(full, 
+                       <span class="dt">scope=</span><span class="kw">list</span>(<span class="dt">lower=</span>null, <span class="dt">upper=</span>full),
+                       <span class="dt">direction=</span><span class="st">&quot;both&quot;</span>, <span class="dt">trace =</span> <span class="dv">0</span>)
+step.full</code></pre></div>
+<pre><code>## 
+## Call:
+## lm(formula = anchovy ~ Year + air + vwnd + BOP + FIP + TOP, data = df)
+## 
+## Coefficients:
+## (Intercept)         Year          air         vwnd          BOP  
+##     -5.6500       0.1198       3.7000       0.1320       1.8051  
+##         FIP          TOP  
+##      1.0189      -1.7894</code></pre>
+<p>We can also apply <code>step()</code> with the caret package:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">step.caret &lt;-<span class="st"> </span>caret<span class="op">::</span><span class="kw">train</span>(anchovy <span class="op">~</span><span class="st"> </span>., <span class="dt">data =</span> df,
+                    <span class="dt">method =</span> <span class="st">&quot;lmStepAIC&quot;</span>,
+                    <span class="dt">direction =</span> <span class="st">&quot;both&quot;</span>,
+                    <span class="dt">trace =</span> <span class="ot">FALSE</span>
+)</code></pre></div>
+<pre><code>## Warning: attempting model selection on an essentially perfect fit is
+## nonsense
+
+## Warning: attempting model selection on an essentially perfect fit is
+## nonsense</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">step.caret<span class="op">$</span>finalModel</code></pre></div>
+<pre><code>## 
+## Call:
+## lm(formula = .outcome ~ Year + air + vwnd + BOP + FIP + TOP, 
+##     data = dat)
+## 
+## Coefficients:
+## (Intercept)         Year          air         vwnd          BOP  
+##     -5.6500       0.1198       3.7000       0.1320       1.8051  
+##         FIP          TOP  
+##      1.0189      -1.7894</code></pre>
+<p>Note that <code>method=&quot;lmStepAIC&quot;</code> in the <code>train()</code> function will always start with the full model.</p>
+<p>The AIC for this model is -19.6. This is a larger model than that reported in Table 3 (page 119) of Stergiou and Christou. The model in Table 3 includes only Year, <em>Trachurus</em> catch, SST, and FIP. The model selected by <code>step()</code> starting from the full model includes Year, <em>Trachurus</em> catch, air temperature, vertical wind, BOP, FIP and TOP.</p>
+<p>Let’s repeat but start the search with the smallest model.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">null &lt;-<span class="st"> </span><span class="kw">lm</span>(anchovy <span class="op">~</span><span class="st"> </span><span class="dv">1</span>, <span class="dt">data=</span>df)
+full &lt;-<span class="st"> </span><span class="kw">lm</span>(anchovy <span class="op">~</span><span class="st"> </span>., <span class="dt">data=</span>df)
+step.null &lt;-<span class="st"> </span><span class="kw">step</span>(null, 
+                   <span class="dt">scope=</span><span class="kw">list</span>(<span class="dt">lower=</span>null, <span class="dt">upper=</span>full),
+                   <span class="dt">direction=</span><span class="st">&quot;both&quot;</span>, <span class="dt">trace =</span> <span class="dv">0</span>)
+step.null</code></pre></div>
+<pre><code>## 
+## Call:
+## lm(formula = anchovy ~ Year + FIP + Trachurus + air, data = df)
+## 
+## Coefficients:
+## (Intercept)         Year          FIP    Trachurus          air  
+##    -0.51874      0.08663      0.81058     -0.28602      1.62735</code></pre>
+<p>This model has an AIC of -18.7. This AIC is larger (worse), which illustrates that you need to be careful how you set up the search. This selected model is very similar to that in Table 3 except that air temperature instead of SST is selected. Air temperature and SST are correlated, however.</p>
+<p>The air temperature is removed from the best model if we use BIC as the model selection criteria. This is done by setting <code>k=log(n)</code> where <span class="math inline">\(n\)</span> is sample size.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">step.null.bic &lt;-<span class="st"> </span><span class="kw">step</span>(null, 
+                       <span class="dt">scope=</span><span class="kw">list</span>(<span class="dt">lower=</span>null, <span class="dt">upper=</span>full),
+                       <span class="dt">direction=</span><span class="st">&quot;both&quot;</span>, <span class="dt">trace =</span> <span class="dv">0</span>,
+                       <span class="dt">k=</span><span class="kw">log</span>(<span class="kw">nrow</span>(df)))
+step.null.bic</code></pre></div>
+<pre><code>## 
+## Call:
+## lm(formula = anchovy ~ Year + FIP + Trachurus, data = df)
+## 
+## Coefficients:
+## (Intercept)         Year          FIP    Trachurus  
+##     2.81733      0.08836      0.98541     -0.30092</code></pre>
+<p>We can also do stepwise variable selection using the leaps package. However, the algorithm or starting model is different than for <code>step()</code> and the results are correspondingly different. The results are similar to <code>step()</code> starting from the full model but not identical. See the next section for a brief introduction to the leaps package.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">models &lt;-<span class="st"> </span>leaps<span class="op">::</span><span class="kw">regsubsets</span>(anchovy<span class="op">~</span>., <span class="dt">data =</span> df, <span class="dt">nvmax =</span><span class="dv">11</span>,
+                     <span class="dt">method =</span> <span class="st">&quot;seqrep&quot;</span>, <span class="dt">nbest=</span><span class="dv">1</span>)
+<span class="kw">plot</span>(models, <span class="dt">scale=</span><span class="st">&quot;bic&quot;</span>)</code></pre></div>
+<p><img src="Fish-Forecast_files/figure-html/leaps.step-1.png" width="672" style="display: block; margin: auto;" /></p>
+</div>
+<div id="leaps" class="section level4 unnumbered">
+<h4>leaps()</h4>
+<!--
+Raftery, A. E. (1995). Bayesian Model Selection in Social Research. Sociological Methodology, 25, 111-163.
+-->
+<p>We can use the leaps package to do a full search of the model space. The function <code>leaps::regsubsets()</code> will find the <code>nbest</code> models of size (number of explanatory variables) 1 to <code>nvmax</code> using different types of searches: exhaustive, forward, backward, and stepwise variable selection. We can then plot these best models of each size against a criteria. such as BIC. leaps allows us to plot against BIC, Cp (asymptotically the same as AIC and LOOCV), <span class="math inline">\(R^2\)</span> and adjusted <span class="math inline">\(R^2\)</span>. Each row in the plot is a model. The dark shading shows which variables are in the model. On the y-axis, farther away from the x-axis is better, so the models (rows) at the top of the plot are the best models.</p>
+<p>Let’s start with an exhaustive search and show only the best model of each size, where size is the number of explanatory variables in the model.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">models &lt;-<span class="st"> </span>leaps<span class="op">::</span><span class="kw">regsubsets</span>(anchovy<span class="op">~</span>., <span class="dt">data =</span> df, 
+                     <span class="dt">nvmax =</span> <span class="dv">11</span>, <span class="dt">nbest=</span><span class="dv">1</span>,
+                     <span class="dt">method =</span> <span class="st">&quot;exhaustive&quot;</span>)
+<span class="kw">plot</span>(models, <span class="dt">scale=</span><span class="st">&quot;bic&quot;</span>)</code></pre></div>
+<p><img src="Fish-Forecast_files/figure-html/leaps-1.png" width="672" style="display: block; margin: auto;" /> We see that when we use BIC as the selection criteria, the best model has Year, <em>Trachurus</em>, and FIP.</p>
+<p>Let’s look at more than one model for each model size. Let’s take the top 3 models for each model size and look at their BICs.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">models &lt;-<span class="st"> </span>leaps<span class="op">::</span><span class="kw">regsubsets</span>(anchovy<span class="op">~</span>., <span class="dt">data =</span> df, 
+                     <span class="dt">nvmax =</span> <span class="dv">11</span>, <span class="dt">nbest=</span><span class="dv">3</span>,
+                     <span class="dt">method =</span> <span class="st">&quot;exhaustive&quot;</span>)
+<span class="kw">plot</span>(models, <span class="dt">scale=</span><span class="st">&quot;bic&quot;</span>)</code></pre></div>
+<p><img src="Fish-Forecast_files/figure-html/leaps2-1.png" width="672" style="display: block; margin: auto;" /> We can plot the BIC for each size of model also.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">smodels =<span class="st"> </span><span class="kw">summary</span>(models)
+nvar &lt;-<span class="st"> </span><span class="kw">apply</span>(smodels<span class="op">$</span>which,<span class="dv">1</span>,sum)<span class="op">-</span><span class="dv">1</span>
+<span class="kw">plot</span>(nvar, smodels<span class="op">$</span>bic, <span class="dt">xlab =</span> <span class="st">&quot;Number of Variables&quot;</span>, <span class="dt">ylab =</span> <span class="st">&quot;BIC&quot;</span>)
+min.bic &lt;-<span class="st"> </span><span class="kw">which.min</span>(smodels<span class="op">$</span>bic)
+<span class="kw">points</span>(nvar[min.bic], smodels<span class="op">$</span>bic[min.bic], <span class="dt">pch =</span> <span class="dv">20</span>, <span class="dt">col =</span> <span class="st">&quot;red&quot;</span>)
+<span class="kw">abline</span>(<span class="dt">h =</span> smodels<span class="op">$</span>bic[min.bic]<span class="op">+</span><span class="dv">2</span>, <span class="dt">lty=</span><span class="dv">2</span>)</code></pre></div>
+<p><img src="Fish-Forecast_files/figure-html/leaps.bic.plot-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>These two plots show that there are many models within 2 of the top model. All the best models have Year and FIP, but there are many different 3rd and 4th variables that can be added and give a similar BIC. Interesting SST does not appear in any of the top models, while it was selected by Stergiou and Christou. This suggests that they computed the yearly SST values slightly differently than I did. My remote sensing data source was slightly different and that might be the cause.</p>
+</div>
+<div id="comparison-of-models-chosen-by-aic-aicc-and-bic" class="section level4">
+<h4><span class="header-section-number">6.3.1.1</span> Comparison of models chosen by AIC, AICc and BIC</h4>
+<p><code>step()</code> uses AIC instead of the AICc (corrected for small sample size). In our case, <span class="math inline">\(n=23\)</span> is fairly small and using AICc would be better suited for such a small dataset. leaps does not return AIC or AICc, but we can compute them. Note that Mallow’s Cp asymptotically has the same ordering as AIC, but <span class="math inline">\(n=23\)</span> is small and it does not have the same ordering as AIC in our case.</p>
+<p>First we use <code>summary()</code> to get a matrix showing the best model of each size. This matrix shows what variable is in the best model of each size. Note that this best model does not depend on the metric (BIC, AIC, etc) because we are looking at models with the same number of variables. The metric affects the penalty for different number of variables and thus only affects the models choice when we compare models of different sizes.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">models &lt;-<span class="st"> </span>leaps<span class="op">::</span><span class="kw">regsubsets</span>(anchovy<span class="op">~</span>., <span class="dt">data =</span> df, 
+                     <span class="dt">nvmax =</span> <span class="dv">11</span>, <span class="dt">nbest=</span><span class="dv">1</span>,
+                     <span class="dt">method =</span> <span class="st">&quot;exhaustive&quot;</span>)
+smodels &lt;-<span class="st"> </span><span class="kw">summary</span>(models)
+<span class="kw">head</span>(smodels<span class="op">$</span>which[,<span class="dv">1</span><span class="op">:</span><span class="dv">10</span>])</code></pre></div>
+<pre><code>##   (Intercept) Year Trachurus   air   slp   sst  vwnd wspd3   BOP   FIP
+## 1        TRUE TRUE     FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE
+## 2        TRUE TRUE     FALSE FALSE FALSE FALSE FALSE FALSE FALSE  TRUE
+## 3        TRUE TRUE      TRUE FALSE FALSE FALSE FALSE FALSE FALSE  TRUE
+## 4        TRUE TRUE      TRUE  TRUE FALSE FALSE FALSE FALSE FALSE  TRUE
+## 5        TRUE TRUE      TRUE  TRUE FALSE FALSE  TRUE FALSE FALSE  TRUE
+## 6        TRUE TRUE     FALSE  TRUE FALSE FALSE  TRUE FALSE  TRUE  TRUE</code></pre>
+<p>Next we compute AIC and AICc from BIC. <code>k</code> is the number of parameters. We need to add one more parameter for the estimated variance.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">k &lt;-<span class="st"> </span><span class="kw">apply</span>(smodels<span class="op">$</span>which,<span class="dv">1</span>,sum)<span class="op">+</span><span class="dv">1</span>
+mod.aicc &lt;-<span class="st"> </span>smodels<span class="op">$</span>bic<span class="op">+</span>k<span class="op">*</span>(<span class="dv">2</span><span class="op">+</span>(<span class="dv">2</span><span class="op">*</span>k<span class="op">+</span><span class="dv">2</span>)<span class="op">/</span>(<span class="dv">23</span><span class="op">-</span>k<span class="op">-</span><span class="dv">1</span>))<span class="op">-</span><span class="kw">log</span>(<span class="dv">23</span>)<span class="op">*</span>k
+mod.aic &lt;-<span class="st"> </span>smodels<span class="op">$</span>bic<span class="op">+</span>k<span class="op">*</span><span class="dv">2</span><span class="op">-</span><span class="kw">log</span>(<span class="dv">23</span>)<span class="op">*</span>k</code></pre></div>
+<p>Now we will plot the metrics for each model size. BIC, AICc and Mallow’s Cp all chose models with an intercept and 3 variables: Year, <em>Trachurus</em> and FIP. AIC selects a much larger model, however with <span class="math inline">\(n=23\)</span>, AICc would be a better choice. <img src="Fish-Forecast_files/figure-html/leaps.aicc.plot-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>To find the best model, find the row of the <code>smodels</code> matrix where AICc is the smallest. For example, here is the best model with AICc.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">rmin &lt;-<span class="st"> </span><span class="kw">which</span>(mod.aicc<span class="op">==</span><span class="kw">min</span>(mod.aicc))
+<span class="kw">colnames</span>(smodels<span class="op">$</span>which)[smodels<span class="op">$</span>which[rmin,]]</code></pre></div>
+<pre><code>## [1] &quot;(Intercept)&quot; &quot;Year&quot;        &quot;Trachurus&quot;   &quot;FIP&quot;</code></pre>
+<p>In comparison, the best model with AIC is larger.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">rmin &lt;-<span class="st"> </span><span class="kw">which</span>(mod.aic<span class="op">==</span><span class="kw">min</span>(mod.aic))
+<span class="kw">colnames</span>(smodels<span class="op">$</span>which)[smodels<span class="op">$</span>which[rmin,]]</code></pre></div>
+<pre><code>## [1] &quot;(Intercept)&quot; &quot;Year&quot;        &quot;air&quot;         &quot;vwnd&quot;        &quot;BOP&quot;        
+## [6] &quot;FIP&quot;         &quot;TOP&quot;</code></pre>
+</div>
+</div>
+<div id="model-selection-with-cross-validationislcv" class="section level3">
+<h3><span class="header-section-number">6.3.2</span> Model selection with cross-validation<a href="#fn6" class="footnoteRef" id="fnref6"><sup>6</sup></a></h3>
+<!--
+https://lagunita.stanford.edu/courses/HumanitiesSciences/StatLearning/Winter2016/about
+
+Introduction to Statistical Learning
+http://www-bcf.usc.edu/~gareth/ISL/
+
+https://lagunita.stanford.edu/c4x/HumanitiesSciences/StatLearning/asset/ch6.html
+-->
+<p>Variable selection (forward, backward, stepwise) is known to overfit models and variables will be chosen that just happen to have high correlation with your response variable for your particular dataset. The result is models with low out-of-sample predictive accuracy. Cross-validation is a way to try to deal with that problem.</p>
+<p>Model selection with cross-validation estimates the out-of-sample predictive performance of a <em>process</em> for building a model. So for example, you could use cross-validation to ask the question, “If I select a best model with AIC does that approach led to models with better predictive performance over selecting a best model with BIC?”.</p>
+<p>The basic idea behind cross-validation is that part of the data is used for fitting (training) the model and the left-out data is used for assessing predictions. You predict the left-out data and compare the actual data to the predictions. There are two common types of cross-validation: leave-one-out cross-validation (LOOCV) and k-fold cross-validation.</p>
+<p>Leave-one-out cross-validation (LOOCV) is a cross-validation where you leave one data point out, fit to the rest of the data, predict the left out data point, and compute the prediction error with prediction minus actual data value. This is repeated for all data points. So you will have <span class="math inline">\(n\)</span> prediction errors if you have <span class="math inline">\(n\)</span> data points. From these errors, you can compute various statistics. Root mean squared error (RMSE), mean squared error (MSE), and mean absolute error (MAE) are common.</p>
+<p>k-fold cross-validation is a cross-validation where you divide the data into k equal fractions. The model is fit k times: each fraction is treated as a test data set and the other k-1 fractions are used as the training data. When the model is fit, you predict the data in the test data and compute the prediction errors. Then you’ll compute the statistics (RMSE, MSE, etc) from the errors from all k training sets. There are many different ways you can split your data into k fractions. Thus one often repeats this process many times and uses the average. This is called repeated cross-validation.</p>
+<div id="example-code" class="section level4 unnumbered">
+<h4>Example code</h4>
+<p>Let’s see an example of this using models fit via stepwise variable selection using <code>leaps::regsubsets()</code>.</p>
+<p>Let’s start by defining a <code>predict</code> function for <code>regsubsets</code> objects<a href="#fn7" class="footnoteRef" id="fnref7"><sup>7</sup></a>.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">predict.regsubsets &lt;-<span class="st"> </span><span class="cf">function</span>(object, newdata, id, ...) {
+    form &lt;-<span class="st"> </span><span class="kw">as.formula</span>(object<span class="op">$</span>call[[<span class="dv">2</span>]])
+    mat &lt;-<span class="st"> </span><span class="kw">model.matrix</span>(form, newdata)
+    coefi &lt;-<span class="st"> </span>leaps<span class="op">:::</span><span class="kw">coef.regsubsets</span>(object, <span class="dt">id =</span> id)
+    mat[, <span class="kw">names</span>(coefi)] <span class="op">%*%</span><span class="st"> </span>coefi
+}</code></pre></div>
+<p>Next we set up a matrix that defines the folds. Each row has numbers 1 to k (folds) which specify which data points are in the test set. The other (non-k) data points will be the training set. Each row of <code>folds</code> is a different replicate of the repeated cross-validation.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">nfolds &lt;-<span class="st"> </span><span class="dv">5</span>
+nreps &lt;-<span class="st"> </span><span class="dv">20</span>
+folds &lt;-<span class="st"> </span><span class="kw">matrix</span>(<span class="ot">NA</span>, nreps, <span class="kw">nrow</span>(df))
+<span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">1</span><span class="op">:</span>nreps) 
+  folds[i,] &lt;-<span class="st"> </span><span class="kw">sample</span>(<span class="kw">rep</span>(<span class="dv">1</span><span class="op">:</span>nfolds, <span class="dt">length =</span> <span class="kw">nrow</span>(df)))</code></pre></div>
+<p>Now we can use <code>df[folds[r,]==k]</code> to specify the test data for the k-th fold of the r-th replicate. And <code>df[folds[r,]!=k]</code> is the training dataset for the k-th fold of the r-th replicate. The <strong>fold</strong> jargon is just another word for group. We divide the data into k groups and we call each group a <strong>fold</strong>.</p>
+<p>Next we set up a matrix to hold the prediction errors. We will have prediction errors for each fold, each replicate, and each variable (columns).</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">nvmax &lt;-<span class="st"> </span><span class="dv">8</span>
+cv.errors &lt;-<span class="st"> </span><span class="kw">matrix</span>(<span class="dv">0</span>, nreps<span class="op">*</span>nfolds, nvmax)</code></pre></div>
+<p>Now, we step through each replicate and each fold in each replicate. We find the best fit with <code>regsubsets()</code> applied to the <em>training set</em> for that replicate. Then we predict using that best fit to the test data for that replicate. We compute the errors (prediction minus data) and store. When we are done, we compute the RMSE (or whatever metric we want).</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="cf">for</span>(r <span class="cf">in</span> <span class="dv">1</span><span class="op">:</span>nreps){
+ <span class="cf">for</span> (k <span class="cf">in</span> <span class="dv">1</span><span class="op">:</span>nfolds) {
+  traindat &lt;-<span class="st"> </span>df[folds[r,]<span class="op">!=</span>k,]
+  testdat &lt;-<span class="st"> </span>df[folds[r,]<span class="op">==</span>k,]
+  best.fit &lt;-<span class="st"> </span>leaps<span class="op">::</span><span class="kw">regsubsets</span>(anchovy <span class="op">~</span><span class="st"> </span>., <span class="dt">data=</span>traindat, <span class="dt">nvmax =</span> nvmax, <span class="dt">method =</span> <span class="st">&quot;seqrep&quot;</span>)
+  <span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="op">:</span>nvmax) {
+    pred &lt;-<span class="st"> </span><span class="kw">predict.regsubsets</span>(best.fit, testdat, <span class="dt">id =</span> i)
+    cv.errors[r<span class="op">+</span>(k<span class="op">-</span><span class="dv">1</span>)<span class="op">*</span>nreps, i] &lt;-<span class="st"> </span>
+<span class="st">      </span><span class="kw">mean</span>((testdat<span class="op">$</span>anchovy <span class="op">-</span><span class="st"> </span>pred)<span class="op">^</span><span class="dv">2</span>)
+    }
+ }
+}
+rmse.cv &lt;-<span class="st"> </span><span class="kw">sqrt</span>(<span class="kw">apply</span>(cv.errors, <span class="dv">2</span>, mean, <span class="dt">na.rm=</span><span class="ot">TRUE</span>))
+<span class="kw">plot</span>(<span class="dv">1</span><span class="op">:</span>nvmax, rmse.cv, <span class="dt">pch =</span> <span class="dv">19</span>, <span class="dt">type =</span> <span class="st">&quot;b&quot;</span>,<span class="dt">xlab=</span><span class="st">&quot;Number of Variables&quot;</span>, <span class="dt">ylab=</span><span class="st">&quot;RMSE&quot;</span>)</code></pre></div>
+<p><img src="Fish-Forecast_files/figure-html/cv.code-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>The model size with the best predictive performance is smaller, intercept plus 2 variables instead of intercept plus 3 variables. This suggests that we should constrain our model size to 2 variables (plus intercept). Note, that with a 5-fold cross-validation, we were fitting the models to 19 data points instead of 23. However, even with a 23-fold cross-validation (Leave One Out CV), a model with 2 variables has the lowest RMSE.</p>
+<p>The best fit 2 variable model has Year and FIP.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">best.fit &lt;-<span class="st"> </span>leaps<span class="op">::</span><span class="kw">regsubsets</span>(anchovy <span class="op">~</span><span class="st"> </span>., <span class="dt">data=</span>traindat, <span class="dt">nvmax =</span> <span class="dv">2</span>, <span class="dt">method =</span> <span class="st">&quot;seqrep&quot;</span>)
+tmp &lt;-<span class="st"> </span><span class="kw">summary</span>(best.fit)<span class="op">$</span>which
+<span class="kw">colnames</span>(tmp)[tmp[<span class="dv">2</span>,]]</code></pre></div>
+<pre><code>## [1] &quot;(Intercept)&quot; &quot;Year&quot;        &quot;FIP&quot;</code></pre>
+</div>
+<div id="cross-validation-with-caret-package" class="section level4 unnumbered">
+<h4>Cross-validation with caret package</h4>
+<p>The the <code>train()</code> function in the <strong>caret</strong> package allows us to fit and cross-validate model sets easily. <code>trainControl</code> specifies the type of cross-validation and <code>tuneGrid</code> specifies the parameter over which cross-validation will be done (in this case the size of the model).</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(caret)
+<span class="co"># Set up repeated k-fold cross-validation</span>
+train.control &lt;-<span class="st"> </span><span class="kw">trainControl</span>(<span class="dt">method =</span> <span class="st">&quot;repeatedcv&quot;</span>, <span class="dt">number=</span><span class="dv">5</span>, <span class="dt">repeats=</span><span class="dv">20</span>)
+<span class="co"># Train the model</span>
+step.model &lt;-<span class="st"> </span><span class="kw">train</span>(anchovy<span class="op">~</span>., <span class="dt">data =</span> df,
+                    <span class="dt">method =</span> <span class="st">&quot;leapSeq&quot;</span>,
+                    <span class="dt">tuneGrid =</span> <span class="kw">data.frame</span>(<span class="dt">nvmax =</span> <span class="dv">1</span><span class="op">:</span>nvmax),
+                    <span class="dt">trControl =</span> train.control
+                    )
+<span class="kw">plot</span>(step.model<span class="op">$</span>results<span class="op">$</span>RMSE, <span class="dt">pch =</span> <span class="dv">19</span>, <span class="dt">type =</span> <span class="st">&quot;b&quot;</span>, <span class="dt">ylab=</span><span class="st">&quot;RMSE&quot;</span>)</code></pre></div>
+<p><img src="Fish-Forecast_files/figure-html/caret.plot-1.png" width="672" style="display: block; margin: auto;" /> The <code>$results</code> part of the output shows us the cross-validation metrics. Best depends on the metric we use. A 2-parameter model is best for all the error metrics except R-squared.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">step.model<span class="op">$</span>results</code></pre></div>
+<table class="huxtable" style="border-collapse: collapse; margin-bottom: 2em; margin-top: 2em; width: 100%; margin-left: 0%; margin-right: auto;  ">
+<col><col><col><col><col><col><col><tr>
+<td style="vertical-align: top; text-align: right; white-space: nowrap; border-style: solid solid solid solid; border-width: 0.4pt 0pt 0.4pt 0.4pt; padding: 4pt 4pt 4pt 4pt; font-weight: bold;">nvmax</td>
+<td style="vertical-align: top; text-align: right; white-space: nowrap; border-style: solid solid solid solid; border-width: 0.4pt 0pt 0.4pt 0pt; padding: 4pt 4pt 4pt 4pt; font-weight: bold;">RMSE</td>
+<td style="vertical-align: top; text-align: right; white-space: nowrap; border-style: solid solid solid solid; border-width: 0.4pt 0pt 0.4pt 0pt; padding: 4pt 4pt 4pt 4pt; font-weight: bold;">Rsquared</td>
+<td style="vertical-align: top; text-align: right; white-space: nowrap; border-style: solid solid solid solid; border-width: 0.4pt 0pt 0.4pt 0pt; padding: 4pt 4pt 4pt 4pt; font-weight: bold;">MAE</td>
+<td style="vertical-align: top; text-align: right; white-space: nowrap; border-style: solid solid solid solid; border-width: 0.4pt 0pt 0.4pt 0pt; padding: 4pt 4pt 4pt 4pt; font-weight: bold;">RMSESD</td>
+<td style="vertical-align: top; text-align: right; white-space: nowrap; border-style: solid solid solid solid; border-width: 0.4pt 0pt 0.4pt 0pt; padding: 4pt 4pt 4pt 4pt; font-weight: bold;">RsquaredSD</td>
+<td style="vertical-align: top; text-align: right; white-space: nowrap; border-style: solid solid solid solid; border-width: 0.4pt 0.4pt 0.4pt 0pt; padding: 4pt 4pt 4pt 4pt; font-weight: bold;">MAESD</td>
+</tr>
+<tr>
+<td style="vertical-align: top; text-align: right; white-space: nowrap; border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0.4pt; padding: 4pt 4pt 4pt 4pt; background-color: rgb(242, 242, 242);">1</td>
+<td style="vertical-align: top; text-align: right; white-space: normal; padding: 4pt 4pt 4pt 4pt; background-color: rgb(242, 242, 242);">0.199</td>
+<td style="vertical-align: top; text-align: right; white-space: normal; padding: 4pt 4pt 4pt 4pt; background-color: rgb(242, 242, 242);">0.857</td>
+<td style="vertical-align: top; text-align: right; white-space: normal; padding: 4pt 4pt 4pt 4pt; background-color: rgb(242, 242, 242);">0.17&nbsp;</td>
+<td style="vertical-align: top; text-align: right; white-space: normal; padding: 4pt 4pt 4pt 4pt; background-color: rgb(242, 242, 242);">0.0674</td>
+<td style="vertical-align: top; text-align: right; white-space: normal; padding: 4pt 4pt 4pt 4pt; background-color: rgb(242, 242, 242);">0.122&nbsp;</td>
+<td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0pt 0.4pt 0pt 0pt; padding: 4pt 4pt 4pt 4pt; background-color: rgb(242, 242, 242);">0.0611</td>
+</tr>
+<tr>
+<td style="vertical-align: top; text-align: right; white-space: nowrap; border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0.4pt; padding: 4pt 4pt 4pt 4pt;">2</td>
+<td style="vertical-align: top; text-align: right; white-space: normal; padding: 4pt 4pt 4pt 4pt;">0.186</td>
+<td style="vertical-align: top; text-align: right; white-space: normal; padding: 4pt 4pt 4pt 4pt;">0.875</td>
+<td style="vertical-align: top; text-align: right; white-space: normal; padding: 4pt 4pt 4pt 4pt;">0.163</td>
+<td style="vertical-align: top; text-align: right; white-space: normal; padding: 4pt 4pt 4pt 4pt;">0.0492</td>
+<td style="vertical-align: top; text-align: right; white-space: normal; padding: 4pt 4pt 4pt 4pt;">0.0989</td>
+<td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0pt 0.4pt 0pt 0pt; padding: 4pt 4pt 4pt 4pt;">0.0477</td>
+</tr>
+<tr>
+<td style="vertical-align: top; text-align: right; white-space: nowrap; border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0.4pt; padding: 4pt 4pt 4pt 4pt; background-color: rgb(242, 242, 242);">3</td>
+<td style="vertical-align: top; text-align: right; white-space: normal; padding: 4pt 4pt 4pt 4pt; background-color: rgb(242, 242, 242);">0.199</td>
+<td style="vertical-align: top; text-align: right; white-space: normal; padding: 4pt 4pt 4pt 4pt; background-color: rgb(242, 242, 242);">0.823</td>
+<td style="vertical-align: top; text-align: right; white-space: normal; padding: 4pt 4pt 4pt 4pt; background-color: rgb(242, 242, 242);">0.164</td>
+<td style="vertical-align: top; text-align: right; white-space: normal; padding: 4pt 4pt 4pt 4pt; background-color: rgb(242, 242, 242);">0.0546</td>
+<td style="vertical-align: top; text-align: right; white-space: normal; padding: 4pt 4pt 4pt 4pt; background-color: rgb(242, 242, 242);">0.164&nbsp;</td>
+<td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0pt 0.4pt 0pt 0pt; padding: 4pt 4pt 4pt 4pt; background-color: rgb(242, 242, 242);">0.0495</td>
+</tr>
+<tr>
+<td style="vertical-align: top; text-align: right; white-space: nowrap; border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0.4pt; padding: 4pt 4pt 4pt 4pt;">4</td>
+<td style="vertical-align: top; text-align: right; white-space: normal; padding: 4pt 4pt 4pt 4pt;">0.212</td>
+<td style="vertical-align: top; text-align: right; white-space: normal; padding: 4pt 4pt 4pt 4pt;">0.804</td>
+<td style="vertical-align: top; text-align: right; white-space: normal; padding: 4pt 4pt 4pt 4pt;">0.174</td>
+<td style="vertical-align: top; text-align: right; white-space: normal; padding: 4pt 4pt 4pt 4pt;">0.0587</td>
+<td style="vertical-align: top; text-align: right; white-space: normal; padding: 4pt 4pt 4pt 4pt;">0.178&nbsp;</td>
+<td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0pt 0.4pt 0pt 0pt; padding: 4pt 4pt 4pt 4pt;">0.0552</td>
+</tr>
+<tr>
+<td style="vertical-align: top; text-align: right; white-space: nowrap; border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0.4pt; padding: 4pt 4pt 4pt 4pt; background-color: rgb(242, 242, 242);">5</td>
+<td style="vertical-align: top; text-align: right; white-space: normal; padding: 4pt 4pt 4pt 4pt; background-color: rgb(242, 242, 242);">0.223</td>
+<td style="vertical-align: top; text-align: right; white-space: normal; padding: 4pt 4pt 4pt 4pt; background-color: rgb(242, 242, 242);">0.779</td>
+<td style="vertical-align: top; text-align: right; white-space: normal; padding: 4pt 4pt 4pt 4pt; background-color: rgb(242, 242, 242);">0.183</td>
+<td style="vertical-align: top; text-align: right; white-space: normal; padding: 4pt 4pt 4pt 4pt; background-color: rgb(242, 242, 242);">0.0551</td>
+<td style="vertical-align: top; text-align: right; white-space: normal; padding: 4pt 4pt 4pt 4pt; background-color: rgb(242, 242, 242);">0.188&nbsp;</td>
+<td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0pt 0.4pt 0pt 0pt; padding: 4pt 4pt 4pt 4pt; background-color: rgb(242, 242, 242);">0.0531</td>
+</tr>
+<tr>
+<td style="vertical-align: top; text-align: right; white-space: nowrap; border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0.4pt; padding: 4pt 4pt 4pt 4pt;">6</td>
+<td style="vertical-align: top; text-align: right; white-space: normal; padding: 4pt 4pt 4pt 4pt;">0.216</td>
+<td style="vertical-align: top; text-align: right; white-space: normal; padding: 4pt 4pt 4pt 4pt;">0.782</td>
+<td style="vertical-align: top; text-align: right; white-space: normal; padding: 4pt 4pt 4pt 4pt;">0.178</td>
+<td style="vertical-align: top; text-align: right; white-space: normal; padding: 4pt 4pt 4pt 4pt;">0.0655</td>
+<td style="vertical-align: top; text-align: right; white-space: normal; padding: 4pt 4pt 4pt 4pt;">0.183&nbsp;</td>
+<td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0pt 0.4pt 0pt 0pt; padding: 4pt 4pt 4pt 4pt;">0.0589</td>
+</tr>
+<tr>
+<td style="vertical-align: top; text-align: right; white-space: nowrap; border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0.4pt; padding: 4pt 4pt 4pt 4pt; background-color: rgb(242, 242, 242);">7</td>
+<td style="vertical-align: top; text-align: right; white-space: normal; padding: 4pt 4pt 4pt 4pt; background-color: rgb(242, 242, 242);">0.215</td>
+<td style="vertical-align: top; text-align: right; white-space: normal; padding: 4pt 4pt 4pt 4pt; background-color: rgb(242, 242, 242);">0.777</td>
+<td style="vertical-align: top; text-align: right; white-space: normal; padding: 4pt 4pt 4pt 4pt; background-color: rgb(242, 242, 242);">0.178</td>
+<td style="vertical-align: top; text-align: right; white-space: normal; padding: 4pt 4pt 4pt 4pt; background-color: rgb(242, 242, 242);">0.063&nbsp;</td>
+<td style="vertical-align: top; text-align: right; white-space: normal; padding: 4pt 4pt 4pt 4pt; background-color: rgb(242, 242, 242);">0.206&nbsp;</td>
+<td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0pt 0.4pt 0pt 0pt; padding: 4pt 4pt 4pt 4pt; background-color: rgb(242, 242, 242);">0.0563</td>
+</tr>
+<tr>
+<td style="vertical-align: top; text-align: right; white-space: nowrap; border-style: solid solid solid solid; border-width: 0pt 0pt 0.4pt 0.4pt; padding: 4pt 4pt 4pt 4pt;">8</td>
+<td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0pt 0pt 0.4pt 0pt; padding: 4pt 4pt 4pt 4pt;">0.227</td>
+<td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0pt 0pt 0.4pt 0pt; padding: 4pt 4pt 4pt 4pt;">0.767</td>
+<td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0pt 0pt 0.4pt 0pt; padding: 4pt 4pt 4pt 4pt;">0.193</td>
+<td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0pt 0pt 0.4pt 0pt; padding: 4pt 4pt 4pt 4pt;">0.0612</td>
+<td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0pt 0pt 0.4pt 0pt; padding: 4pt 4pt 4pt 4pt;">0.208&nbsp;</td>
+<td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0pt 0.4pt 0.4pt 0pt; padding: 4pt 4pt 4pt 4pt;">0.0572</td>
+</tr>
+</table>
+
+<p>The best 2-parameter model has Year and FIP.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">coef</span>(step.model<span class="op">$</span>finalModel, <span class="dt">id=</span><span class="dv">2</span>)</code></pre></div>
+<pre><code>## (Intercept)        Year         FIP 
+## -0.01122016  0.07297605  1.04079295</code></pre>
+
+</div>
+</div>
+</div>
+<div class="footnotes">
+<hr />
+<ol start="1">
+<li id="fn1"><p><a href="http://www.sthda.com/english/articles/37-model-selection-essentials-in-r/">Model selection essentials in R</a><a href="6-3-MREGVAR.html#fnref1">↩</a></p></li>
+<li id="fn2"><p>James, Gareth, Daniela Witten, Trevor Hastie, and Robert Tibshirani. 2014. An Introduction to Statistical Learning: With Applications in R. Springer Publishing Company, Incorporated.<a href="6-3-MREGVAR.html#fnref2">↩</a></p></li>
+<li id="fn3"><p>Harrell, Frank. 2015. Regression modeling strategies. Springer.<a href="6-3-MREGVAR.html#fnref3">↩</a></p></li>
+<li id="fn4"><p>Raftery, A. E. 1995. Bayesian model selection in social research. Sociological Methodology, 25, 111-163.<a href="6-3-MREGVAR.html#fnref4">↩</a></p></li>
+<li id="fn5"><p>This section and the R code was adapted from and influenced by <a href="https://lagunita.stanford.edu/c4x/HumanitiesSciences/StatLearning/asset/ch6.html">Chapter 6 material</a> in Introduction to Statistical Learning by James, Witten, Hastie and Tibshirani. They have an online course and (free) textbook at <a href="http://www-bcf.usc.edu/~gareth/ISL/" class="uri">http://www-bcf.usc.edu/~gareth/ISL/</a> .<a href="6-3-MREGVAR.html#fnref5">↩</a></p></li>
+<li id="fn6"><p>This section and the R code was adapted from and influenced by <a href="https://lagunita.stanford.edu/c4x/HumanitiesSciences/StatLearning/asset/ch6.html">Chapter 6 material</a> in Introduction to Statistical Learning by James, Witten, Hastie and Tibshirani. They have an online course and (free) textbook at <a href="http://www-bcf.usc.edu/~gareth/ISL/" class="uri">http://www-bcf.usc.edu/~gareth/ISL/</a> .<a href="6-3-MREGVAR.html#fnref6">↩</a></p></li>
+<li id="fn7"><p>This function was copied from the Introduction to Statistical Learning material.<a href="6-3-MREGVAR.html#fnref7">↩</a></p></li>
+</ol>
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="6-2-collinear.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="6-4-MREGPR.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/lunr.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": {
+"github": false,
+"facebook": true,
+"twitter": true,
+"google": false,
+"linkedin": false,
+"weibo": false,
+"instapaper": false,
+"vk": false,
+"all": ["facebook", "google", "twitter", "linkedin", "weibo", "instapaper"]
+},
+"fontsettings": {
+"theme": "white",
+"family": "sans",
+"size": 2
+},
+"edit": {
+"link": "https://github.com/fish-forecast/Fish-Forecast-Bookdown/edit/master/Forecasting-6-2-MREG-variable-selection.Rmd",
+"text": "Edit"
+},
+"history": {
+"link": null,
+"text": null
+},
+"download": null,
+"toc": {
+"collapse": "section"
+}
+});
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "";
+    if (src === "" || src === "true") src = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:" && /^https?:/.test(src))
+      src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+</body>
+
+</html>

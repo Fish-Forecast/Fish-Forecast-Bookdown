@@ -1,15 +1,5 @@
----
-title: "Autocorrelated Data in Regression Models"
-author: "EE Holmes"
-date: "2/15/2019"
-output: html_document
----
-
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
-```
-
-## R Markdown
+<!--
+## Autocorrelated Data in Regression Models
 
 Create some simulated data for a linear regression against one predictor variable:
 $$y_i = \alpha + \beta x_i + e_i \\e_i \sim N(0,\sigma)$$
@@ -112,3 +102,4 @@ covar <- as.vector(arima.sim(n, model=list(ar=0.7)))
 y2 <- alpha + beta*covar + err
 dat2 <- data.frame(y=y2, x=covar)
 ```
+-->

@@ -37,22 +37,22 @@ These three methods will be demonstrated by replicating the work in Stergiou and
 
 ---
 
-### Hellenic landings data
+### Hellenic landings data {#landingsdata}
 
-We will use the annual landings data from Hellenic (Greek) waters that were used in Stergiou and Christou (1996). 
-
-Stergiou and Christou analyzed 16 species.  We will look two of the species: Anchovy and Sardine.  
-
-Stergiou and Christou used the data from 1964-1989.  We have the data up to 2007, but will focus mainly on 1964-1989 (the first half of the time series) to replicate Stergiou and Christou's analyses.
+We will use the annual landings data from Hellenic (Greek) waters (Figure \@ref(fig:greece)) that were used in Stergiou and Christou (1996).  Stergiou and Christou analyzed 16 species.  We will look at just two of the species: Anchovy and Sardine.  Stergiou and Christou used the data from 1964-1989.  We have the data up to 2007, but will focus mainly on 1964-1989 (the first half of the time series) to replicate Stergiou and Christou's analyses.
 
 
-![Area where data were collected](./figs/Greece.png)
+```{r greece, fig.cap="Location of the fishery."}
+knitr::include_graphics("./figs/Greece.png")
+```
 
+The data are available in tables in yearly fishery survey reports published by the [Hellenic Statisical Authority](http://www.statistics.gr/greece-in-figures).
 
-![Statistical Reports](./figs/StatisticalReportCover.png)
+![](./figs/StatisticalReportCover.png)
 
+The main landings data is in Table IV in these reports.
 
-![Statistical Report Table IV](./figs/StatisticalReportTableIV.png)
+![](./figs/StatisticalReportTableIV.png)
 
 ## The landings data, landings.RData
 

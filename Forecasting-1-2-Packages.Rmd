@@ -6,7 +6,7 @@ We will be using the forecast [@R-forecast] and tseries [@R-tseries] packages, w
 * stats
 * ggplot2
 
-Thus to call function fun1 from package pack1, I will use `pack1::fun1()`.  This will make the code more verbose but you will be able to keep track of function comes from what package.
+Thus to call function fun1 from package pack1, I will use `pack1::fun1()`.  This will make the code more verbose but you will be able to keep track of which function comes from what package.
 
 Make sure you have the following packages installed.  All are available on CRAN.
 
@@ -38,5 +38,5 @@ We will be using classic methods for catch forecasting discussed in the followin
 ```{r include=FALSE}
 # automatically create a bib database for R packages
 knitr::write_bib(c(
-  .packages(), 'bookdown', 'forecast', 'tseries', 'MARSS', 'urca'), 'packages.bib')
+  .packages(), 'bookdown', 'forecast', 'tseries', 'MARSS', 'urca', 'corrplot'), 'packages.bib')
 ```

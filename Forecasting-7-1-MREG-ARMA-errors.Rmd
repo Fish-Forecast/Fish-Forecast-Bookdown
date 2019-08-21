@@ -1,4 +1,4 @@
-## Multivariate linear regression with ARMA errors
+## Multivariate linear regression with ARMA errors {#MREGARMA}
 
 ```{r f62-load_packages, message=FALSE, warning=FALSE}
 library(ggplot2)
@@ -54,7 +54,7 @@ xreg <- as.matrix(df[,c("Year","FIP")])
 arima(df$anchovy, xreg=xreg, order = c(1,0,0))
 ```
 
-We can also use the `sarima` function in the astsa package.  This plots a nice diagnostics plot with the fit.
+We can also use the `sarima` function in the **astsa** package.  This plots a nice diagnostics plot with the fit.
 
 ```{r mreg.sarima}
 xreg <- as.matrix(df[,c("Year","FIP")])

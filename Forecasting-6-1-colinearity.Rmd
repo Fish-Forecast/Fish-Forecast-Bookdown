@@ -1,0 +1,85 @@
+## Assessing colinearity in covariates {#collinear}
+
+<!--
+if(file.exists("Fish-Forecast.Rmd")) file.remove("Fish-Forecast.Rmd")
+bookdown::preview_chapter("Forecasting-6-2-Covariates-MSEG.Rmd")
+-->
+
+Collinearity is near-linear relationships among the explanatory variables. Collinearity causes many problems such as inflated standard errors of the coefficients and correspondingly unbiased but highly imprecise estimates of the coefficients, false p-values, and poor predictive accuracy of the model. Thus it is important to evaluate the level of collinearity in your explanatory variables.
+
+#### Pairs plot {-}
+
+One way to see this is visually is with the `pairs()` plot.  A pairs plot of fishing effort covariates reveals high correlations between Year, HPP and TOP.
+
+```{r pairs.fish}
+pairs(df[,c(2,9:12)])
+```
+
+The environmental covariates look generally ok.
+```{r pairs.env}
+pairs(df[,c(2,4:8)])
+```
+
+Another way that we can visualize the problem is by looking at the correlation matrix using the **corrplot** package.
+
+```{r}
+library(corrplot)
+X <- as.matrix(df[,colnames(df)!="anchovy"])
+corrplot(cor(X))
+```
+
+#### Variance inflation factors {-}
+
+Another way is to look for collinearity is to compute the variance inflation factors (VIF). The variance inflation factor is an estimate of how much larger the variance of a coefficient estimate is compared to if the variable were uncorrelated with the other explanatory variables in the model.  If the VIF of variable $i$ is $z$, then the standard error of the $\beta_i$ for variable $i$ is $\sqrt{z}$ times larger than if variable $i$ were uncorrelated with the other variables. For example, if VIF=10, the standard error of the coefficient estimate is 3.16 times larger (inflated).  The rule of thumb is that any of the variables with VIF greater than 10 have collinearity problems.
+
+The `vif()` function in the car package will compute VIFs for us.  
+
+```{r vif.car}
+full <- lm(anchovy ~ ., data=df)
+car::vif(full)
+```
+
+This shows that Year, HPP and TOP have severe collinearity problems, and BOP and *Trachusus* also have collinearity issues, though lesser.
+
+#### redun()
+
+The Hmisc library also has a redundancy function (`redun()`) that can help identify which variables are redundant.  This identifies variables that can be explained with an $R^2>0.9$ by a linear (or non-linear) combination of other variables.  We are fitting a linear model, so we set `nk=0` to force `redun()` to only look at linear combinations.
+
+We use `redun()` only on the explanatory variables and thus remove the first column, which is our response variable (anchovy).
+
+```{r Hmisc.redun}
+a <- Hmisc::redun(~ .,data=df[,-1], nk=0)
+a$Out
+```
+
+This indicates that TOP and HPP can be explained by the other variables.
+
+### Effect of collinearity
+
+One thing that happens when we have collinearity is that we will get "complementary" (negative matched by positive) and very large coefficients in the variables that are collinear. We see this when we fit a linear regression with all the variables. I use the z-scored data so that the effect sizes (x-axis) are on the same scale.
+
+```{r coef.full, echo=FALSE}
+fit.full <- lm(anchovy ~ ., data=dfz)
+coef.full <- coef(fit.full)[-1]
+labs <- names(coef(fit.full))[-1]
+op <- par(mar=c(5, 7, 4, 2) + 0.1)
+barplot(rbind(coef.full), names.arg=labs, 
+        horiz=TRUE, las=2, beside=TRUE,
+        col=c("aquamarine3"))
+legend("topright", c("ols"), pch=15, 
+       col=c("aquamarine3"), 
+       bty="n")
+par(op)
+```
+
+The Year coefficients is very large and the TOP and HPP coefficients are negative and very large.
+If we look at the fit, we see the at the standard errors for Year, TOP and HPP are very large.  The p-value for Year is significant, however in the presence of severe collinearity, reported p-values should not be trusted.
+
+```{r full.summary}
+summary(fit.full)
+```
+
+Stergiou and Christou do not state how (if at all) they address the collinearity in the explanatory variables, but it is clearly present. In the next chapter, I will show how to develop a multivariate regression model using variable selection. This is the approach used by Stergiou and Christou. Keep in mind that variable selection will not perform well when there is collinearity in your covariates and that variable selection is prone to over-fitting and selecting covariates due to chance.
+
+
+

@@ -1,0 +1,26 @@
+## Discussion
+
+<!--
+if(file.exists("Fish-Forecast.Rmd")) file.remove("Fish-Forecast.Rmd")
+bookdown::preview_chapter("Forecasting-6-2-Covariates-MSEG.Rmd")
+-->
+
+This chapter illustrates a variety of approaches for "variable selection".  This is the situation where one has a large number of covariates and one wants to chose the covariates that produce the best predictions.  Following Stergiou and Christou, I used mainly linear regressions with variables selected with stepwise variable selection.
+
+Keep in mind that stepwise variable selection is generally considered data-dredging and a reviewer who is statistician will almost certainly find fault with this approach. Penalized regression is a more accepted approach for developing a regression model with many covariates.  Part of the appeal of penalized regression is that it is robust to collinearity in your covariates.  Stepwise variable regression is not robust to collinearity.
+
+Cross-validation is an approach for testing a *process* of building a model. In the case of the anchovy data, a model with only two covariates, Year and number of fishers, was selected via cross-validation as having the best (lowest) predictive error.  This is considerable smaller than the best model via stepwise variable selection.
+
+When we tested the models against data completely held out of the analysis and model development (1988-2007), we discovered a number of problems. 1) Using "Year" as a covariate is a bad idea since it is deterministically linear upward. and 2) There is a problem with the effort data between 1988 and 1996.  There is a jump in the effort data.
+
+We used variable selection or penalized regression to select weighting on a large set of covariates.  Another approach is to develop a set of covariates from your knowledge of the system and use only covariates that are thought to be important.  In Section 4.7.7 of  (Harrell 2015), a rule of thumb (based on shrinkage) for the number of predictors that can be used without overfitting is given by: $(LR-p)/9$ where $LR$ is the likelihood ratio test $\chi^2$ of the full model against the null model with only intercept and $p$ is the number of variables in the full model.
+
+```{r eval.shrinkage}
+null <- lm(anchovy ~ 1, data=df)
+full <- lm(anchovy ~ ., data=df)
+a <- lmtest::lrtest(null, full)
+(a$Chisq[2]-a$Df[2])/9
+```
+
+This rule of thumb suggests that we could include six variables. Another approach to model building would be to select environmental and biological variables based on the known biology of anchovy and to select one effort variable or a composite "effort" based on a combination of the effort variables.
+

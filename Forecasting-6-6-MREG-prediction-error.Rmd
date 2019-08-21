@@ -1,0 +1,233 @@
+## Model Prediction Accuracy {#MREGPREDICT}
+
+<!--
+if(file.exists("Fish-Forecast.Rmd")) file.remove("Fish-Forecast.Rmd")
+bookdown::preview_chapter("Forecasting-6-2-Covariates-MSEG.Rmd")
+-->
+
+We could use cross-validation compare prediction accuracy if we had a pre-defined set of models to compare.  In our case, we do not have a set of models but rather a set of "number of variables" and the specific variables to include in that number are determined using the fit to the data (in some fashion).  We cannot use variable selection (any sort) with our full dataset to chose the variables and then turn around and use cross-validation with the same dataset to test the out-of-sample prediction accuracy.  Anytime you double-use your data like that, you will have severe bias problems.
+
+<!--
+Discussion of this issue
+https://stats.stackexchange.com/questions/27750/feature-selection-and-cross-validation/27751#27751
+-->
+
+Instead, we will test our models using sets of years that we held out for testing, i.e. that were not used for fitting the model or selecting variates.  We will use the following test years: 1988 and 1989 as was used in Stergiou and Christou and 1988-1992 (five years).  We will use the performance testing procedure in Chapter \@ref(perf-testing).
+
+#### Computing the prediction error for a model {-}
+
+First we set up the test data frames.
+```{r testdata2, echo=FALSE}
+# 1988 and 1989 are rows 24 & 25
+testdata2 <- df.full[24:25,]
+```
+
+We can then compute the RMSE for the predictions from one of our linear regression models.  Let's use the model selected by `step()` using AIC as the metric and stepwise variable regression starting from a full model, `step.full`.
+```{r errs}
+fr <- predict(step.full, newdata=testdata2)
+err <- fr - testdata2$anchovy
+sqrt(mean(err^2))
+```
+
+We could also use `forecast()` in the forecast package to compute predictions and then use `accuracy()` to compute the prediction metrics for the test data.
+```{r}
+fr <- forecast::forecast(step.full, newdata=testdata2)
+forecast::accuracy(fr, testdata2)
+```
+
+#### Comparing the predictions for a suite of models {-}
+
+Let's compare a suite of models and compare predictions for the full out-of-sample data that we have: 1988 to 2007.
+```{r}
+fr.list <- list()
+testdat <- testdata.full <- df.full[24:nrow(df.full),]
+n.fr <- length(testdat)
+```
+
+Then we fit the three best lm models chosen via stepwise regression, exhaustive search or cross-validation:
+```{r linear.reg.model.set}
+modelname <- "Year+FIP"
+fit <- lm(anchovy~Year+FIP, data=df)
+fr.list[[modelname]] <- predict(fit, newdata=testdat)
+
+modelname <- "Year+Trachurus+FIP"
+fit <- lm(anchovy~Year+Trachurus+FIP, data=df)
+fr.list[[modelname]] <- predict(fit, newdata=testdat)
+
+modelname <- "6 variables"
+fit <- lm(anchovy~Year+air+vwnd+BOP+FIP+TOP, data=df)
+fr.list[[modelname]] <- predict(fit, newdata=testdat)
+```
+
+Then we add the forecasts for Ridge Regression.
+```{r}
+library(glmnet)
+resp <- colnames(df)!="anchovy"
+x <- as.matrix(df[,resp])
+y <- as.matrix(df[,"anchovy"])
+fit <- glmnet(x, y, family="gaussian", alpha=0)
+n <- 20; s <- 0
+for(i in 1:n) s <- s + cv.glmnet(x, y, nfolds=5, alpha=0)$lambda.min
+s.best <- s/n
+
+modelname <- "Ridge Regression"
+newx <- as.matrix(testdat[,resp])
+fr.list[[modelname]] <- predict(fit, newx=newx, s=s.best)
+```
+LASSO regression,
+```{r}
+fit <- glmnet(x, y, family="gaussian", alpha=1)
+n <- 20; s <- 0
+for(i in 1:n) s <- s + cv.glmnet(x, y, nfolds=5, alpha=1)$lambda.min
+s.best <- s/n
+
+modelname <- "LASSO Regression"
+newx <- as.matrix(testdat[,resp])
+fr.list[[modelname]] <- predict(fit, newx=newx, s=s.best)
+```
+
+and elastic net regression.
+```{r}
+fit <- glmnet(x, y, family="gaussian", alpha=0.5)
+n <- 20; s <- 0
+for(i in 1:n) s <- s + cv.glmnet(x, y, nfolds=5, alpha=0.5)$lambda.min
+s.best <- s/n
+
+modelname <- "Elastic net Regression"
+newx <- as.matrix(testdat[,resp])
+fr.list[[modelname]] <- predict(fit, newx=newx, s=s.best)
+```
+
+Now we can create a table
+```{r model.comp.table, results="asis"}
+restab <- as.data.frame(matrix(NA,1,21))
+#restab <- data.frame(model="", stringsAsFactors=FALSE)
+for(i in 1:length(fr.list)){
+  err <- fr.list[[i]]-testdat$anchovy
+  restab[i,2:(length(err)+1)] <- sqrt(cumsum(err^2)/1:length(err))
+  restab[i,1] <- names(fr.list)[i]
+}
+tmp <- restab[,c(1,6,11,16,21)]
+colnames(tmp) <- c("model","5 yrs", "10 yrs", "15 yrs", "20 yrs")
+knitr::kable(tmp)
+```
+
+
+If we plot the forecasts with the 1965-1987 data (open circles) and the 1988-2007 data (solid circles), we see that the forecasts continue the upward trend in the data while the data level off. 
+
+```{r echo=FALSE}
+plot(Year1+df$Year, df$anchovy, ylim=c(8,12), xlim=c(Year1,Year2), ylab="Anchovy log catch", xlab="", bty="L")
+for(i in 1:length(fr.list)){
+  lines(Year1+testdat$Year,fr.list[[i]], lty=i, col=i)
+}
+points(Year1+testdat$Year,testdat$anchovy, pch=20)
+legend("topleft", names(fr.list), cex=.5, col=1:6, lty=1:6, bty="n")
+```
+
+This illustrates a problem with using "Year" as a covariate.  This covariate is deterministically increasing. If it is included in the model, then the forecasts will have an upward or downward trend.  When using environmental, biological and effort covariates, one hopes that the covariates explain the trends in the data.  It would be wiser to not use "Year" as a covariate.
+
+LASSO regression with no year,
+```{r}
+resp <- colnames(df)!="anchovy" & colnames(df)!="Year"
+x <- as.matrix(df[,resp])
+y <- as.matrix(df[,"anchovy"])
+fit.lasso <- glmnet(x, y, family="gaussian", alpha=1)
+n <- 20; s <- 0
+for(i in 1:n) s <- s + cv.glmnet(x, y, nfolds=5, alpha=1)$lambda.min
+s.best.lasso <- s/n
+
+modelname <- "LASSO Reg no Year"
+newx <- as.matrix(testdat[,resp])
+fr.list[[modelname]] <- predict(fit.lasso, newx=newx, s=s.best.lasso)
+```
+
+Ridge regression with no year,
+```{r}
+resp <- colnames(df)!="anchovy" & colnames(df)!="Year"
+x <- as.matrix(df[,resp])
+y <- as.matrix(df[,"anchovy"])
+fit.ridge <- glmnet(x, y, family="gaussian", alpha=0)
+n <- 20; s <- 0
+for(i in 1:n) s <- s + cv.glmnet(x, y, nfolds=5, alpha=1)$lambda.min
+s.best.ridge <- s/n
+
+modelname <- "Ridge Reg no Year"
+newx <- as.matrix(testdat[,resp])
+fr.list[[modelname]] <- predict(fit.ridge, newx=newx, s=s.best.ridge)
+```
+
+Now we can create a table
+```{r model.comp.table2, results="asis", echo=FALSE}
+restab <- as.data.frame(matrix(NA,1,21))
+#restab <- data.frame(model="", stringsAsFactors=FALSE)
+for(i in 1:length(fr.list)){
+  err <- fr.list[[i]]-testdat$anchovy
+  restab[i,2:(length(err)+1)] <- sqrt(cumsum(err^2)/1:length(err))
+  restab[i,1] <- names(fr.list)[i]
+}
+tmp <- restab[,c(1,6,11,16,21)]
+colnames(tmp) <- c("model","5 yrs", "10 yrs", "15 yrs", "20 yrs")
+knitr::kable(tmp[7:8,])
+```
+
+```{r echo=FALSE}
+plot(Year1+df$Year, df$anchovy, ylim=c(8,12), xlim=c(Year1,Year2), ylab="Anchovy log catch", xlab="", bty="L")
+for(i in 7:length(fr.list)){
+  lines(Year1+testdat$Year,fr.list[[i]], lty=i, col=i)
+}
+points(Year1+testdat$Year,testdat$anchovy, pch=20)
+legend("topleft", names(fr.list)[7:8], cex=.5, col=7:8, lty=7:8, bty="n")
+```
+Without "Year", the model predicts 1988 well (using 1987 covariates) but then has a large jump upward after which is has a similar "flat-ish" trend as seen after 1989.  What happened in 1988 (the covariate year affecting 1989)?  The horsepower covariate, along with BOP (total boats) and TOP (boat tonnage), have a sudden upward jump in 1988. This is seen in all the fisheries.  This suggests that in 1988 either a large number of new boats entered all the fisheries or what boats were counted as "purse seiners" was changed. Upon looking at the covariates, it seems that something changed in the recording from 1988 to 1996.
+
+```{r echo=FALSE}
+par(mfrow=c(2,2),mar=c(2,2,2,2))
+plot(fish.cov$Year,fish.cov$Beach.seiners.BOB,ylab="",xlab="")
+title("Beach Seiner Boats")
+abline(v=1988)
+abline(v=1996)
+plot(fish.cov$Year,fish.cov$Trawlers.BOT,ylab="",xlab="")
+title("Trawler Boats")
+abline(v=1988)
+abline(v=1996)
+plot(fish.cov$Year,fish.cov$Other.BOC,ylab="",xlab="")
+title("Other Boats")
+abline(v=1988)
+abline(v=1996)
+plot(fish.cov$Year,fish.cov$Purse.seiners.BOP,ylab="",xlab="")
+title("Purse Seiner Boats")
+abline(v=1988)
+abline(v=1996)
+
+```
+
+If we correct that jump from 1988 to 1989 (subtract the jump from all data 1989 onward), the Lasso and Ridge predictions without year look considerably better.
+
+```{r echo=FALSE}
+testdatc <- testdat
+testdatc$BOP[(testdat$Year+1964)>1988]<-testdatc$BOP[(testdat$Year+1964)>1988]-0.083
+testdatc$HPP[(testdat$Year+1964)>1988]<-testdatc$HPP[(testdat$Year+1964)>1988]-0.28285
+testdatc$TOP[(testdat$Year+1964)>1988]<-testdatc$TOP[(testdat$Year+1964)>1988]-0.295
+save(df, df.full, testdatc, file="MREG_Data.RData")
+```
+
+```{r echo=FALSE}
+modelname <- "LASSO Reg no Year jump corrected"
+newx <- as.matrix(testdatc[,resp])
+fr.list[[modelname]] <- predict(fit.lasso, newx=newx, s=s.best.lasso)
+
+modelname <- "Ridge Reg no Year jump corrected"
+newx <- as.matrix(testdatc[,resp])
+fr.list[[modelname]] <- predict(fit.ridge, newx=newx, s=s.best.ridge)
+```
+
+```{r echo=FALSE}
+mnames <- c("LASSO Reg no Year jump corrected", "Ridge Reg no Year jump corrected")
+plot(Year1+df$Year, df$anchovy, ylim=c(8,12), xlim=c(Year1,Year2), ylab="Anchovy log catch", xlab="", bty="L")
+for(i in 1:2){
+  lines(Year1+testdat$Year,fr.list[[mnames[i]]], lty=i, col=i)
+}
+points(Year1+testdat$Year,testdat$anchovy, pch=20)
+legend("topleft", mnames, cex=.5, col=1:2, lty=1:2, bty="n")
+```
+

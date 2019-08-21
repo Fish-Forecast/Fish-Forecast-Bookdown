@@ -1,0 +1,7 @@
+
+```{r f70-load_packages, echo=FALSE, message=FALSE, warning=FALSE}
+library(ggplot2)
+```
+
+# Auto-regressive models with covariates
+
