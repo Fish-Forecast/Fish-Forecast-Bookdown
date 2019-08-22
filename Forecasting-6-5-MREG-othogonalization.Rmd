@@ -7,14 +7,7 @@ bookdown::preview_chapter("Forecasting-6-2-Covariates-MSEG.Rmd")
 
 The last approach that we will discuss for dealing with collinearity is orthogonalization. With this technique, we replace the set of collinear covariates $X$  with a set of orthogonal, i.e. independent, covariates $Z$, which are linear combinations of the original, collinear, covariates. Principal Components Analysis (PCA) is an example of using orthogonalization to deal with collinear covariates. Another example is when we use the `poly()` function to do polynomial regression. In this case, we are replacing a set of collinear variates,  $x$, $x^2$, $x^3$, etc., with a set of orthogonal covariates. 
 
-The ways that you can create a set of orthogonal covariates is not unique. There are many different sets of orthogonal covariates. We will show three ways you might create your orthogonal set: PCA, Gram-Schmidt Orthogonalization, and residuals from a linear regressions.
-
-First let's run with the collinear covariates and look at the effect sizes. We will use the standardized covariates with the mean removed and variance scaled to 1. 
-
-```{r}
-raw <- lm(anchovy ~ ., data=dfz)
-summary(raw)
-```
+The ways that you can create a set of orthogonal covariates is not unique. There are many different sets of orthogonal covariates. We will show three ways you might create your orthogonal set: PCA, Gram-Schmidt Orthogonalization, and residuals from linear regressions. Note, it is important to use standardized covariates with the mean removed and variance scaled to 1 when doing orthogonalization. Thus we will use `dfz` instead of `df`.
 
 #### Principal component regression
 

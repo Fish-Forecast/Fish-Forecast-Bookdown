@@ -1,7 +1,7 @@
 ## Stationarity
 
 ```{r f32-load_data, message=FALSE, warning=FALSE, echo=FALSE}
-load("landings.RData")
+require(FishForecast)
 ```
 The first two steps of the Box-Jenkins Method have to do with evaluating for stationarity and correcting for lack of stationarity in your data:
 
@@ -178,7 +178,7 @@ Here is a plot of the anchovy and sardine in Greek waters from 1965 to 1989.  Th
 
 ```{r fig.vis, fig.height = 4, fig.width = 8, fig.align = "center", echo=FALSE}
 require(ggplot2)
-dat = subset(landings, Species %in% c("Anchovy", "Sardine") & 
+dat = subset(greeklandings, Species %in% c("Anchovy", "Sardine") & 
                Year <= 1989)
 dat$log.metric.tons = log(dat$metric.tons)
 ggplot(dat, aes(x=Year, y=log.metric.tons)) +

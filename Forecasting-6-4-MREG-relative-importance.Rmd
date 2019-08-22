@@ -5,21 +5,21 @@ if(file.exists("Fish-Forecast.Rmd")) file.remove("Fish-Forecast.Rmd")
 bookdown::preview_chapter("Forecasting-6-2-Covariates-MSEG.Rmd")
 -->
 
-Another approach to linear regression with multiple collinear regressors is to compute relative importance metrics[^relimp]. 
+Another approach to linear regression with multiple collinear regressors is to compute relative importance metrics[^relimp]. The **relaimpo** package will compute the relative importance metrics and provides plotting.
 
 [^relimp]: Groemping, U. (2006) Relative Importance for Linear Regression in R: The Package relaimpo Journal of Statistical Software 17, Issue 1. Downloadable at http://www.jstatsoft.org/v17/i01
 
 This gives a somewhat different picture with year, Trachurus and the effort metrics most important while the environmental variables have low importance.
 
 ```{r relimp}
-reli <- calc.relimp(anchovy~.,data=df)
+reli <- relaimpo::calc.relimp(anchovy~.,data=df)
 plot(reli)
 ```
 
 The pattern remains the same without Year as a response variable.
 
 ```{r relimp.noYear}
-reli <- calc.relimp(anchovy~.-Year,data=df)
+reli <- relaimpo::calc.relimp(anchovy~.-Year,data=df)
 plot(reli)
 ```
 

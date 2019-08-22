@@ -32,12 +32,11 @@ library(ggplot2)
 library(MASS)
 library(car)
 library(glmnet)
-library(Hmisc)
 library(stringr)
 library(caret)
 library(leaps)
 library(forecast)
-library(relaimpo)
+library(olsrr)
 ```
 
 ### Model selection with stepwise variable selection {#stepwise-sel}
@@ -64,6 +63,7 @@ step.full <- step(full,
                        direction="both", trace = 0)
 step.full
 ```
+
 We can also apply `step()` with the caret package:
 ```{r stepAIC.caret}
 step.caret <- caret::train(anchovy ~ ., data = df,
@@ -99,7 +99,7 @@ step.null.bic <- step(null,
 step.null.bic
 ```
 
-We can also do stepwise variable selection using the leaps package.  However, the algorithm or starting model is different than for `step()` and the results are correspondingly different.  The results are similar to `step()` starting from the full model but not identical.  See the next section for a brief introduction to the leaps package.
+We can also do stepwise variable selection using the leaps package.  However, the algorithm or starting model is different than for `step()` and the results are correspondingly different.  The top row in the plot shows the included (black) variables: Year, Trachurus, air, vwnd, FIP. The results are similar to `step()` starting from the full model but not identical.  See the next section for a brief introduction to the leaps package.
 ```{r leaps.step}
 models <- leaps::regsubsets(anchovy~., data = df, nvmax =11,
                      method = "seqrep", nbest=1)
@@ -132,6 +132,7 @@ models <- leaps::regsubsets(anchovy~., data = df,
                      method = "exhaustive")
 plot(models, scale="bic")
 ```
+
 We can plot the BIC for each size of model also. 
 ```{r leaps.bic.plot, fig.height=5}
 smodels = summary(models)
@@ -197,6 +198,16 @@ In comparison, the best model with AIC is larger.
 ```{r leaps.aic.best}
 rmin <- which(mod.aic==min(mod.aic))
 colnames(smodels$which)[smodels$which[rmin,]]
+```
+
+#### **olsrr** package {-}
+
+The **olsrr** [package](https://CRAN.R-project.org/package=olsrr) provides a variety of tools for multivariate regression models, including functions for variable selection. The **olsrr** functions include nice table and plot outputs. The functions are a bit more user friendly and the package include very clear vignettes that illustrate the functions. The package includes functions for all subsets, forward and backward selection with a variety of different selection metrics.
+
+Here is an example of one of the functions. This is for all subsets selection.
+
+```{r olsrr.step, cache=TRUE}
+ols_step_best_subset(full)
 ```
 
 

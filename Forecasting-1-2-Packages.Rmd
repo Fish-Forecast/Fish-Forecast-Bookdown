@@ -1,6 +1,6 @@
 ## Packages
 
-We will be using the forecast [@R-forecast] and tseries [@R-tseries] packages, with the MARSS [@R-MARSS] package to implement ARMAX models.  However we will also use a variety of other packages.  So that you can keep track of what package a function come from, I will use the `::` notation for functions that are *not* from the following standard packages:
+We will be mainly be using the forecast [@R-forecast] and tseries [@R-tseries] packages, with the MARSS [@R-MARSS] package to implement ARMAX models.  However we will also use a variety of other packages especially for the multivariate regression chapter.  So that you can keep track of what package a function come from, I will use the `::` notation for functions that are *not* from the following standard packages:
 
 * base R
 * stats
@@ -8,13 +8,21 @@ We will be using the forecast [@R-forecast] and tseries [@R-tseries] packages, w
 
 Thus to call function fun1 from package pack1, I will use `pack1::fun1()`.  This will make the code more verbose but you will be able to keep track of which function comes from what package.
 
-Make sure you have the following packages installed.  All are available on CRAN.
+To install the data used in this book along with all the needed packages, install the **FishForecast** package from GitHub. If you are on a Windows machine, you will need to install [Rtools](https://cran.rstudio.com/bin/windows/Rtools/) in order to install packages from GitHub.
 
-* ggplot2, gridExtra, grid
-* forecast
-* tseries
-* urca
-* MARSS
+To install a package from GitHub, install the **devtools** package and then run
+
+```
+library(devtools)
+devtools::install_github("Fish-Forecast/FishForecast")
+```
+
+Calling 
+```
+library(FishForecast)
+```
+will then make the data objects available.
+
 
 #### tidyverse and piping {-}
 
@@ -28,15 +36,15 @@ I will use a combination of base plotting and ggplot2 [@R-ggplot2] plotting.  Do
 
 We will be using classic methods for catch forecasting discussed in the following reference papers:
 
-* We are replicating the work in [Stergio and Christou 1996](https://doi.org/10.1016/0165-7836(95)00389-4). See their [ResearchGate page](https://www.researchgate.net/publication/223836928_Modelling_and_forecasting_annual_fisheries_catches_Comparison_of_regression_univariate_and_multivariate_time_series_methods) for PDF reprint.
-* These methods are also discussed in [Lawer 2016](http://dx.doi.org/10.4236/nr.2016.74018).  Open-Source PDF.
-* And in [Georgakarakos et al 2006](https://doi.org/10.1016/j.fishres.2005.12.003).  A PDF reprint is available on the [Hellenic Center for Marine Research website](http://arch.her.hcmr.gr/publ.htm).
-* The chapter on modeling seasonal catch data will use models discussed in [Stergiou et al 1997](https://doi.org/10.1016/S0165-7836(96)00482-1). See their [ResearchGate page](https://www.researchgate.net/publication/222888388_Modelling_and_forecasting_monthly_fisheries_catches_Comparison_of_regression_univariate_and_multivariate_time_series_methods) for PDF reprint.
+* We are replicating the work in [@StergiouChristou1996]  ([Link](https://doi.org/10.1016/0165-7836(95)00389-4)). 
+* These methods are also discussed in [@Lawer2016] ([PDF](http://dx.doi.org/10.4236/nr.2016.74018)).
+* And in [@Georgakarakosetal2006] ([Link](https://doi.org/10.1016/j.fishres.2005.12.003)).  A PDF reprint is available on the [Hellenic Center for Marine Research website](http://arch.her.hcmr.gr/publ.htm).
+* The chapter on modeling seasonal catch data will use models discussed in [@Stergiouetal1997] ([Link](https://doi.org/10.1016/S0165-7836(96)00482-1)). See their [ResearchGate page](https://www.researchgate.net/publication/222888388_Modelling_and_forecasting_monthly_fisheries_catches_Comparison_of_regression_univariate_and_multivariate_time_series_methods) for a PDF reprint.
 
 
 
 ```{r include=FALSE}
 # automatically create a bib database for R packages
 knitr::write_bib(c(
-  .packages(), 'bookdown', 'forecast', 'tseries', 'MARSS', 'urca', 'corrplot'), 'packages.bib')
+  .packages(), 'bookdown', 'forecast', 'tseries', 'MARSS', 'urca', 'corrplot', 'olsrr', 'caret', 'car'), 'packages.bib')
 ```

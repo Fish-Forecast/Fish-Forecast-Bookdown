@@ -24,7 +24,7 @@
 <meta name="author" content="Elizabeth Holmes" />
 
 
-<meta name="date" content="2019-08-20" />
+<meta name="date" content="2019-08-22" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -109,7 +109,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="1.1" data-path="1-1-stergiou-and-christou-1996.html"><a href="1-1-stergiou-and-christou-1996.html"><i class="fa fa-check"></i><b>1.1</b> Stergiou and Christou 1996</a><ul>
 <li class="chapter" data-level="1.1.1" data-path="1-1-stergiou-and-christou-1996.html"><a href="1-1-stergiou-and-christou-1996.html#landingsdata"><i class="fa fa-check"></i><b>1.1.1</b> Hellenic landings data</a></li>
 </ul></li>
-<li class="chapter" data-level="1.2" data-path="1-2-the-landings-data-landings-rdata.html"><a href="1-2-the-landings-data-landings-rdata.html"><i class="fa fa-check"></i><b>1.2</b> The landings data, landings.RData</a></li>
+<li class="chapter" data-level="1.2" data-path="1-2-the-landings-data-and-covariates.html"><a href="1-2-the-landings-data-and-covariates.html"><i class="fa fa-check"></i><b>1.2</b> The landings data and covariates</a></li>
 <li class="chapter" data-level="1.3" data-path="1-3-ts-objects.html"><a href="1-3-ts-objects.html"><i class="fa fa-check"></i><b>1.3</b> ts objects</a><ul>
 <li class="chapter" data-level="1.3.1" data-path="1-3-ts-objects.html"><a href="1-3-ts-objects.html#ts-function"><i class="fa fa-check"></i><b>1.3.1</b> <code>ts()</code> function</a></li>
 <li class="chapter" data-level="1.3.2" data-path="1-3-ts-objects.html"><a href="1-3-ts-objects.html#ggplot-and-ts-objects"><i class="fa fa-check"></i><b>1.3.2</b> ggplot and ts objects</a></li>
@@ -232,8 +232,8 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="6.7" data-path="6-7-MREGPREDICT.html"><a href="6-7-MREGPREDICT.html"><i class="fa fa-check"></i><b>6.7</b> Prediction accuracy</a></li>
 <li class="chapter" data-level="6.8" data-path="6-8-discussion.html"><a href="6-8-discussion.html"><i class="fa fa-check"></i><b>6.8</b> Discussion</a></li>
 </ul></li>
-<li class="chapter" data-level="7" data-path="7-auto-regressive-models-with-covariates.html"><a href="7-auto-regressive-models-with-covariates.html"><i class="fa fa-check"></i><b>7</b> Auto-regressive models with covariates</a><ul>
-<li class="chapter" data-level="7.1" data-path="7-1-MREGARMA.html"><a href="7-1-MREGARMA.html"><i class="fa fa-check"></i><b>7.1</b> Multivariate linear regression with ARMA errors</a><ul>
+<li class="chapter" data-level="7" data-path="7-ar-models-with-covariates.html"><a href="7-ar-models-with-covariates.html"><i class="fa fa-check"></i><b>7</b> AR models with covariates</a><ul>
+<li class="chapter" data-level="7.1" data-path="7-1-MREGARMA.html"><a href="7-1-MREGARMA.html"><i class="fa fa-check"></i><b>7.1</b> MREG with ARMA errors</a><ul>
 <li class="chapter" data-level="7.1.1" data-path="7-1-MREGARMA.html"><a href="7-1-MREGARMA.html#example-fitting-with-auto.arima"><i class="fa fa-check"></i><b>7.1.1</b> Example: fitting with auto.arima</a></li>
 <li class="chapter" data-level="7.1.2" data-path="7-1-MREGARMA.html"><a href="7-1-MREGARMA.html#example-fitting-with-arima-and-sarima"><i class="fa fa-check"></i><b>7.1.2</b> Example: fitting with arima and sarima</a></li>
 <li class="chapter" data-level="7.1.3" data-path="7-1-MREGARMA.html"><a href="7-1-MREGARMA.html#example-fitting-with-gls"><i class="fa fa-check"></i><b>7.1.3</b> Example: fitting with gls</a></li>
@@ -287,14 +287,14 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
             <section class="normal" id="section-">
 <div id="covariates-used-in-stergiou-and-christou" class="section level2">
 <h2><span class="header-section-number">6.1</span> Covariates used in Stergiou and Christou</h2>
-<p>Stergiou and Christou used five environmental covariates: air temperature (air), sea-level pressure (slp), sea surface temperature (sst), vertical wind speed (vwnd), and wind speed cubed (wspd3). I downloaded monthly values for these covariates from the three 1 degree boxes used by Stergiou and Christou from the ICOADS database. I then computed a yearly average over all months in the three boxes. These yearly average environmental covariates are in <code>covsmean.year</code>, which is part of <code>landings.RData</code>.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">load</span>(<span class="st">&quot;landings.RData&quot;</span>)
-<span class="kw">colnames</span>(covsmean.year)</code></pre></div>
+<p>Stergiou and Christou used five environmental covariates: air temperature (air), sea-level pressure (slp), sea surface temperature (sst), vertical wind speed (vwnd), and wind speed cubed (wspd3). I downloaded monthly values for these covariates from the three 1 degree boxes used by Stergiou and Christou from the ICOADS database. I then computed a yearly average over all months in the three boxes. These yearly average environmental covariates are in <code>covsmean.year</code>, which is part of <code>landings</code> in the <strong>FishForecast</strong> package.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">require</span>(FishForecast)
+<span class="kw">colnames</span>(ecovsmean.year)</code></pre></div>
 <pre><code>## [1] &quot;Year&quot;          &quot;air.degC&quot;      &quot;slp.millibars&quot; &quot;sst.degC&quot;     
 ## [5] &quot;vwnd.m/s&quot;      &quot;wspd3.m3/s3&quot;</code></pre>
 <p>The covariates are those in Stergiou and Christou with the following differences. I used the ICOADS data not the COADS data. The boxes are 1 degree but on 1 degree centers not 0.5 centers. Thus the box is 39.5-40.5 not 39-40. ICOADS does not include ‘vertical wind’. I used NS winds which may be different. The code to download the ICOADS data is in the appendix.</p>
 <p>In addition to the environmental covariates, Stergiou and Christou used many covariates of fishing effort for trawlers, purse seiners, beach seiners, other coastal boats and demersal (sum of trawlers, beach seiners and other coastal boats). For each fishery type, they used data on number of fishers (FI), number of boats (BO), total engine horse power (HP), total boat tonnage (TO). They also used an economic variable: value (VA) of catch for trawlers, purse seiners, beach seiners, other coastal boats. These fishery covariates were extracted from the Greek Statistical Reports (<a href="1-1-stergiou-and-christou-1996.html#landingsdata">1.1.1</a>).</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">colnames</span>(fish.cov)</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">colnames</span>(greekfish.cov)</code></pre></div>
 <pre><code>##  [1] &quot;Year&quot;              &quot;Boats.BO&quot;          &quot;Trawlers.BOT&quot;     
 ##  [4] &quot;Purse.seiners.BOP&quot; &quot;Beach.seiners.BOB&quot; &quot;Other.BOC&quot;        
 ##  [7] &quot;Demersal.BOD&quot;      &quot;Fishers.FI&quot;        &quot;Trawlers.FIT&quot;     
@@ -335,14 +335,14 @@ Year1 &lt;-<span class="st"> </span>df<span class="op">$</span>Year[<span class=
 Year2 &lt;-<span class="st"> </span>df<span class="op">$</span>Year[<span class="kw">length</span>(df<span class="op">$</span>Year)]
 df &lt;-<span class="st"> </span><span class="kw">subset</span>(df, Year<span class="op">&gt;=</span>Year1<span class="op">+</span><span class="dv">1</span> <span class="op">&amp;</span><span class="st"> </span>Year<span class="op">&lt;=</span>Year2)
 <span class="co"># biological covariates</span>
-df.bio &lt;-<span class="st"> </span><span class="kw">subset</span>(landings, Species<span class="op">==</span><span class="st">&quot;Horse.mackerel&quot;</span>)[,<span class="kw">c</span>(<span class="st">&quot;Year&quot;</span>,<span class="st">&quot;log.metric.tons&quot;</span>)]
+df.bio &lt;-<span class="st"> </span><span class="kw">subset</span>(greeklandings, Species<span class="op">==</span><span class="st">&quot;Horse.mackerel&quot;</span>)[,<span class="kw">c</span>(<span class="st">&quot;Year&quot;</span>,<span class="st">&quot;log.metric.tons&quot;</span>)]
 df.bio &lt;-<span class="st"> </span><span class="kw">subset</span>(df.bio, Year<span class="op">&gt;=</span>Year1 <span class="op">&amp;</span><span class="st"> </span>Year<span class="op">&lt;=</span>Year2<span class="op">-</span><span class="dv">1</span>)[,<span class="op">-</span><span class="dv">1</span>,drop=<span class="ot">FALSE</span>] <span class="co"># [,-1] to remove year</span>
 <span class="kw">colnames</span>(df.bio) &lt;-<span class="st"> &quot;Trachurus&quot;</span>
 <span class="co"># environmental covariates</span>
-covsmean.year[,<span class="st">&quot;vwnd.m/s&quot;</span>]&lt;-<span class="st"> </span><span class="kw">abs</span>(covsmean.year[,<span class="st">&quot;vwnd.m/s&quot;</span>])
-df.env &lt;-<span class="st"> </span><span class="kw">log</span>(<span class="kw">subset</span>(covsmean.year, Year<span class="op">&gt;=</span>Year1 <span class="op">&amp;</span><span class="st"> </span>Year<span class="op">&lt;=</span>Year2<span class="op">-</span><span class="dv">1</span>)[,<span class="op">-</span><span class="dv">1</span>])
+ecovsmean.year[,<span class="st">&quot;vwnd.m/s&quot;</span>]&lt;-<span class="st"> </span><span class="kw">abs</span>(ecovsmean.year[,<span class="st">&quot;vwnd.m/s&quot;</span>])
+df.env &lt;-<span class="st"> </span><span class="kw">log</span>(<span class="kw">subset</span>(ecovsmean.year, Year<span class="op">&gt;=</span>Year1 <span class="op">&amp;</span><span class="st"> </span>Year<span class="op">&lt;=</span>Year2<span class="op">-</span><span class="dv">1</span>)[,<span class="op">-</span><span class="dv">1</span>])
 <span class="co"># fishing effort</span>
-df.fish &lt;-<span class="st"> </span><span class="kw">log</span>(<span class="kw">subset</span>(fish.cov, Year<span class="op">&gt;=</span>Year1 <span class="op">&amp;</span><span class="st"> </span>Year<span class="op">&lt;=</span>Year2<span class="op">-</span><span class="dv">1</span>)[,<span class="op">-</span><span class="dv">1</span>])
+df.fish &lt;-<span class="st"> </span><span class="kw">log</span>(<span class="kw">subset</span>(greekfish.cov, Year<span class="op">&gt;=</span>Year1 <span class="op">&amp;</span><span class="st"> </span>Year<span class="op">&lt;=</span>Year2<span class="op">-</span><span class="dv">1</span>)[,<span class="op">-</span><span class="dv">1</span>])
 purse.cols &lt;-<span class="st"> </span>stringr<span class="op">::</span><span class="kw">str_detect</span>(<span class="kw">colnames</span>(df.fish),<span class="st">&quot;Purse.seiners&quot;</span>)
 df.fish &lt;-<span class="st"> </span>df.fish[,purse.cols]
 df.fish &lt;-<span class="st"> </span>df.fish[<span class="op">!</span>(<span class="kw">colnames</span>(df.fish)<span class="op">==</span><span class="st">&quot;Purse.seiners.VAP&quot;</span>)]

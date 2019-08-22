@@ -24,7 +24,7 @@
 <meta name="author" content="Elizabeth Holmes" />
 
 
-<meta name="date" content="2019-08-20" />
+<meta name="date" content="2019-08-22" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -109,7 +109,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="1.1" data-path="1-1-stergiou-and-christou-1996.html"><a href="1-1-stergiou-and-christou-1996.html"><i class="fa fa-check"></i><b>1.1</b> Stergiou and Christou 1996</a><ul>
 <li class="chapter" data-level="1.1.1" data-path="1-1-stergiou-and-christou-1996.html"><a href="1-1-stergiou-and-christou-1996.html#landingsdata"><i class="fa fa-check"></i><b>1.1.1</b> Hellenic landings data</a></li>
 </ul></li>
-<li class="chapter" data-level="1.2" data-path="1-2-the-landings-data-landings-rdata.html"><a href="1-2-the-landings-data-landings-rdata.html"><i class="fa fa-check"></i><b>1.2</b> The landings data, landings.RData</a></li>
+<li class="chapter" data-level="1.2" data-path="1-2-the-landings-data-and-covariates.html"><a href="1-2-the-landings-data-and-covariates.html"><i class="fa fa-check"></i><b>1.2</b> The landings data and covariates</a></li>
 <li class="chapter" data-level="1.3" data-path="1-3-ts-objects.html"><a href="1-3-ts-objects.html"><i class="fa fa-check"></i><b>1.3</b> ts objects</a><ul>
 <li class="chapter" data-level="1.3.1" data-path="1-3-ts-objects.html"><a href="1-3-ts-objects.html#ts-function"><i class="fa fa-check"></i><b>1.3.1</b> <code>ts()</code> function</a></li>
 <li class="chapter" data-level="1.3.2" data-path="1-3-ts-objects.html"><a href="1-3-ts-objects.html#ggplot-and-ts-objects"><i class="fa fa-check"></i><b>1.3.2</b> ggplot and ts objects</a></li>
@@ -232,8 +232,8 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="6.7" data-path="6-7-MREGPREDICT.html"><a href="6-7-MREGPREDICT.html"><i class="fa fa-check"></i><b>6.7</b> Prediction accuracy</a></li>
 <li class="chapter" data-level="6.8" data-path="6-8-discussion.html"><a href="6-8-discussion.html"><i class="fa fa-check"></i><b>6.8</b> Discussion</a></li>
 </ul></li>
-<li class="chapter" data-level="7" data-path="7-auto-regressive-models-with-covariates.html"><a href="7-auto-regressive-models-with-covariates.html"><i class="fa fa-check"></i><b>7</b> Auto-regressive models with covariates</a><ul>
-<li class="chapter" data-level="7.1" data-path="7-1-MREGARMA.html"><a href="7-1-MREGARMA.html"><i class="fa fa-check"></i><b>7.1</b> Multivariate linear regression with ARMA errors</a><ul>
+<li class="chapter" data-level="7" data-path="7-ar-models-with-covariates.html"><a href="7-ar-models-with-covariates.html"><i class="fa fa-check"></i><b>7</b> AR models with covariates</a><ul>
+<li class="chapter" data-level="7.1" data-path="7-1-MREGARMA.html"><a href="7-1-MREGARMA.html"><i class="fa fa-check"></i><b>7.1</b> MREG with ARMA errors</a><ul>
 <li class="chapter" data-level="7.1.1" data-path="7-1-MREGARMA.html"><a href="7-1-MREGARMA.html#example-fitting-with-auto.arima"><i class="fa fa-check"></i><b>7.1.1</b> Example: fitting with auto.arima</a></li>
 <li class="chapter" data-level="7.1.2" data-path="7-1-MREGARMA.html"><a href="7-1-MREGARMA.html#example-fitting-with-arima-and-sarima"><i class="fa fa-check"></i><b>7.1.2</b> Example: fitting with arima and sarima</a></li>
 <li class="chapter" data-level="7.1.3" data-path="7-1-MREGARMA.html"><a href="7-1-MREGARMA.html#example-fitting-with-gls"><i class="fa fa-check"></i><b>7.1.3</b> Example: fitting with gls</a></li>
@@ -287,21 +287,20 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
             <section class="normal" id="section-">
 <div id="packages" class="section level2">
 <h2><span class="header-section-number">1.4</span> Packages</h2>
-<p>We will be using the forecast <span class="citation">(Hyndman et al. <a href="references-1.html#ref-R-forecast">2019</a>)</span> and tseries <span class="citation">(Trapletti and Hornik <a href="references-1.html#ref-R-tseries">2019</a>)</span> packages, with the MARSS <span class="citation">(Holmes et al. <a href="references-1.html#ref-R-MARSS">2018</a>)</span> package to implement ARMAX models. However we will also use a variety of other packages. So that you can keep track of what package a function come from, I will use the <code>::</code> notation for functions that are <em>not</em> from the following standard packages:</p>
+<p>We will be mainly be using the forecast <span class="citation">(Hyndman et al. <a href="references-1.html#ref-R-forecast">2019</a>)</span> and tseries <span class="citation">(Trapletti and Hornik <a href="references-1.html#ref-R-tseries">2019</a>)</span> packages, with the MARSS <span class="citation">(Holmes et al. <a href="references-1.html#ref-R-MARSS">2018</a>)</span> package to implement ARMAX models. However we will also use a variety of other packages especially for the multivariate regression chapter. So that you can keep track of what package a function come from, I will use the <code>::</code> notation for functions that are <em>not</em> from the following standard packages:</p>
 <ul>
 <li>base R</li>
 <li>stats</li>
 <li>ggplot2</li>
 </ul>
 <p>Thus to call function fun1 from package pack1, I will use <code>pack1::fun1()</code>. This will make the code more verbose but you will be able to keep track of which function comes from what package.</p>
-<p>Make sure you have the following packages installed. All are available on CRAN.</p>
-<ul>
-<li>ggplot2, gridExtra, grid</li>
-<li>forecast</li>
-<li>tseries</li>
-<li>urca</li>
-<li>MARSS</li>
-</ul>
+<p>To install the data used in this book along with all the needed packages, install the <strong>FishForecast</strong> package from GitHub. If you are on a Windows machine, you will need to install <a href="https://cran.rstudio.com/bin/windows/Rtools/">Rtools</a> in order to install packages from GitHub.</p>
+<p>To install a package from GitHub, install the <strong>devtools</strong> package and then run</p>
+<pre><code>library(devtools)
+devtools::install_github(&quot;Fish-Forecast/FishForecast&quot;)</code></pre>
+<p>Calling</p>
+<pre><code>library(FishForecast)</code></pre>
+<p>will then make the data objects available.</p>
 <div id="tidyverse-and-piping" class="section level4 unnumbered">
 <h4>tidyverse and piping</h4>
 <p>I will minimize the use of tidyverse and piping. Although the latter can create much more concise code, for beginner R users and programmers, I think it will interfere with learning. I may add the piped versions of the code later. I am not going to be doing much ‘data-wrangling’. I will assume that your data are in the tidyverse format, though I will not be using tibbles explicitly. Our data are quite simple, so this is not hard. See the chapter on inputting your data.</p>

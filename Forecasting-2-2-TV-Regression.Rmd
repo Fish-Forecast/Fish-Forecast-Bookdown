@@ -4,10 +4,10 @@ Fitting a time-varying regression is done with the `lm()` function.  For example
 
 $$log(Anchovy) = \alpha + \beta t + \beta_2 t^2 + \beta_3 t^3 + \beta_4 t^4 + e_t$$
 
-First load in the data.  `landings.RData` includes a number of data objects.   `anchovy` is a data frame with year and log.metric.tons columns. `anchovy87` is the same data frame but with the years 1964 to 1987. These are the years that Stergio and Christou use for fitting their models.  They hold out 1988 and 1989 for forecast evaluation.
+First load in the data by loading the **FishForecast** package.  `anchovy` is a data frame with year and log.metric.tons columns. `anchovy87` is the same data frame but with the years 1964 to 1987. These are the years that Stergio and Christou use for fitting their models.  They hold out 1988 and 1989 for forecast evaluation.
 
 ```{r f21-load_data}
-load("landings.RData")
+require(FishForecast)
 ```
 
 We need to add on a column for $t$ (and $t^2$, $t^3$, $t^4$) where the first year is $t=1$.  We could regress against year (so 1964 to 1987), but by convention, one regresses against 1 to the number of years or 0 to the number of years minus 1.  Stergiou and Christou did the former.

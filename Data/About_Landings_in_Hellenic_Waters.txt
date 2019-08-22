@@ -42,3 +42,6 @@ anchovy87ts <- ts(anchovy87$log.metric.tons, start=1964)
 sardine87ts <- ts(anchovy87$log.metric.tons, start=1964)
 
 save(landings, anchovy, anchovyts, anchovy87, anchovy87ts, sardine, sardinets, sardine87, sardine87ts, covs, covsmean.mon, covsmean.year, fish.cov, file="landings.RData")
+
+# renamed covs ecovs, ecovsmean.mon, etc.
+save(ecovs, ecovsmean.mon, ecovsmean.year, file="greekenvironcovs.RData")

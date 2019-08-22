@@ -11,7 +11,7 @@ $$C_t = \alpha + \beta t + e_t$$
 Model fit:
 
 ```{r f22-tvreg.anchovy}
-load("landings.RData")
+require(FishForecast)
 anchovy87$t <- anchovy87$Year-1963
 model <- lm(log.metric.tons ~ t, data=anchovy87)
 coef(model)

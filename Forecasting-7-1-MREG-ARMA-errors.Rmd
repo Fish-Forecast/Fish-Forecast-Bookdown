@@ -1,4 +1,4 @@
-## Multivariate linear regression with ARMA errors {#MREGARMA}
+## MREG with ARMA errors {#MREGARMA}
 
 ```{r f62-load_packages, message=FALSE, warning=FALSE}
 library(ggplot2)

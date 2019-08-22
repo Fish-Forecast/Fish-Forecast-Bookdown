@@ -1,6 +1,6 @@
 ## ARMAX Models {#ARMAX}
 
-```{r f64-load_packages, message=FALSE, warning=FALSE}
+```{r f72-load_packages, message=FALSE, warning=FALSE}
 library(MARSS)
 ```
 

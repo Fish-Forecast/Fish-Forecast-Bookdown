@@ -24,7 +24,7 @@
 <meta name="author" content="Elizabeth Holmes" />
 
 
-<meta name="date" content="2019-08-20" />
+<meta name="date" content="2019-08-22" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -109,7 +109,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="1.1" data-path="1-1-stergiou-and-christou-1996.html"><a href="1-1-stergiou-and-christou-1996.html"><i class="fa fa-check"></i><b>1.1</b> Stergiou and Christou 1996</a><ul>
 <li class="chapter" data-level="1.1.1" data-path="1-1-stergiou-and-christou-1996.html"><a href="1-1-stergiou-and-christou-1996.html#landingsdata"><i class="fa fa-check"></i><b>1.1.1</b> Hellenic landings data</a></li>
 </ul></li>
-<li class="chapter" data-level="1.2" data-path="1-2-the-landings-data-landings-rdata.html"><a href="1-2-the-landings-data-landings-rdata.html"><i class="fa fa-check"></i><b>1.2</b> The landings data, landings.RData</a></li>
+<li class="chapter" data-level="1.2" data-path="1-2-the-landings-data-and-covariates.html"><a href="1-2-the-landings-data-and-covariates.html"><i class="fa fa-check"></i><b>1.2</b> The landings data and covariates</a></li>
 <li class="chapter" data-level="1.3" data-path="1-3-ts-objects.html"><a href="1-3-ts-objects.html"><i class="fa fa-check"></i><b>1.3</b> ts objects</a><ul>
 <li class="chapter" data-level="1.3.1" data-path="1-3-ts-objects.html"><a href="1-3-ts-objects.html#ts-function"><i class="fa fa-check"></i><b>1.3.1</b> <code>ts()</code> function</a></li>
 <li class="chapter" data-level="1.3.2" data-path="1-3-ts-objects.html"><a href="1-3-ts-objects.html#ggplot-and-ts-objects"><i class="fa fa-check"></i><b>1.3.2</b> ggplot and ts objects</a></li>
@@ -232,8 +232,8 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="6.7" data-path="6-7-MREGPREDICT.html"><a href="6-7-MREGPREDICT.html"><i class="fa fa-check"></i><b>6.7</b> Prediction accuracy</a></li>
 <li class="chapter" data-level="6.8" data-path="6-8-discussion.html"><a href="6-8-discussion.html"><i class="fa fa-check"></i><b>6.8</b> Discussion</a></li>
 </ul></li>
-<li class="chapter" data-level="7" data-path="7-auto-regressive-models-with-covariates.html"><a href="7-auto-regressive-models-with-covariates.html"><i class="fa fa-check"></i><b>7</b> Auto-regressive models with covariates</a><ul>
-<li class="chapter" data-level="7.1" data-path="7-1-MREGARMA.html"><a href="7-1-MREGARMA.html"><i class="fa fa-check"></i><b>7.1</b> Multivariate linear regression with ARMA errors</a><ul>
+<li class="chapter" data-level="7" data-path="7-ar-models-with-covariates.html"><a href="7-ar-models-with-covariates.html"><i class="fa fa-check"></i><b>7</b> AR models with covariates</a><ul>
+<li class="chapter" data-level="7.1" data-path="7-1-MREGARMA.html"><a href="7-1-MREGARMA.html"><i class="fa fa-check"></i><b>7.1</b> MREG with ARMA errors</a><ul>
 <li class="chapter" data-level="7.1.1" data-path="7-1-MREGARMA.html"><a href="7-1-MREGARMA.html#example-fitting-with-auto.arima"><i class="fa fa-check"></i><b>7.1.1</b> Example: fitting with auto.arima</a></li>
 <li class="chapter" data-level="7.1.2" data-path="7-1-MREGARMA.html"><a href="7-1-MREGARMA.html#example-fitting-with-arima-and-sarima"><i class="fa fa-check"></i><b>7.1.2</b> Example: fitting with arima and sarima</a></li>
 <li class="chapter" data-level="7.1.3" data-path="7-1-MREGARMA.html"><a href="7-1-MREGARMA.html#example-fitting-with-gls"><i class="fa fa-check"></i><b>7.1.3</b> Example: fitting with gls</a></li>
@@ -289,10 +289,10 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <h2><span class="header-section-number">1.5</span> References</h2>
 <p>We will be using classic methods for catch forecasting discussed in the following reference papers:</p>
 <ul>
-<li>We are replicating the work in <a href="https://doi.org/10.1016/0165-7836(95)00389-4">Stergio and Christou 1996</a>. See their <a href="https://www.researchgate.net/publication/223836928_Modelling_and_forecasting_annual_fisheries_catches_Comparison_of_regression_univariate_and_multivariate_time_series_methods">ResearchGate page</a> for PDF reprint.</li>
-<li>These methods are also discussed in <a href="http://dx.doi.org/10.4236/nr.2016.74018">Lawer 2016</a>. Open-Source PDF.</li>
-<li>And in <a href="https://doi.org/10.1016/j.fishres.2005.12.003">Georgakarakos et al 2006</a>. A PDF reprint is available on the <a href="http://arch.her.hcmr.gr/publ.htm">Hellenic Center for Marine Research website</a>.</li>
-<li>The chapter on modeling seasonal catch data will use models discussed in <a href="https://doi.org/10.1016/S0165-7836(96)00482-1">Stergiou et al 1997</a>. See their <a href="https://www.researchgate.net/publication/222888388_Modelling_and_forecasting_monthly_fisheries_catches_Comparison_of_regression_univariate_and_multivariate_time_series_methods">ResearchGate page</a> for PDF reprint.</li>
+<li>We are replicating the work in <span class="citation">(Stergiou and Christou <a href="references-1.html#ref-StergiouChristou1996">1996</a>)</span> (<a href="https://doi.org/10.1016/0165-7836(95)00389-4">Link</a>).</li>
+<li>These methods are also discussed in <span class="citation">(Lawer <a href="references-1.html#ref-Lawer2016">2016</a>)</span> (<a href="http://dx.doi.org/10.4236/nr.2016.74018">PDF</a>).</li>
+<li>And in <span class="citation">(Georgakarakos, Doutsoubas, and Valavanis <a href="references-1.html#ref-Georgakarakosetal2006">2006</a>)</span> (<a href="https://doi.org/10.1016/j.fishres.2005.12.003">Link</a>). A PDF reprint is available on the <a href="http://arch.her.hcmr.gr/publ.htm">Hellenic Center for Marine Research website</a>.</li>
+<li>The chapter on modeling seasonal catch data will use models discussed in <span class="citation">(Stergiou, Christou, and Petrakis <a href="references-1.html#ref-Stergiouetal1997">1997</a>)</span> (<a href="https://doi.org/10.1016/S0165-7836(96)00482-1">Link</a>). See their <a href="https://www.researchgate.net/publication/222888388_Modelling_and_forecasting_monthly_fisheries_catches_Comparison_of_regression_univariate_and_multivariate_time_series_methods">ResearchGate page</a> for a PDF reprint.</li>
 </ul>
 
 </div>

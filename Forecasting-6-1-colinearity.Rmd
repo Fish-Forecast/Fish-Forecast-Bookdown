@@ -7,6 +7,14 @@ bookdown::preview_chapter("Forecasting-6-2-Covariates-MSEG.Rmd")
 
 Collinearity is near-linear relationships among the explanatory variables. Collinearity causes many problems such as inflated standard errors of the coefficients and correspondingly unbiased but highly imprecise estimates of the coefficients, false p-values, and poor predictive accuracy of the model. Thus it is important to evaluate the level of collinearity in your explanatory variables.
 
+```{r message=FALSE, warning=FALSE}
+library(ggplot2)
+library(car)
+library(Hmisc)
+library(corrplot)
+library(olsrr)
+```
+
 #### Pairs plot {-}
 
 One way to see this is visually is with the `pairs()` plot.  A pairs plot of fishing effort covariates reveals high correlations between Year, HPP and TOP.
@@ -25,7 +33,7 @@ Another way that we can visualize the problem is by looking at the correlation m
 ```{r}
 library(corrplot)
 X <- as.matrix(df[,colnames(df)!="anchovy"])
-corrplot(cor(X))
+corrplot::corrplot(cor(X))
 ```
 
 #### Variance inflation factors {-}
@@ -69,12 +77,12 @@ See the information from the olsrr package on [condition indices](https://cran.r
 
 ```{r}
 model <- lm(anchovy ~ ., data=dfz)
-round(ols_eigen_cindex(model), digit=2)
+round(olsrr::ols_eigen_cindex(model), digit=2)
 ```
 
 #### redun() {-}
 
-The Hmisc library also has a redundancy function (`redun()`) that can help identify which variables are redundant.  This identifies variables that can be explained with an $R^2>0.9$ by a linear (or non-linear) combination of other variables.  We are fitting a linear model, so we set `nk=0` to force `redun()` to only look at linear combinations.
+The **Hmisc** library also has a redundancy function (`redun()`) that can help identify which variables are redundant.  This identifies variables that can be explained with an $R^2>0.9$ by a linear (or non-linear) combination of other variables.  We are fitting a linear model, so we set `nk=0` to force `redun()` to only look at linear combinations.
 
 We use `redun()` only on the explanatory variables and thus remove the first column, which is our response variable (anchovy).
 

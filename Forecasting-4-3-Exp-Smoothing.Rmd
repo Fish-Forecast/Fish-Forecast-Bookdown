@@ -104,7 +104,7 @@ fit1 <- forecast::ets(anchovy87ts, model="ANN")
 Use that model with the 2000-2007 data and produce a forecast:
 
 ```{r fit.new.ann}
-dat <- subset(landings, Species=="Anchovy" & Year>=2000 & Year<=2007)
+dat <- subset(greeklandings, Species=="Anchovy" & Year>=2000 & Year<=2007)
 dat <- ts(dat$log.metric.tons, start=2000)
 fit2 <- forecast::ets(dat, model=fit1)
 fr2 <- forecast::forecast(fit2, h=5)

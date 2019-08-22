@@ -37,10 +37,10 @@ When just getting started, we will focus just on a few of these.
 
 #### Load the data {-}
 
-Load the data. 
+Load the data by loading the **FishForecast** package. 
 
 ```{r f34-load_data}
-load("landings.RData")
+require(FishForecast)
 ```
 
 `anchovy87ts` is a ts object of the log metric tons for 1964-1987.  We will use this for `auto.arima()` however we could also use `anchovy87$log.metric.tons`.  `anchovy87ts` is just
@@ -219,7 +219,7 @@ Look at histograms of your data:
 
 ```{r fig.width=10, echo=FALSE, fig.align="center"}
 par(mfrow=c(1,2))
-dat <- subset(landings, Species=="Anchovy" & Year<=1987)
+dat <- subset(greeklandings, Species=="Anchovy" & Year<=1987)
 hist(dat$metric.tons, main="metric.tons", xlab="anchovy")
 hist(dat$log.metric.tons, main="log.metric.tons",xlab="log anchovy")
 ```

@@ -3,8 +3,8 @@
 Once you have found a set of possible forecast models, you are ready to compare forecasts from a variety of models and choose a forecast model. To quantify the forecast performance, we need to create forecasts for data that we have so that we can compare the forecast to actual data.  There are two approaches to this: holding out data for testing and cross-validation.
   
 ```{r f36-load_data, message=FALSE, warning=FALSE, echo=FALSE}
-library(ggplot2)
-load("landings.RData")
+require(ggplot2)
+require(FishForecast)
 ```
 
 
@@ -49,8 +49,8 @@ For the variable length window approach applied to  the Anchovy time series, we 
 ```{r cv.sliding, echo=FALSE}
 p <- list()
 for(i in 1:9){
-  p[[i]]<-ggplot(subset(landings, Species=="Anchovy"&Year<1974+i), aes(x=Year, y=log.metric.tons))+geom_point()+ylab("landings")+xlab("")+xlim(1964,1990)+ylim(8,12)+
-    geom_point(data=subset(landings, Species=="Anchovy"&Year==1974+i),aes(x=Year,y=log.metric.tons),color="red") +
+  p[[i]]<-ggplot(subset(greeklandings, Species=="Anchovy"&Year<1974+i), aes(x=Year, y=log.metric.tons))+geom_point()+ylab("landings")+xlab("")+xlim(1964,1990)+ylim(8,12)+
+    geom_point(data=subset(greeklandings, Species=="Anchovy"&Year==1974+i),aes(x=Year,y=log.metric.tons),color="red") +
     ggtitle(paste0("forecast ",i))
 }
 gridExtra::grid.arrange(
@@ -66,8 +66,8 @@ Another approach uses a fixed window.  For example, a 10-year window.
 ```{r cv.fixed, echo=FALSE}
 p <- list()
 for(i in 1:9){
-  p[[i]]<-ggplot(subset(landings, Species=="Anchovy"&Year>=1964+i-1&Year<1974+i), aes(x=Year, y=log.metric.tons))+geom_point()+ylab("landings")+xlab("")+xlim(1964,1990)+ylim(8,12)+
-    geom_point(data=subset(landings, Species=="Anchovy"&Year==1974+i),aes(x=Year,y=log.metric.tons),color="red") +
+  p[[i]]<-ggplot(subset(greeklandings, Species=="Anchovy"&Year>=1964+i-1&Year<1974+i), aes(x=Year, y=log.metric.tons))+geom_point()+ylab("landings")+xlab("")+xlim(1964,1990)+ylim(8,12)+
+    geom_point(data=subset(greeklandings, Species=="Anchovy"&Year==1974+i),aes(x=Year,y=log.metric.tons),color="red") +
     ggtitle(paste0("forecast ",i))
 }
 gridExtra::grid.arrange(
@@ -85,8 +85,8 @@ In that case, there is a gap between your training data and your test data point
 ```{r cv.sliding.4plot, echo=FALSE}
 p <- list()
 for(i in 1:9){
-  p[[i]]<-ggplot(subset(landings, Species=="Anchovy"&Year<1974+i), aes(x=Year, y=log.metric.tons))+geom_point()+ylab("landings")+xlab("")+xlim(1964,1990)+ylim(8,12)+
-    geom_point(data=subset(landings, Species=="Anchovy"&Year==1974+i+3),aes(x=Year,y=log.metric.tons),color="red") +
+  p[[i]]<-ggplot(subset(greeklandings, Species=="Anchovy"&Year<1974+i), aes(x=Year, y=log.metric.tons))+geom_point()+ylab("landings")+xlab("")+xlim(1964,1990)+ylim(8,12)+
+    geom_point(data=subset(greeklandings, Species=="Anchovy"&Year==1974+i+3),aes(x=Year,y=log.metric.tons),color="red") +
     ggtitle(paste0("forecast ",i))
 }
 gridExtra::grid.arrange(

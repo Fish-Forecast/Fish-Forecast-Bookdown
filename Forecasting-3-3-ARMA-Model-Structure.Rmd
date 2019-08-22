@@ -1,7 +1,7 @@
 ## Model structure
 
 ```{r f33-load_data, echo=FALSE, message=FALSE, warning=FALSE}
-load("landings.RData")
+require(FishForecast)
 ```
 
 We are now at step A3 and A4 of the Box-Jenkins Method.  Note we did not address seasonality since we are working with yearly data.

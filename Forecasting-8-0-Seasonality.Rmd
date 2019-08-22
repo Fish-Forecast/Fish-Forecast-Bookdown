@@ -22,24 +22,25 @@ We will illustrate the analysis of seasonal catch data using a data set of month
 
 ### Load the chinook salmon data set {-}
 
-```{r}
-load("chinook.RData")
-head(chinook)
+This is in the **FishForecast** package.
+```{r f80-load_packages}
+require(FishForecast)
+head(chinook.month)
 ```
 
 
 The data are monthly and start in January 1990.  To make this into a ts object do
 
 ```{r}
-chinookts <- ts(chinook$log.metric.tons, start=c(1990,1), frequency=12)
+chinookts <- ts(chinook.month$log.metric.tons, start=c(1990,1), frequency=12)
 ```
 `start` is the year and month and frequency is the number of months in the year.  If we had quarterly data that started in 2nd quarter of 1990, our call would be
 ```
-ts(chinook, start=c(1990,2), frequency=4)
+ts(chinook$log.metric.tons, start=c(1990,2), frequency=4)
 ```
 If we had daily data starting on hour 5 of day 10 and each row was an hour, our call would be
 ```
-ts(chinook, start=c(10,5), frequency=24)
+ts(chinook$log.metric.tons, start=c(10,5), frequency=24)
 ```
 
 Use `?ts` to see more examples of how to set up ts objects.

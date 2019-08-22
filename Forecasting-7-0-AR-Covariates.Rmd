@@ -3,5 +3,5 @@
 library(ggplot2)
 ```
 
-# Auto-regressive models with covariates
+# AR models with covariates
 

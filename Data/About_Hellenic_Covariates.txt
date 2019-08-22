@@ -40,3 +40,5 @@ covsmean.mon$Year <- as.character(covsmean.mon$Year)
 #Save the covariates with the landing data.
 load("landings.RData")
 save(landings, anchovy, anchovyts, anchovy87, anchovy87ts, sardine, sardinets, sardine87, sardine87ts, covs, covsmean.mon, covsmean.year, fish.cov, file="landings.RData")
+
+# note changed name to ecovs, ecovsmean.mon, etc

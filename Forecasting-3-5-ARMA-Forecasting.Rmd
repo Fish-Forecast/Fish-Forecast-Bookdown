@@ -10,7 +10,7 @@ library(forecast)
 ```
 
 ```{r f35-load_data2, message=FALSE, warning=FALSE, echo=FALSE}
-load("landings.RData")
+require(FishForecast)
 ```
 
 
@@ -80,7 +80,7 @@ We can repeat for other species.
 
 ```{r}
 spp="Chub.mackerel"
-dat <- subset(landings, Species==spp & Year<=1987)$log.metric.tons
+dat <- subset(greeklandings, Species==spp & Year<=1987)$log.metric.tons
 dat <- ts(dat, start=1964)
 fit <- forecast::auto.arima(dat)
 fr <- forecast::forecast(fit, h=5)

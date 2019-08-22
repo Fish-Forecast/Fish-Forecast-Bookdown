@@ -17,11 +17,11 @@ Before discussing models with covariates, I will show a variety of approaches fo
 
 ## Covariates used in Stergiou and Christou
 
-Stergiou and Christou used five environmental covariates: air temperature (air), sea-level pressure (slp), sea surface temperature (sst), vertical wind speed (vwnd), and wind speed cubed (wspd3).  I downloaded monthly values for these covariates from the three 1 degree boxes used by Stergiou and Christou from the ICOADS database. I then computed a yearly average over all months in the three boxes.  These yearly average environmental covariates are in `covsmean.year`, which is part of `landings.RData`.
+Stergiou and Christou used five environmental covariates: air temperature (air), sea-level pressure (slp), sea surface temperature (sst), vertical wind speed (vwnd), and wind speed cubed (wspd3).  I downloaded monthly values for these covariates from the three 1 degree boxes used by Stergiou and Christou from the ICOADS database. I then computed a yearly average over all months in the three boxes.  These yearly average environmental covariates are in `covsmean.year`, which is part of `landings` in the **FishForecast** package.
 
 ```{r f37-load_data}
-load("landings.RData")
-colnames(covsmean.year)
+require(FishForecast)
+colnames(ecovsmean.year)
 ```
 
 The covariates are those in Stergiou and Christou with the following differences. I used the ICOADS data not the COADS data.  The boxes are 1 degree but on 1 degree centers not 0.5 centers.  Thus the box is 39.5-40.5 not 39-40.  ICOADS does not include 'vertical wind'.  I used NS winds which may be different.  The code to download the ICOADS data is in the appendix.
@@ -29,7 +29,7 @@ The covariates are those in Stergiou and Christou with the following differences
 In addition to the environmental covariates, Stergiou and Christou used many covariates of fishing effort for trawlers, purse seiners, beach seiners, other coastal boats and demersal (sum of trawlers, beach seiners and other coastal boats).  For each fishery type, they used data on number of fishers (FI), number of boats (BO), total engine horse power (HP), total boat tonnage (TO).  They also used an economic variable: value (VA) of catch for trawlers, purse seiners, beach seiners, other coastal boats. These fishery covariates were extracted from the Greek Statistical Reports  (\@ref(landingsdata)).
 
 ```{r fish.cov}
-colnames(fish.cov)
+colnames(greekfish.cov)
 ```
 For anchovy, the fishery effort metrics from the purse seine fishery were used. Lastly, biological covariates were included which were the landings of other species.  Stergiou and Christou state (page 118) that the other species modeled by VAR (page 114) was included. This would imply that sardine was used as an explanatory variable.  However in Table 3 (page 119), it appears that *Trachurus* (Horse mackerel) was included.  It is not clear if sardine was also included but not chosen as an important variable.  I included *Trachurus* and not sardine as the biological explanatory variable.
 
@@ -43,14 +43,14 @@ Year1 <- df$Year[1]
 Year2 <- df$Year[length(df$Year)]
 df <- subset(df, Year>=Year1+1 & Year<=Year2)
 # biological covariates
-df.bio <- subset(landings, Species=="Horse.mackerel")[,c("Year","log.metric.tons")]
+df.bio <- subset(greeklandings, Species=="Horse.mackerel")[,c("Year","log.metric.tons")]
 df.bio <- subset(df.bio, Year>=Year1 & Year<=Year2-1)[,-1,drop=FALSE] # [,-1] to remove year
 colnames(df.bio) <- "Trachurus"
 # environmental covariates
-covsmean.year[,"vwnd.m/s"]<- abs(covsmean.year[,"vwnd.m/s"])
-df.env <- log(subset(covsmean.year, Year>=Year1 & Year<=Year2-1)[,-1])
+ecovsmean.year[,"vwnd.m/s"]<- abs(ecovsmean.year[,"vwnd.m/s"])
+df.env <- log(subset(ecovsmean.year, Year>=Year1 & Year<=Year2-1)[,-1])
 # fishing effort
-df.fish <- log(subset(fish.cov, Year>=Year1 & Year<=Year2-1)[,-1])
+df.fish <- log(subset(greekfish.cov, Year>=Year1 & Year<=Year2-1)[,-1])
 purse.cols <- stringr::str_detect(colnames(df.fish),"Purse.seiners")
 df.fish <- df.fish[,purse.cols]
 df.fish <- df.fish[!(colnames(df.fish)=="Purse.seiners.VAP")]

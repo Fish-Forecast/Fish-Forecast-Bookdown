@@ -1,5 +1,5 @@
 ```{r echo=FALSE}
-load("landings.RData")
+require(FishForecast)
 ```
 
 # Exponential smoothing models

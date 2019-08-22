@@ -2,10 +2,10 @@
 
 The `ets()` function in the **forecast** package fits  exponential smoothing models and produces forecasts from the fitted models. It also includes functions for plotting forecasts.
 
-Load the data.
+Load the data by loading the **FishForecast** package.
 
 ```{r load_data_exp_smoothing}
-load("landings.RData")
+require(FishForecast)
 ```
 
 Fit the model.

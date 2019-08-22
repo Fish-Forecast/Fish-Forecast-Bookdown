@@ -24,7 +24,7 @@
 <meta name="author" content="Elizabeth Holmes" />
 
 
-<meta name="date" content="2019-08-20" />
+<meta name="date" content="2019-08-22" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -109,7 +109,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="1.1" data-path="1-1-stergiou-and-christou-1996.html"><a href="1-1-stergiou-and-christou-1996.html"><i class="fa fa-check"></i><b>1.1</b> Stergiou and Christou 1996</a><ul>
 <li class="chapter" data-level="1.1.1" data-path="1-1-stergiou-and-christou-1996.html"><a href="1-1-stergiou-and-christou-1996.html#landingsdata"><i class="fa fa-check"></i><b>1.1.1</b> Hellenic landings data</a></li>
 </ul></li>
-<li class="chapter" data-level="1.2" data-path="1-2-the-landings-data-landings-rdata.html"><a href="1-2-the-landings-data-landings-rdata.html"><i class="fa fa-check"></i><b>1.2</b> The landings data, landings.RData</a></li>
+<li class="chapter" data-level="1.2" data-path="1-2-the-landings-data-and-covariates.html"><a href="1-2-the-landings-data-and-covariates.html"><i class="fa fa-check"></i><b>1.2</b> The landings data and covariates</a></li>
 <li class="chapter" data-level="1.3" data-path="1-3-ts-objects.html"><a href="1-3-ts-objects.html"><i class="fa fa-check"></i><b>1.3</b> ts objects</a><ul>
 <li class="chapter" data-level="1.3.1" data-path="1-3-ts-objects.html"><a href="1-3-ts-objects.html#ts-function"><i class="fa fa-check"></i><b>1.3.1</b> <code>ts()</code> function</a></li>
 <li class="chapter" data-level="1.3.2" data-path="1-3-ts-objects.html"><a href="1-3-ts-objects.html#ggplot-and-ts-objects"><i class="fa fa-check"></i><b>1.3.2</b> ggplot and ts objects</a></li>
@@ -232,8 +232,8 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="6.7" data-path="6-7-MREGPREDICT.html"><a href="6-7-MREGPREDICT.html"><i class="fa fa-check"></i><b>6.7</b> Prediction accuracy</a></li>
 <li class="chapter" data-level="6.8" data-path="6-8-discussion.html"><a href="6-8-discussion.html"><i class="fa fa-check"></i><b>6.8</b> Discussion</a></li>
 </ul></li>
-<li class="chapter" data-level="7" data-path="7-auto-regressive-models-with-covariates.html"><a href="7-auto-regressive-models-with-covariates.html"><i class="fa fa-check"></i><b>7</b> Auto-regressive models with covariates</a><ul>
-<li class="chapter" data-level="7.1" data-path="7-1-MREGARMA.html"><a href="7-1-MREGARMA.html"><i class="fa fa-check"></i><b>7.1</b> Multivariate linear regression with ARMA errors</a><ul>
+<li class="chapter" data-level="7" data-path="7-ar-models-with-covariates.html"><a href="7-ar-models-with-covariates.html"><i class="fa fa-check"></i><b>7</b> AR models with covariates</a><ul>
+<li class="chapter" data-level="7.1" data-path="7-1-MREGARMA.html"><a href="7-1-MREGARMA.html"><i class="fa fa-check"></i><b>7.1</b> MREG with ARMA errors</a><ul>
 <li class="chapter" data-level="7.1.1" data-path="7-1-MREGARMA.html"><a href="7-1-MREGARMA.html#example-fitting-with-auto.arima"><i class="fa fa-check"></i><b>7.1.1</b> Example: fitting with auto.arima</a></li>
 <li class="chapter" data-level="7.1.2" data-path="7-1-MREGARMA.html"><a href="7-1-MREGARMA.html#example-fitting-with-arima-and-sarima"><i class="fa fa-check"></i><b>7.1.2</b> Example: fitting with arima and sarima</a></li>
 <li class="chapter" data-level="7.1.3" data-path="7-1-MREGARMA.html"><a href="7-1-MREGARMA.html#example-fitting-with-gls"><i class="fa fa-check"></i><b>7.1.3</b> Example: fitting with gls</a></li>
@@ -292,38 +292,7 @@ if(file.exists("Fish-Forecast.Rmd")) file.remove("Fish-Forecast.Rmd")
 bookdown::preview_chapter("Forecasting-6-2-Covariates-MSEG.Rmd")
 -->
 <p>The last approach that we will discuss for dealing with collinearity is orthogonalization. With this technique, we replace the set of collinear covariates <span class="math inline">\(X\)</span> with a set of orthogonal, i.e. independent, covariates <span class="math inline">\(Z\)</span>, which are linear combinations of the original, collinear, covariates. Principal Components Analysis (PCA) is an example of using orthogonalization to deal with collinear covariates. Another example is when we use the <code>poly()</code> function to do polynomial regression. In this case, we are replacing a set of collinear variates, <span class="math inline">\(x\)</span>, <span class="math inline">\(x^2\)</span>, <span class="math inline">\(x^3\)</span>, etc., with a set of orthogonal covariates.</p>
-<p>The ways that you can create a set of orthogonal covariates is not unique. There are many different sets of orthogonal covariates. We will show three ways you might create your orthogonal set: PCA, Gram-Schmidt Orthogonalization, and residuals from a linear regressions.</p>
-<p>First let’s run with the collinear covariates and look at the effect sizes. We will use the standardized covariates with the mean removed and variance scaled to 1.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">raw &lt;-<span class="st"> </span><span class="kw">lm</span>(anchovy <span class="op">~</span><span class="st"> </span>., <span class="dt">data=</span>dfz)
-<span class="kw">summary</span>(raw)</code></pre></div>
-<pre><code>## 
-## Call:
-## lm(formula = anchovy ~ ., data = dfz)
-## 
-## Residuals:
-##     Min      1Q  Median      3Q     Max 
-## -0.4112 -0.1633 -0.0441  0.1459  0.5009 
-## 
-## Coefficients:
-##               Estimate Std. Error t value Pr(&gt;|t|)  
-## (Intercept) -9.171e-15  7.003e-02   0.000   1.0000  
-## Year         2.118e+00  7.139e-01   2.966   0.0128 *
-## Trachurus   -6.717e-02  2.983e-01  -0.225   0.8260  
-## air          2.987e-01  1.353e-01   2.207   0.0495 *
-## slp         -5.023e-02  1.277e-01  -0.393   0.7016  
-## sst         -7.250e-02  1.102e-01  -0.658   0.5242  
-## vwnd         1.530e-01  9.930e-02   1.540   0.1517  
-## wspd3        6.086e-02  9.679e-02   0.629   0.5423  
-## BOP          3.137e-01  2.590e-01   1.211   0.2512  
-## FIP          1.347e-01  2.082e-01   0.647   0.5309  
-## HPP         -5.202e-01  5.581e-01  -0.932   0.3713  
-## TOP         -8.068e-01  7.839e-01  -1.029   0.3255  
-## ---
-## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
-## 
-## Residual standard error: 0.3359 on 11 degrees of freedom
-## Multiple R-squared:  0.946,  Adjusted R-squared:  0.8921 
-## F-statistic: 17.53 on 11 and 11 DF,  p-value: 2.073e-05</code></pre>
+<p>The ways that you can create a set of orthogonal covariates is not unique. There are many different sets of orthogonal covariates. We will show three ways you might create your orthogonal set: PCA, Gram-Schmidt Orthogonalization, and residuals from linear regressions. Note, it is important to use standardized covariates with the mean removed and variance scaled to 1 when doing orthogonalization. Thus we will use <code>dfz</code> instead of <code>df</code>.</p>
 <div id="principal-component-regression" class="section level4">
 <h4><span class="header-section-number">6.6.0.1</span> Principal component regression</h4>
 <p>Principal component regression is a linear regression in which you transform your collinear covariates using the othogonal variates created by Principal Components Analysis (PCA). PCA uses an orthogonal set of variates <span class="math inline">\(Z\)</span> in which the first variate accounts for as much of the variability in the variate dataset as possible, the second accounts for as much of the remaining variance as possible, the third accounts for as much of the variance remaining after the first two, etc., etc. Each variate is orthogonal to the preceding variate.</p>
@@ -337,7 +306,7 @@ bookdown::preview_chapter("Forecasting-6-2-Covariates-MSEG.Rmd")
 Z &lt;-<span class="st"> </span>X<span class="op">%*%</span>loadings
 <span class="kw">colnames</span>(Z) &lt;-<span class="st"> </span><span class="kw">paste0</span>(<span class="st">&quot;PC&quot;</span>, <span class="dv">1</span><span class="op">:</span><span class="kw">ncol</span>(Z))
 <span class="kw">corrplot</span>(<span class="kw">cor</span>(Z))</code></pre></div>
-<p><img src="Fish-Forecast_files/figure-html/unnamed-chunk-89-1.png" width="672" style="display: block; margin: auto;" /> These new variates are linear combinations of the original variates. The “loadings” indicate the weight of each original variate in the new variate (“principal component”).</p>
+<p><img src="Fish-Forecast_files/figure-html/unnamed-chunk-92-1.png" width="672" style="display: block; margin: auto;" /> These new variates are linear combinations of the original variates. The “loadings” indicate the weight of each original variate in the new variate (“principal component”).</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(reshape2)
 meltR =<span class="st"> </span><span class="kw">melt</span>(loadings)
 <span class="kw">ggplot</span>(meltR, <span class="kw">aes</span>(<span class="dt">x=</span>Var1, <span class="dt">y =</span> value)) <span class="op">+</span><span class="st"> </span>
@@ -345,12 +314,12 @@ meltR =<span class="st"> </span><span class="kw">melt</span>(loadings)
 <span class="st">  </span><span class="kw">coord_flip</span>() <span class="op">+</span><span class="st"> </span>
 <span class="st">  </span><span class="kw">facet_wrap</span>(. <span class="op">~</span><span class="st"> </span>Var2) <span class="op">+</span>
 <span class="st">  </span><span class="kw">ggtitle</span>(<span class="st">&quot;Loadings&quot;</span>)</code></pre></div>
-<p><img src="Fish-Forecast_files/figure-html/unnamed-chunk-90-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="Fish-Forecast_files/figure-html/unnamed-chunk-93-1.png" width="672" style="display: block; margin: auto;" /></p>
 <p>The <span class="math inline">\(Z\)</span> matrix gives us a set of orthogonal variates, but some of them do not explain much of the variance. We know this should be the case because we have collinearity in our data. The singular values (which are square root of the eigenvalues of <span class="math inline">\(X^\top X\)</span>) show how much of the variance in <span class="math inline">\(X\)</span> explained by each pricipal component (column in <span class="math inline">\(Z\)</span>). In the plot, the singular values were of <span class="math inline">\(X/\sqrt{n}\)</span> so that <span class="math inline">\(X^\top X\)</span> is the correlation matrix. The average singular value for a correlation matrix is 1. With this scaling, any singlular value much less than one is small.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">sing.val &lt;-<span class="st"> </span><span class="kw">svd</span>(X<span class="op">/</span><span class="kw">sqrt</span>(n))<span class="op">$</span>d
 <span class="kw">plot</span>(sing.val, <span class="dt">xlab=</span><span class="st">&quot;axis&quot;</span>, <span class="dt">ylab=</span><span class="st">&quot;singular value&quot;</span>)
 <span class="kw">abline</span>(<span class="dt">h=</span><span class="dv">1</span>, <span class="dt">col=</span><span class="st">&quot;red&quot;</span>)</code></pre></div>
-<p><img src="Fish-Forecast_files/figure-html/unnamed-chunk-91-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="Fish-Forecast_files/figure-html/unnamed-chunk-94-1.png" width="672" style="display: block; margin: auto;" /></p>
 <p>We could run a linear regression with all the 11 orthogonal variates (principal components), but that would not be helpful. The point of orthogonalization is to find a smaller set of variates that explains the structure in the larger set of collinear variates. Based on the singular value plot, we will use the first 2 components. These 2 capture a fair bit of the variability in the anchovy catch.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">dfpca &lt;-<span class="st"> </span><span class="kw">data.frame</span>(<span class="dt">anchovy=</span>dfz<span class="op">$</span>anchovy, Z[,<span class="dv">1</span><span class="op">:</span><span class="dv">2</span>])
 pcalm &lt;-<span class="st"> </span><span class="kw">lm</span>(anchovy <span class="op">~</span><span class="st"> </span>., <span class="dt">data=</span>dfpca)
@@ -384,7 +353,7 @@ df_out<span class="op">$</span>group &lt;-<span class="st"> </span><span class="
 p&lt;-<span class="kw">ggplot</span>(df_out,<span class="kw">aes</span>(<span class="dt">x=</span>PC1,<span class="dt">y=</span>PC2,<span class="dt">color=</span>group ))
 p&lt;-p<span class="op">+</span><span class="kw">geom_point</span>()
 p</code></pre></div>
-<p><img src="Fish-Forecast_files/figure-html/unnamed-chunk-93-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="Fish-Forecast_files/figure-html/unnamed-chunk-96-1.png" width="672" style="display: block; margin: auto;" /></p>
 <p>We can recover the effect sizes for the original variates from <span class="math inline">\(V\tilde{\beta}\)</span>. This gives a similar picture as the other methods we used. Year, TOP/HPP/BOP and Trachurus come out as important.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">coef</span>(pcalm)</code></pre></div>
 <pre><code>##   (Intercept)           PC1           PC2 
@@ -394,7 +363,7 @@ p</code></pre></div>
 <span class="st">  </span><span class="kw">geom_bar</span>(<span class="dt">stat=</span><span class="st">&quot;identity&quot;</span>) <span class="op">+</span><span class="st"> </span>
 <span class="st">  </span><span class="kw">coord_flip</span>() <span class="op">+</span>
 <span class="st">  </span><span class="kw">ggtitle</span>(<span class="st">&quot;Effects on scaled original vars&quot;</span>)</code></pre></div>
-<p><img src="Fish-Forecast_files/figure-html/unnamed-chunk-94-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="Fish-Forecast_files/figure-html/unnamed-chunk-97-1.png" width="672" style="display: block; margin: auto;" /></p>
 <p>Principal Components Regression (PCR) is a method for dimension reduction, like Lasso regression or variable selection, but your new principal components can be hard to interpret because they are linear combinations of the original variates. In addition, if you are trying to understand if a particular variate improves your model, then PCR is going to help you. Another approach for creating orthogonal variates is Gram-Schmidt orthogalization and this can help study the effect of adding specific variates.</p>
 </div>
 <div id="gram-schmidt-orthogonalization" class="section level4">
