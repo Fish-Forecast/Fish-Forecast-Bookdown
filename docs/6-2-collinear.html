@@ -1,12 +1,12 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<html lang="" xml:lang="">
 <head>
 
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <title>6.2 Collinearity | Fisheries Catch Forecasting</title>
   <meta name="description" content="This book will show you how to model and forecast annual and seasonal fisheries catches using R and its time-series analysis functions and packages. Forecasting using time-varying regression, ARIMA (Box-Jenkins) models, and expoential smoothing models is demonstrated using real catch time series. The entire process from data evaluation and diagnostics, model fitting, model selection and forecast evaluation is shown. The focus of the book is on univariate time series (annual or seasonal), however multivariate regression with autocorrelated errors and multivariate autoregressive models (MAR) are covered briefly. For multivariate autoregressive models and multivariate autoregressive state-space models for fisheries and environmental sciences, see Holmes, Ward and Scheuerell (2018)." />
-  <meta name="generator" content="bookdown 0.12 and GitBook 2.6.7" />
+  <meta name="generator" content="bookdown 0.20 and GitBook 2.6.7" />
 
   <meta property="og:title" content="6.2 Collinearity | Fisheries Catch Forecasting" />
   <meta property="og:type" content="book" />
@@ -24,15 +24,15 @@
 <meta name="author" content="Elizabeth Holmes" />
 
 
-<meta name="date" content="2019-08-22" />
+<meta name="date" content="2020-10-02" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black" />
   
   
-<link rel="prev" href="6-1-covariates-used-in-stergiou-and-christou.html">
-<link rel="next" href="6-3-MREGVAR.html">
+<link rel="prev" href="6-1-covariates-used-in-stergiou-and-christou.html"/>
+<link rel="next" href="6-3-MREGVAR.html"/>
 <script src="libs/jquery-2.2.3/jquery.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
@@ -40,6 +40,7 @@
 <link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
 
 
 
@@ -47,45 +48,75 @@
 
 
 
+
+
+<script src="libs/accessible-code-block-0.0.1/empty-anchor.js"></script>
 <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
 
 
 <style type="text/css">
-div.sourceCode { overflow-x: auto; }
-table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
-  margin: 0; padding: 0; vertical-align: baseline; border: none; }
-table.sourceCode { width: 100%; line-height: 100%; }
-td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
-td.sourceCode { padding-left: 5px; }
-code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
-code > span.dt { color: #902000; } /* DataType */
-code > span.dv { color: #40a070; } /* DecVal */
-code > span.bn { color: #40a070; } /* BaseN */
-code > span.fl { color: #40a070; } /* Float */
-code > span.ch { color: #4070a0; } /* Char */
-code > span.st { color: #4070a0; } /* String */
-code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
-code > span.ot { color: #007020; } /* Other */
-code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
-code > span.fu { color: #06287e; } /* Function */
-code > span.er { color: #ff0000; font-weight: bold; } /* Error */
-code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
-code > span.cn { color: #880000; } /* Constant */
-code > span.sc { color: #4070a0; } /* SpecialChar */
-code > span.vs { color: #4070a0; } /* VerbatimString */
-code > span.ss { color: #bb6688; } /* SpecialString */
-code > span.im { } /* Import */
-code > span.va { color: #19177c; } /* Variable */
-code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
-code > span.op { color: #666666; } /* Operator */
-code > span.bu { } /* BuiltIn */
-code > span.ex { } /* Extension */
-code > span.pp { color: #bc7a00; } /* Preprocessor */
-code > span.at { color: #7d9029; } /* Attribute */
-code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
-code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
-code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
-code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code.sourceCode > span { display: inline-block; line-height: 1.25; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode { white-space: pre; position: relative; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+code.sourceCode { white-space: pre-wrap; }
+code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
 </style>
 
 <link rel="stylesheet" href="style.css" type="text/css" />
@@ -128,7 +159,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="2.2" data-path="2-2-forecasting.html"><a href="2-2-forecasting.html"><i class="fa fa-check"></i><b>2.2</b> Forecasting</a><ul>
 <li class="chapter" data-level="2.2.1" data-path="2-2-forecasting.html"><a href="2-2-forecasting.html#the-forecast-package"><i class="fa fa-check"></i><b>2.2.1</b> The forecast package</a></li>
 </ul></li>
-<li class="chapter" data-level="2.3" data-path="2-3-summary-1.html"><a href="2-3-summary-1.html"><i class="fa fa-check"></i><b>2.3</b> Summary</a></li>
+<li class="chapter" data-level="2.3" data-path="2-1-fitting.html"><a href="2-1-fitting.html#summary"><i class="fa fa-check"></i><b>2.3</b> Summary</a></li>
 </ul></li>
 <li class="chapter" data-level="3" data-path="3-arima-models.html"><a href="3-arima-models.html"><i class="fa fa-check"></i><b>3</b> ARIMA Models</a><ul>
 <li class="chapter" data-level="3.1" data-path="3-1-overview.html"><a href="3-1-overview.html"><i class="fa fa-check"></i><b>3.1</b> Overview</a><ul>
@@ -141,7 +172,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="3.2.2" data-path="3-2-stationarity.html"><a href="3-2-stationarity.html#non-stationarity"><i class="fa fa-check"></i><b>3.2.2</b> Non-stationarity</a></li>
 <li class="chapter" data-level="3.2.3" data-path="3-2-stationarity.html"><a href="3-2-stationarity.html#stationarity-tests"><i class="fa fa-check"></i><b>3.2.3</b> Stationarity tests</a></li>
 <li class="chapter" data-level="3.2.4" data-path="3-2-stationarity.html"><a href="3-2-stationarity.html#differencing-the-data"><i class="fa fa-check"></i><b>3.2.4</b> Differencing the data</a></li>
-<li class="chapter" data-level="3.2.5" data-path="3-2-stationarity.html"><a href="3-2-stationarity.html#summary-2"><i class="fa fa-check"></i><b>3.2.5</b> Summary</a></li>
+<li class="chapter" data-level="3.2.5" data-path="2-1-fitting.html"><a href="2-1-fitting.html#summary"><i class="fa fa-check"></i><b>3.2.5</b> Summary</a></li>
 </ul></li>
 <li class="chapter" data-level="3.3" data-path="3-3-model-structure.html"><a href="3-3-model-structure.html"><i class="fa fa-check"></i><b>3.3</b> Model structure</a><ul>
 <li class="chapter" data-level="3.3.1" data-path="3-3-model-structure.html"><a href="3-3-model-structure.html#ar-and-ma-lags"><i class="fa fa-check"></i><b>3.3.1</b> AR and MA lags</a></li>
@@ -149,7 +180,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="3.3.3" data-path="3-3-model-structure.html"><a href="3-3-model-structure.html#choosing-the-ar-and-ma-levels"><i class="fa fa-check"></i><b>3.3.3</b> Choosing the AR and MA levels</a></li>
 <li class="chapter" data-level="3.3.4" data-path="3-3-model-structure.html"><a href="3-3-model-structure.html#trace-true"><i class="fa fa-check"></i><b>3.3.4</b> Trace = TRUE</a></li>
 <li class="chapter" data-level="3.3.5" data-path="3-3-model-structure.html"><a href="3-3-model-structure.html#stepwise-false"><i class="fa fa-check"></i><b>3.3.5</b> stepwise = FALSE</a></li>
-<li class="chapter" data-level="3.3.6" data-path="3-3-model-structure.html"><a href="3-3-model-structure.html#summary-3"><i class="fa fa-check"></i><b>3.3.6</b> Summary</a></li>
+<li class="chapter" data-level="3.3.6" data-path="2-1-fitting.html"><a href="2-1-fitting.html#summary"><i class="fa fa-check"></i><b>3.3.6</b> Summary</a></li>
 </ul></li>
 <li class="chapter" data-level="3.4" data-path="3-4-fitting-arima-models.html"><a href="3-4-fitting-arima-models.html"><i class="fa fa-check"></i><b>3.4</b> Fitting ARIMA models</a><ul>
 <li class="chapter" data-level="3.4.1" data-path="3-4-fitting-arima-models.html"><a href="3-4-fitting-arima-models.html#fitting-with-auto.arima"><i class="fa fa-check"></i><b>3.4.1</b> Fitting with <code>auto.arima()</code></a></li>
@@ -160,19 +191,19 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="3.4.6" data-path="3-4-fitting-arima-models.html"><a href="3-4-fitting-arima-models.html#model-checking"><i class="fa fa-check"></i><b>3.4.6</b> Model checking</a></li>
 <li class="chapter" data-level="3.4.7" data-path="3-4-fitting-arima-models.html"><a href="3-4-fitting-arima-models.html#workflow-for-non-seasonal-data"><i class="fa fa-check"></i><b>3.4.7</b> Workflow for non-seasonal data</a></li>
 <li class="chapter" data-level="3.4.8" data-path="3-4-fitting-arima-models.html"><a href="3-4-fitting-arima-models.html#stepwise-vs-exhaustive-model-selection"><i class="fa fa-check"></i><b>3.4.8</b> Stepwise vs exhaustive model selection</a></li>
-<li class="chapter" data-level="3.4.9" data-path="3-4-fitting-arima-models.html"><a href="3-4-fitting-arima-models.html#summary-4"><i class="fa fa-check"></i><b>3.4.9</b> Summary</a></li>
+<li class="chapter" data-level="3.4.9" data-path="2-1-fitting.html"><a href="2-1-fitting.html#summary"><i class="fa fa-check"></i><b>3.4.9</b> Summary</a></li>
 </ul></li>
-<li class="chapter" data-level="3.5" data-path="3-5-forecasting-1.html"><a href="3-5-forecasting-1.html"><i class="fa fa-check"></i><b>3.5</b> Forecasting</a><ul>
-<li class="chapter" data-level="3.5.1" data-path="3-5-forecasting-1.html"><a href="3-5-forecasting-1.html#forecasting-with-forecast"><i class="fa fa-check"></i><b>3.5.1</b> Forecasting with <code>forecast()</code></a></li>
-<li class="chapter" data-level="3.5.2" data-path="3-5-forecasting-1.html"><a href="3-5-forecasting-1.html#missing-values-1"><i class="fa fa-check"></i><b>3.5.2</b> Missing values</a></li>
-<li class="chapter" data-level="3.5.3" data-path="3-5-forecasting-1.html"><a href="3-5-forecasting-1.html#null-forecast-models"><i class="fa fa-check"></i><b>3.5.3</b> Null forecast models</a></li>
+<li class="chapter" data-level="3.5" data-path="2-2-forecasting.html"><a href="2-2-forecasting.html#forecasting"><i class="fa fa-check"></i><b>3.5</b> Forecasting</a><ul>
+<li class="chapter" data-level="3.5.1" data-path="3-5-forecasting.html"><a href="3-5-forecasting.html"><i class="fa fa-check"></i><b>3.5.1</b> Forecasting with <code>forecast()</code></a></li>
+<li class="chapter" data-level="3.5.2" data-path="3-4-fitting-arima-models.html"><a href="3-4-fitting-arima-models.html#missing-values"><i class="fa fa-check"></i><b>3.5.2</b> Missing values</a></li>
+<li class="chapter" data-level="3.5.3" data-path="3-5-forecasting.html"><a href="3-5-forecasting.html#null-forecast-models"><i class="fa fa-check"></i><b>3.5.3</b> Null forecast models</a></li>
 </ul></li>
 </ul></li>
 <li class="chapter" data-level="4" data-path="4-exponential-smoothing-models.html"><a href="4-exponential-smoothing-models.html"><i class="fa fa-check"></i><b>4</b> Exponential smoothing models</a><ul>
-<li class="chapter" data-level="4.1" data-path="4-1-overview-1.html"><a href="4-1-overview-1.html"><i class="fa fa-check"></i><b>4.1</b> Overview</a><ul>
-<li class="chapter" data-level="4.1.1" data-path="4-1-overview-1.html"><a href="4-1-overview-1.html#naive-model"><i class="fa fa-check"></i><b>4.1.1</b> Naive model</a></li>
-<li class="chapter" data-level="4.1.2" data-path="4-1-overview-1.html"><a href="4-1-overview-1.html#exponential-smoothing"><i class="fa fa-check"></i><b>4.1.2</b> Exponential smoothing</a></li>
-<li class="chapter" data-level="4.1.3" data-path="4-1-overview-1.html"><a href="4-1-overview-1.html#exponential-smoothing-model"><i class="fa fa-check"></i><b>4.1.3</b> Exponential smoothing model</a></li>
+<li class="chapter" data-level="4.1" data-path="3-1-overview.html"><a href="3-1-overview.html#overview"><i class="fa fa-check"></i><b>4.1</b> Overview</a><ul>
+<li class="chapter" data-level="4.1.1" data-path="4-1-overview.html"><a href="4-1-overview.html"><i class="fa fa-check"></i><b>4.1.1</b> Naive model</a></li>
+<li class="chapter" data-level="4.1.2" data-path="4-1-overview.html"><a href="4-1-overview.html#exponential-smoothing"><i class="fa fa-check"></i><b>4.1.2</b> Exponential smoothing</a></li>
+<li class="chapter" data-level="4.1.3" data-path="4-1-overview.html"><a href="4-1-overview.html#exponential-smoothing-model"><i class="fa fa-check"></i><b>4.1.3</b> Exponential smoothing model</a></li>
 </ul></li>
 <li class="chapter" data-level="4.2" data-path="4-2-ets-function.html"><a href="4-2-ets-function.html"><i class="fa fa-check"></i><b>4.2</b> <code>ets()</code> function</a><ul>
 <li class="chapter" data-level="4.2.1" data-path="4-2-ets-function.html"><a href="4-2-ets-function.html#the-weighting-function"><i class="fa fa-check"></i><b>4.2.1</b> The weighting function</a></li>
@@ -200,7 +231,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="5.3" data-path="5-3-metrics.html"><a href="5-3-metrics.html"><i class="fa fa-check"></i><b>5.3</b> Metrics</a><ul>
 <li class="chapter" data-level="5.3.1" data-path="5-3-metrics.html"><a href="5-3-metrics.html#accuracy-function"><i class="fa fa-check"></i><b>5.3.1</b> <code>accuracy()</code> function</a></li>
 <li class="chapter" data-level="5.3.2" data-path="5-3-metrics.html"><a href="5-3-metrics.html#test-multiple-models"><i class="fa fa-check"></i><b>5.3.2</b> Test multiple models</a></li>
-<li class="chapter" data-level="5.3.3" data-path="5-3-metrics.html"><a href="5-3-metrics.html#cross-validation-1"><i class="fa fa-check"></i><b>5.3.3</b> Cross-validation</a></li>
+<li class="chapter" data-level="5.3.3" data-path="5-2-cross-validation.html"><a href="5-2-cross-validation.html#cross-validation"><i class="fa fa-check"></i><b>5.3.3</b> Cross-validation</a></li>
 </ul></li>
 <li class="chapter" data-level="5.4" data-path="5-4-candidate-model-set.html"><a href="5-4-candidate-model-set.html"><i class="fa fa-check"></i><b>5.4</b> Candidate model set</a></li>
 <li class="chapter" data-level="5.5" data-path="5-5-testing-the-candidate-model-set.html"><a href="5-5-testing-the-candidate-model-set.html"><i class="fa fa-check"></i><b>5.5</b> Testing the candidate model set</a><ul>
@@ -238,10 +269,10 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="7.1.2" data-path="7-1-MREGARMA.html"><a href="7-1-MREGARMA.html#example-fitting-with-arima-and-sarima"><i class="fa fa-check"></i><b>7.1.2</b> Example: fitting with arima and sarima</a></li>
 <li class="chapter" data-level="7.1.3" data-path="7-1-MREGARMA.html"><a href="7-1-MREGARMA.html#example-fitting-with-gls"><i class="fa fa-check"></i><b>7.1.3</b> Example: fitting with gls</a></li>
 <li class="chapter" data-level="7.1.4" data-path="7-1-MREGARMA.html"><a href="7-1-MREGARMA.html#mreg-of-first-or-second-differences"><i class="fa fa-check"></i><b>7.1.4</b> MREG of first or second differences</a></li>
-<li class="chapter" data-level="7.1.5" data-path="7-1-MREGARMA.html"><a href="7-1-MREGARMA.html#discussion-1"><i class="fa fa-check"></i><b>7.1.5</b> Discussion</a></li>
+<li class="chapter" data-level="7.1.5" data-path="6-8-discussion.html"><a href="6-8-discussion.html#discussion"><i class="fa fa-check"></i><b>7.1.5</b> Discussion</a></li>
 </ul></li>
 <li class="chapter" data-level="7.2" data-path="7-2-ARMAX.html"><a href="7-2-ARMAX.html"><i class="fa fa-check"></i><b>7.2</b> ARMAX Models</a><ul>
-<li class="chapter" data-level="7.2.1" data-path="7-2-ARMAX.html"><a href="7-2-ARMAX.html#discussion-2"><i class="fa fa-check"></i><b>7.2.1</b> Discussion</a></li>
+<li class="chapter" data-level="7.2.1" data-path="6-8-discussion.html"><a href="6-8-discussion.html#discussion"><i class="fa fa-check"></i><b>7.2.1</b> Discussion</a></li>
 </ul></li>
 </ul></li>
 <li class="chapter" data-level="8" data-path="8-seasonality.html"><a href="8-seasonality.html"><i class="fa fa-check"></i><b>8</b> Seasonality</a><ul>
@@ -253,10 +284,10 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="8.2.1" data-path="8-2-seasonal-exponential-smoothing-model.html"><a href="8-2-seasonal-exponential-smoothing-model.html#force-seasonality-to-evolve-more"><i class="fa fa-check"></i><b>8.2.1</b> Force seasonality to evolve more</a></li>
 </ul></li>
 <li class="chapter" data-level="8.3" data-path="8-3-seasonal-arima-model.html"><a href="8-3-seasonal-arima-model.html"><i class="fa fa-check"></i><b>8.3</b> Seasonal ARIMA model</a></li>
-<li class="chapter" data-level="8.4" data-path="8-4-missing-values-2.html"><a href="8-4-missing-values-2.html"><i class="fa fa-check"></i><b>8.4</b> Missing values</a></li>
+<li class="chapter" data-level="8.4" data-path="3-4-fitting-arima-models.html"><a href="3-4-fitting-arima-models.html#missing-values"><i class="fa fa-check"></i><b>8.4</b> Missing values</a></li>
 <li class="chapter" data-level="8.5" data-path="8-5-forecast-evaluation.html"><a href="8-5-forecast-evaluation.html"><i class="fa fa-check"></i><b>8.5</b> Forecast evaluation</a></li>
 </ul></li>
-<li class="chapter" data-level="" data-path="references-1.html"><a href="references-1.html"><i class="fa fa-check"></i>References</a></li>
+<li class="chapter" data-level="" data-path="1-5-references.html"><a href="1-5-references.html#references"><i class="fa fa-check"></i>References</a></li>
 <li class="appendix"><span><b>Appendix</b></span></li>
 <li class="chapter" data-level="A" data-path="A-inputting-data.html"><a href="A-inputting-data.html"><i class="fa fa-check"></i><b>A</b> Inputting data</a><ul>
 <li class="chapter" data-level="" data-path="A-inputting-data.html"><a href="A-inputting-data.html#one-response-variable"><i class="fa fa-check"></i>one response variable</a></li>
@@ -292,98 +323,62 @@ if(file.exists("Fish-Forecast.Rmd")) file.remove("Fish-Forecast.Rmd")
 bookdown::preview_chapter("Forecasting-6-2-Covariates-MSEG.Rmd")
 -->
 <p>Collinearity is near-linear relationships among the explanatory variables. Collinearity causes many problems such as inflated standard errors of the coefficients and correspondingly unbiased but highly imprecise estimates of the coefficients, false p-values, and poor predictive accuracy of the model. Thus it is important to evaluate the level of collinearity in your explanatory variables.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(ggplot2)
-<span class="kw">library</span>(car)
-<span class="kw">library</span>(Hmisc)
-<span class="kw">library</span>(corrplot)
-<span class="kw">library</span>(olsrr)</code></pre></div>
+<div class="sourceCode" id="cb262"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb262-1"><a href="6-2-collinear.html#cb262-1"></a><span class="kw">library</span>(ggplot2)</span>
+<span id="cb262-2"><a href="6-2-collinear.html#cb262-2"></a><span class="kw">library</span>(car)</span>
+<span id="cb262-3"><a href="6-2-collinear.html#cb262-3"></a><span class="kw">library</span>(Hmisc)</span>
+<span id="cb262-4"><a href="6-2-collinear.html#cb262-4"></a><span class="kw">library</span>(corrplot)</span>
+<span id="cb262-5"><a href="6-2-collinear.html#cb262-5"></a><span class="kw">library</span>(olsrr)</span></code></pre></div>
 <div id="pairs-plot" class="section level4 unnumbered">
 <h4>Pairs plot</h4>
 <p>One way to see this is visually is with the <code>pairs()</code> plot. A pairs plot of fishing effort covariates reveals high correlations between Year, HPP and TOP.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">pairs</span>(df[,<span class="kw">c</span>(<span class="dv">2</span>,<span class="dv">9</span><span class="op">:</span><span class="dv">12</span>)])</code></pre></div>
+<div class="sourceCode" id="cb263"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb263-1"><a href="6-2-collinear.html#cb263-1"></a><span class="kw">pairs</span>(df[,<span class="kw">c</span>(<span class="dv">2</span>,<span class="dv">9</span><span class="op">:</span><span class="dv">12</span>)])</span></code></pre></div>
 <p><img src="Fish-Forecast_files/figure-html/pairs.fish-1.png" width="672" style="display: block; margin: auto;" /></p>
 <p>The environmental covariates look generally ok.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">pairs</span>(df[,<span class="kw">c</span>(<span class="dv">2</span>,<span class="dv">4</span><span class="op">:</span><span class="dv">8</span>)])</code></pre></div>
+<div class="sourceCode" id="cb264"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb264-1"><a href="6-2-collinear.html#cb264-1"></a><span class="kw">pairs</span>(df[,<span class="kw">c</span>(<span class="dv">2</span>,<span class="dv">4</span><span class="op">:</span><span class="dv">8</span>)])</span></code></pre></div>
 <p><img src="Fish-Forecast_files/figure-html/pairs.env-1.png" width="672" style="display: block; margin: auto;" /></p>
 <p>Another way that we can visualize the problem is by looking at the correlation matrix using the <strong>corrplot</strong> package.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(corrplot)
-X &lt;-<span class="st"> </span><span class="kw">as.matrix</span>(df[,<span class="kw">colnames</span>(df)<span class="op">!=</span><span class="st">&quot;anchovy&quot;</span>])
-corrplot<span class="op">::</span><span class="kw">corrplot</span>(<span class="kw">cor</span>(X))</code></pre></div>
+<div class="sourceCode" id="cb265"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb265-1"><a href="6-2-collinear.html#cb265-1"></a><span class="kw">library</span>(corrplot)</span>
+<span id="cb265-2"><a href="6-2-collinear.html#cb265-2"></a>X &lt;-<span class="st"> </span><span class="kw">as.matrix</span>(df[,<span class="kw">colnames</span>(df)<span class="op">!=</span><span class="st">&quot;anchovy&quot;</span>])</span>
+<span id="cb265-3"><a href="6-2-collinear.html#cb265-3"></a>corrplot<span class="op">::</span><span class="kw">corrplot</span>(<span class="kw">cor</span>(X))</span></code></pre></div>
 <p><img src="Fish-Forecast_files/figure-html/unnamed-chunk-87-1.png" width="672" style="display: block; margin: auto;" /></p>
 </div>
 <div id="variance-inflation-factors" class="section level4 unnumbered">
 <h4>Variance inflation factors</h4>
 <p>Another way is to look for collinearity is to compute the variance inflation factors (VIF). The variance inflation factor is an estimate of how much larger the variance of a coefficient estimate is compared to if the variable were uncorrelated with the other explanatory variables in the model. If the VIF of variable <span class="math inline">\(i\)</span> is <span class="math inline">\(z\)</span>, then the standard error of the <span class="math inline">\(\beta_i\)</span> for variable <span class="math inline">\(i\)</span> is <span class="math inline">\(\sqrt{z}\)</span> times larger than if variable <span class="math inline">\(i\)</span> were uncorrelated with the other variables. For example, if VIF=10, the standard error of the coefficient estimate is 3.16 times larger (inflated). The rule of thumb is that any of the variables with VIF greater than 10 have collinearity problems.</p>
 <p>The <code>vif()</code> function in the <strong>car</strong> package will compute VIFs for us.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">full &lt;-<span class="st"> </span><span class="kw">lm</span>(anchovy <span class="op">~</span><span class="st"> </span>., <span class="dt">data=</span>df)
-car<span class="op">::</span><span class="kw">vif</span>(full)</code></pre></div>
-<pre><code>##       Year  Trachurus        air        slp        sst       vwnd 
-## 103.922970  18.140279   3.733963   3.324463   2.476689   2.010485 
-##      wspd3        BOP        FIP        HPP        TOP 
-##   1.909992  13.676208   8.836446  63.507170 125.295727</code></pre>
+<div class="sourceCode" id="cb266"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb266-1"><a href="6-2-collinear.html#cb266-1"></a>full &lt;-<span class="st"> </span><span class="kw">lm</span>(anchovy <span class="op">~</span><span class="st"> </span>., <span class="dt">data=</span>df)</span>
+<span id="cb266-2"><a href="6-2-collinear.html#cb266-2"></a>car<span class="op">::</span><span class="kw">vif</span>(full)</span></code></pre></div>
+<pre><code>##       Year  Trachurus        air        slp        sst       vwnd      wspd3 
+## 103.922970  18.140279   3.733963   3.324463   2.476689   2.010485   1.909992 
+##        BOP        FIP        HPP        TOP 
+##  13.676208   8.836446  63.507170 125.295727</code></pre>
 <p>The <code>ols_vif_tol()</code> function in the <strong>olsrr</strong> <a href="https://cran.r-project.org/package=olsrr">package</a> also computes the VIF.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">olsrr<span class="op">::</span><span class="kw">ols_vif_tol</span>(full)</code></pre></div>
-<table class="huxtable" style="border-collapse: collapse; margin-bottom: 2em; margin-top: 2em; width: 48.8888888888889%; margin-left: 0%; margin-right: auto;  ">
-<col><col><col><tr>
-<td style="vertical-align: top; text-align: left; white-space: nowrap; border-style: solid solid solid solid; border-width: 0.4pt 0pt 0.4pt 0.4pt; padding: 4pt 4pt 4pt 4pt; font-weight: bold;">Variables</td>
-<td style="vertical-align: top; text-align: right; white-space: nowrap; border-style: solid solid solid solid; border-width: 0.4pt 0pt 0.4pt 0pt; padding: 4pt 4pt 4pt 4pt; font-weight: bold;">Tolerance</td>
-<td style="vertical-align: top; text-align: right; white-space: nowrap; border-style: solid solid solid solid; border-width: 0.4pt 0.4pt 0.4pt 0pt; padding: 4pt 4pt 4pt 4pt; font-weight: bold;">VIF</td>
-</tr>
+<div class="sourceCode" id="cb268"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb268-1"><a href="6-2-collinear.html#cb268-1"></a>olsrr<span class="op">::</span><span class="kw">ols_vif_tol</span>(full)</span></code></pre></div>
+<table class="huxtable" style="border-collapse: collapse; border: 0px; margin-bottom: 2em; margin-top: 2em; ; margin-left: auto; margin-right: auto;  " id="tab:vif.olsrr">
+<caption style="caption-side: top; text-align: center;">(#tab:vif.olsrr) </caption><col><col><col><tr>
+<th style="vertical-align: top; text-align: left; white-space: normal; border-style: solid solid solid solid; border-width: 0.4pt 0pt 0.4pt 0.4pt;    padding: 6pt 6pt 6pt 6pt; font-weight: bold;">Variables</th><th style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0.4pt 0pt 0.4pt 0pt;    padding: 6pt 6pt 6pt 6pt; font-weight: bold;">Tolerance</th><th style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0.4pt 0.4pt 0.4pt 0pt;    padding: 6pt 6pt 6pt 6pt; font-weight: bold;">VIF</th></tr>
 <tr>
-<td style="vertical-align: top; text-align: left; white-space: nowrap; border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0.4pt; padding: 4pt 4pt 4pt 4pt; background-color: rgb(242, 242, 242);">Year</td>
-<td style="vertical-align: top; text-align: right; white-space: normal; padding: 4pt 4pt 4pt 4pt; background-color: rgb(242, 242, 242);">0.00962</td>
-<td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0pt 0.4pt 0pt 0pt; padding: 4pt 4pt 4pt 4pt; background-color: rgb(242, 242, 242);">104&nbsp;&nbsp;&nbsp;</td>
-</tr>
+<td style="vertical-align: top; text-align: left; white-space: normal; border-style: solid solid solid solid; border-width: 0.4pt 0pt 0pt 0.4pt;    padding: 6pt 6pt 6pt 6pt; background-color: rgb(242, 242, 242); font-weight: normal;">Year</td><td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0.4pt 0pt 0pt 0pt;    padding: 6pt 6pt 6pt 6pt; background-color: rgb(242, 242, 242); font-weight: normal;">0.00962</td><td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0.4pt 0.4pt 0pt 0pt;    padding: 6pt 6pt 6pt 6pt; background-color: rgb(242, 242, 242); font-weight: normal;">104&nbsp;&nbsp;&nbsp;</td></tr>
 <tr>
-<td style="vertical-align: top; text-align: left; white-space: nowrap; border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0.4pt; padding: 4pt 4pt 4pt 4pt;">Trachurus</td>
-<td style="vertical-align: top; text-align: right; white-space: normal; padding: 4pt 4pt 4pt 4pt;">0.0551&nbsp;</td>
-<td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0pt 0.4pt 0pt 0pt; padding: 4pt 4pt 4pt 4pt;">18.1&nbsp;</td>
-</tr>
+<td style="vertical-align: top; text-align: left; white-space: normal; border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0.4pt;    padding: 6pt 6pt 6pt 6pt; font-weight: normal;">Trachurus</td><td style="vertical-align: top; text-align: right; white-space: normal; padding: 6pt 6pt 6pt 6pt; font-weight: normal;">0.0551&nbsp;</td><td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0pt 0.4pt 0pt 0pt;    padding: 6pt 6pt 6pt 6pt; font-weight: normal;">18.1&nbsp;</td></tr>
 <tr>
-<td style="vertical-align: top; text-align: left; white-space: nowrap; border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0.4pt; padding: 4pt 4pt 4pt 4pt; background-color: rgb(242, 242, 242);">air</td>
-<td style="vertical-align: top; text-align: right; white-space: normal; padding: 4pt 4pt 4pt 4pt; background-color: rgb(242, 242, 242);">0.268&nbsp;&nbsp;</td>
-<td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0pt 0.4pt 0pt 0pt; padding: 4pt 4pt 4pt 4pt; background-color: rgb(242, 242, 242);">3.73</td>
-</tr>
+<td style="vertical-align: top; text-align: left; white-space: normal; border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0.4pt;    padding: 6pt 6pt 6pt 6pt; background-color: rgb(242, 242, 242); font-weight: normal;">air</td><td style="vertical-align: top; text-align: right; white-space: normal; padding: 6pt 6pt 6pt 6pt; background-color: rgb(242, 242, 242); font-weight: normal;">0.268&nbsp;&nbsp;</td><td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0pt 0.4pt 0pt 0pt;    padding: 6pt 6pt 6pt 6pt; background-color: rgb(242, 242, 242); font-weight: normal;">3.73</td></tr>
 <tr>
-<td style="vertical-align: top; text-align: left; white-space: nowrap; border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0.4pt; padding: 4pt 4pt 4pt 4pt;">slp</td>
-<td style="vertical-align: top; text-align: right; white-space: normal; padding: 4pt 4pt 4pt 4pt;">0.301&nbsp;&nbsp;</td>
-<td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0pt 0.4pt 0pt 0pt; padding: 4pt 4pt 4pt 4pt;">3.32</td>
-</tr>
+<td style="vertical-align: top; text-align: left; white-space: normal; border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0.4pt;    padding: 6pt 6pt 6pt 6pt; font-weight: normal;">slp</td><td style="vertical-align: top; text-align: right; white-space: normal; padding: 6pt 6pt 6pt 6pt; font-weight: normal;">0.301&nbsp;&nbsp;</td><td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0pt 0.4pt 0pt 0pt;    padding: 6pt 6pt 6pt 6pt; font-weight: normal;">3.32</td></tr>
 <tr>
-<td style="vertical-align: top; text-align: left; white-space: nowrap; border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0.4pt; padding: 4pt 4pt 4pt 4pt; background-color: rgb(242, 242, 242);">sst</td>
-<td style="vertical-align: top; text-align: right; white-space: normal; padding: 4pt 4pt 4pt 4pt; background-color: rgb(242, 242, 242);">0.404&nbsp;&nbsp;</td>
-<td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0pt 0.4pt 0pt 0pt; padding: 4pt 4pt 4pt 4pt; background-color: rgb(242, 242, 242);">2.48</td>
-</tr>
+<td style="vertical-align: top; text-align: left; white-space: normal; border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0.4pt;    padding: 6pt 6pt 6pt 6pt; background-color: rgb(242, 242, 242); font-weight: normal;">sst</td><td style="vertical-align: top; text-align: right; white-space: normal; padding: 6pt 6pt 6pt 6pt; background-color: rgb(242, 242, 242); font-weight: normal;">0.404&nbsp;&nbsp;</td><td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0pt 0.4pt 0pt 0pt;    padding: 6pt 6pt 6pt 6pt; background-color: rgb(242, 242, 242); font-weight: normal;">2.48</td></tr>
 <tr>
-<td style="vertical-align: top; text-align: left; white-space: nowrap; border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0.4pt; padding: 4pt 4pt 4pt 4pt;">vwnd</td>
-<td style="vertical-align: top; text-align: right; white-space: normal; padding: 4pt 4pt 4pt 4pt;">0.497&nbsp;&nbsp;</td>
-<td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0pt 0.4pt 0pt 0pt; padding: 4pt 4pt 4pt 4pt;">2.01</td>
-</tr>
+<td style="vertical-align: top; text-align: left; white-space: normal; border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0.4pt;    padding: 6pt 6pt 6pt 6pt; font-weight: normal;">vwnd</td><td style="vertical-align: top; text-align: right; white-space: normal; padding: 6pt 6pt 6pt 6pt; font-weight: normal;">0.497&nbsp;&nbsp;</td><td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0pt 0.4pt 0pt 0pt;    padding: 6pt 6pt 6pt 6pt; font-weight: normal;">2.01</td></tr>
 <tr>
-<td style="vertical-align: top; text-align: left; white-space: nowrap; border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0.4pt; padding: 4pt 4pt 4pt 4pt; background-color: rgb(242, 242, 242);">wspd3</td>
-<td style="vertical-align: top; text-align: right; white-space: normal; padding: 4pt 4pt 4pt 4pt; background-color: rgb(242, 242, 242);">0.524&nbsp;&nbsp;</td>
-<td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0pt 0.4pt 0pt 0pt; padding: 4pt 4pt 4pt 4pt; background-color: rgb(242, 242, 242);">1.91</td>
-</tr>
+<td style="vertical-align: top; text-align: left; white-space: normal; border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0.4pt;    padding: 6pt 6pt 6pt 6pt; background-color: rgb(242, 242, 242); font-weight: normal;">wspd3</td><td style="vertical-align: top; text-align: right; white-space: normal; padding: 6pt 6pt 6pt 6pt; background-color: rgb(242, 242, 242); font-weight: normal;">0.524&nbsp;&nbsp;</td><td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0pt 0.4pt 0pt 0pt;    padding: 6pt 6pt 6pt 6pt; background-color: rgb(242, 242, 242); font-weight: normal;">1.91</td></tr>
 <tr>
-<td style="vertical-align: top; text-align: left; white-space: nowrap; border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0.4pt; padding: 4pt 4pt 4pt 4pt;">BOP</td>
-<td style="vertical-align: top; text-align: right; white-space: normal; padding: 4pt 4pt 4pt 4pt;">0.0731&nbsp;</td>
-<td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0pt 0.4pt 0pt 0pt; padding: 4pt 4pt 4pt 4pt;">13.7&nbsp;</td>
-</tr>
+<td style="vertical-align: top; text-align: left; white-space: normal; border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0.4pt;    padding: 6pt 6pt 6pt 6pt; font-weight: normal;">BOP</td><td style="vertical-align: top; text-align: right; white-space: normal; padding: 6pt 6pt 6pt 6pt; font-weight: normal;">0.0731&nbsp;</td><td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0pt 0.4pt 0pt 0pt;    padding: 6pt 6pt 6pt 6pt; font-weight: normal;">13.7&nbsp;</td></tr>
 <tr>
-<td style="vertical-align: top; text-align: left; white-space: nowrap; border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0.4pt; padding: 4pt 4pt 4pt 4pt; background-color: rgb(242, 242, 242);">FIP</td>
-<td style="vertical-align: top; text-align: right; white-space: normal; padding: 4pt 4pt 4pt 4pt; background-color: rgb(242, 242, 242);">0.113&nbsp;&nbsp;</td>
-<td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0pt 0.4pt 0pt 0pt; padding: 4pt 4pt 4pt 4pt; background-color: rgb(242, 242, 242);">8.84</td>
-</tr>
+<td style="vertical-align: top; text-align: left; white-space: normal; border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0.4pt;    padding: 6pt 6pt 6pt 6pt; background-color: rgb(242, 242, 242); font-weight: normal;">FIP</td><td style="vertical-align: top; text-align: right; white-space: normal; padding: 6pt 6pt 6pt 6pt; background-color: rgb(242, 242, 242); font-weight: normal;">0.113&nbsp;&nbsp;</td><td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0pt 0.4pt 0pt 0pt;    padding: 6pt 6pt 6pt 6pt; background-color: rgb(242, 242, 242); font-weight: normal;">8.84</td></tr>
 <tr>
-<td style="vertical-align: top; text-align: left; white-space: nowrap; border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0.4pt; padding: 4pt 4pt 4pt 4pt;">HPP</td>
-<td style="vertical-align: top; text-align: right; white-space: normal; padding: 4pt 4pt 4pt 4pt;">0.0157&nbsp;</td>
-<td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0pt 0.4pt 0pt 0pt; padding: 4pt 4pt 4pt 4pt;">63.5&nbsp;</td>
-</tr>
+<td style="vertical-align: top; text-align: left; white-space: normal; border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0.4pt;    padding: 6pt 6pt 6pt 6pt; font-weight: normal;">HPP</td><td style="vertical-align: top; text-align: right; white-space: normal; padding: 6pt 6pt 6pt 6pt; font-weight: normal;">0.0157&nbsp;</td><td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0pt 0.4pt 0pt 0pt;    padding: 6pt 6pt 6pt 6pt; font-weight: normal;">63.5&nbsp;</td></tr>
 <tr>
-<td style="vertical-align: top; text-align: left; white-space: nowrap; border-style: solid solid solid solid; border-width: 0pt 0pt 0.4pt 0.4pt; padding: 4pt 4pt 4pt 4pt; background-color: rgb(242, 242, 242);">TOP</td>
-<td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0pt 0pt 0.4pt 0pt; padding: 4pt 4pt 4pt 4pt; background-color: rgb(242, 242, 242);">0.00798</td>
-<td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0pt 0.4pt 0.4pt 0pt; padding: 4pt 4pt 4pt 4pt; background-color: rgb(242, 242, 242);">125&nbsp;&nbsp;&nbsp;</td>
-</tr>
+<td style="vertical-align: top; text-align: left; white-space: normal; border-style: solid solid solid solid; border-width: 0pt 0pt 0.4pt 0.4pt;    padding: 6pt 6pt 6pt 6pt; background-color: rgb(242, 242, 242); font-weight: normal;">TOP</td><td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0pt 0pt 0.4pt 0pt;    padding: 6pt 6pt 6pt 6pt; background-color: rgb(242, 242, 242); font-weight: normal;">0.00798</td><td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0pt 0.4pt 0.4pt 0pt;    padding: 6pt 6pt 6pt 6pt; background-color: rgb(242, 242, 242); font-weight: normal;">125&nbsp;&nbsp;&nbsp;</td></tr>
 </table>
 
 <p>This shows that Year, HPP and TOP have severe collinearity problems, and BOP and <em>Trachusus</em> also have collinearity issues, though lesser.</p>
@@ -392,228 +387,46 @@ car<span class="op">::</span><span class="kw">vif</span>(full)</code></pre></div
 <h4>Condition indices</h4>
 <p>Condition indices are computed from the eigenvalues of the correlation matrix of the variates. The size of the index will be greatly affected by whether you have standardized the variance of your covariates, unlike the other tests described here.</p>
 <p><span class="math display">\[ci = \sqrt{max(eigenvalue)/eigenvalue}\]</span></p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">vars &lt;-<span class="st"> </span><span class="kw">as.matrix</span>(dfz[,<span class="op">-</span><span class="dv">1</span>])
-res &lt;-<span class="st"> </span><span class="kw">eigen</span>(<span class="kw">crossprod</span>(vars))<span class="op">$</span>values
-<span class="kw">sqrt</span>(<span class="kw">max</span>(res)<span class="op">/</span>res)</code></pre></div>
+<div class="sourceCode" id="cb269"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb269-1"><a href="6-2-collinear.html#cb269-1"></a>vars &lt;-<span class="st"> </span><span class="kw">as.matrix</span>(dfz[,<span class="op">-</span><span class="dv">1</span>])</span>
+<span id="cb269-2"><a href="6-2-collinear.html#cb269-2"></a>res &lt;-<span class="st"> </span><span class="kw">eigen</span>(<span class="kw">crossprod</span>(vars))<span class="op">$</span>values</span>
+<span id="cb269-3"><a href="6-2-collinear.html#cb269-3"></a><span class="kw">sqrt</span>(<span class="kw">max</span>(res)<span class="op">/</span>res)</span></code></pre></div>
 <pre><code>##  [1]  1.000000  1.506975  2.235652  2.332424  3.025852  3.895303  4.753285
 ##  [8]  5.419310  7.977486 20.115739 35.515852</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">vars &lt;-<span class="st"> </span><span class="kw">as.matrix</span>(dfz[,<span class="op">-</span><span class="dv">1</span>])
-res &lt;-<span class="st"> </span><span class="kw">eigen</span>(<span class="kw">crossprod</span>(vars))<span class="op">$</span>values
-<span class="kw">sqrt</span>(<span class="kw">max</span>(res)<span class="op">/</span>res)</code></pre></div>
+<div class="sourceCode" id="cb271"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb271-1"><a href="6-2-collinear.html#cb271-1"></a>vars &lt;-<span class="st"> </span><span class="kw">as.matrix</span>(dfz[,<span class="op">-</span><span class="dv">1</span>])</span>
+<span id="cb271-2"><a href="6-2-collinear.html#cb271-2"></a>res &lt;-<span class="st"> </span><span class="kw">eigen</span>(<span class="kw">crossprod</span>(vars))<span class="op">$</span>values</span>
+<span id="cb271-3"><a href="6-2-collinear.html#cb271-3"></a><span class="kw">sqrt</span>(<span class="kw">max</span>(res)<span class="op">/</span>res)</span></code></pre></div>
 <pre><code>##  [1]  1.000000  1.506975  2.235652  2.332424  3.025852  3.895303  4.753285
 ##  [8]  5.419310  7.977486 20.115739 35.515852</code></pre>
 <p>See the information from the olsrr package on <a href="https://cran.r-project.org/web/packages/olsrr/vignettes/regression_diagnostics.html">condition indices</a> on how to use condition indices to spot collinearity. Basically you are looking for condition indices greater than 30 whether the proportion of variance for the covariate is greater than 0.5. In the table below, this criteria identifies Year, BOP, and TOP. Note that the test was done with the standardized covariates (<code>dfz</code>).</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">model &lt;-<span class="st"> </span><span class="kw">lm</span>(anchovy <span class="op">~</span><span class="st"> </span>., <span class="dt">data=</span>dfz)
-<span class="kw">round</span>(olsrr<span class="op">::</span><span class="kw">ols_eigen_cindex</span>(model), <span class="dt">digit=</span><span class="dv">2</span>)</code></pre></div>
-<table class="huxtable" style="border-collapse: collapse; margin-bottom: 2em; margin-top: 2em; width: 60%; margin-left: 0%; margin-right: auto;  ">
-<col><col><col><col><col><col><col><col><col><col><col><col><col><col><tr>
-<td style="vertical-align: top; text-align: right; white-space: nowrap; border-style: solid solid solid solid; border-width: 0.4pt 0pt 0.4pt 0.4pt; padding: 4pt 4pt 4pt 4pt; font-weight: bold;">Eigenvalue</td>
-<td style="vertical-align: top; text-align: right; white-space: nowrap; border-style: solid solid solid solid; border-width: 0.4pt 0pt 0.4pt 0pt; padding: 4pt 4pt 4pt 4pt; font-weight: bold;">Condition Index</td>
-<td style="vertical-align: top; text-align: right; white-space: nowrap; border-style: solid solid solid solid; border-width: 0.4pt 0pt 0.4pt 0pt; padding: 4pt 4pt 4pt 4pt; font-weight: bold;">intercept</td>
-<td style="vertical-align: top; text-align: right; white-space: nowrap; border-style: solid solid solid solid; border-width: 0.4pt 0pt 0.4pt 0pt; padding: 4pt 4pt 4pt 4pt; font-weight: bold;">Year</td>
-<td style="vertical-align: top; text-align: right; white-space: nowrap; border-style: solid solid solid solid; border-width: 0.4pt 0pt 0.4pt 0pt; padding: 4pt 4pt 4pt 4pt; font-weight: bold;">Trachurus</td>
-<td style="vertical-align: top; text-align: right; white-space: nowrap; border-style: solid solid solid solid; border-width: 0.4pt 0pt 0.4pt 0pt; padding: 4pt 4pt 4pt 4pt; font-weight: bold;">air</td>
-<td style="vertical-align: top; text-align: right; white-space: nowrap; border-style: solid solid solid solid; border-width: 0.4pt 0pt 0.4pt 0pt; padding: 4pt 4pt 4pt 4pt; font-weight: bold;">slp</td>
-<td style="vertical-align: top; text-align: right; white-space: nowrap; border-style: solid solid solid solid; border-width: 0.4pt 0pt 0.4pt 0pt; padding: 4pt 4pt 4pt 4pt; font-weight: bold;">sst</td>
-<td style="vertical-align: top; text-align: right; white-space: nowrap; border-style: solid solid solid solid; border-width: 0.4pt 0pt 0.4pt 0pt; padding: 4pt 4pt 4pt 4pt; font-weight: bold;">vwnd</td>
-<td style="vertical-align: top; text-align: right; white-space: nowrap; border-style: solid solid solid solid; border-width: 0.4pt 0pt 0.4pt 0pt; padding: 4pt 4pt 4pt 4pt; font-weight: bold;">wspd3</td>
-<td style="vertical-align: top; text-align: right; white-space: nowrap; border-style: solid solid solid solid; border-width: 0.4pt 0pt 0.4pt 0pt; padding: 4pt 4pt 4pt 4pt; font-weight: bold;">BOP</td>
-<td style="vertical-align: top; text-align: right; white-space: nowrap; border-style: solid solid solid solid; border-width: 0.4pt 0pt 0.4pt 0pt; padding: 4pt 4pt 4pt 4pt; font-weight: bold;">FIP</td>
-<td style="vertical-align: top; text-align: right; white-space: nowrap; border-style: solid solid solid solid; border-width: 0.4pt 0pt 0.4pt 0pt; padding: 4pt 4pt 4pt 4pt; font-weight: bold;">HPP</td>
-<td style="vertical-align: top; text-align: right; white-space: nowrap; border-style: solid solid solid solid; border-width: 0.4pt 0.4pt 0.4pt 0pt; padding: 4pt 4pt 4pt 4pt; font-weight: bold;">TOP</td>
-</tr>
+<div class="sourceCode" id="cb273"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb273-1"><a href="6-2-collinear.html#cb273-1"></a>model &lt;-<span class="st"> </span><span class="kw">lm</span>(anchovy <span class="op">~</span><span class="st"> </span>., <span class="dt">data=</span>dfz)</span>
+<span id="cb273-2"><a href="6-2-collinear.html#cb273-2"></a><span class="kw">round</span>(olsrr<span class="op">::</span><span class="kw">ols_eigen_cindex</span>(model), <span class="dt">digit=</span><span class="dv">2</span>)</span></code></pre></div>
+<table class="huxtable" style="border-collapse: collapse; border: 0px; margin-bottom: 2em; margin-top: 2em; ; margin-left: auto; margin-right: auto;  " id="tab:unnamed-chunk-90">
+<caption style="caption-side: top; text-align: center;"><span id="tab:unnamed-chunk-90">Table 6.1: </span> </caption><col><col><col><col><col><col><col><col><col><col><col><col><col><col><tr>
+<th style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0.4pt 0pt 0.4pt 0.4pt;    padding: 6pt 6pt 6pt 6pt; font-weight: bold;">Eigenvalue</th><th style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0.4pt 0pt 0.4pt 0pt;    padding: 6pt 6pt 6pt 6pt; font-weight: bold;">Condition Index</th><th style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0.4pt 0pt 0.4pt 0pt;    padding: 6pt 6pt 6pt 6pt; font-weight: bold;">intercept</th><th style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0.4pt 0pt 0.4pt 0pt;    padding: 6pt 6pt 6pt 6pt; font-weight: bold;">Year</th><th style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0.4pt 0pt 0.4pt 0pt;    padding: 6pt 6pt 6pt 6pt; font-weight: bold;">Trachurus</th><th style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0.4pt 0pt 0.4pt 0pt;    padding: 6pt 6pt 6pt 6pt; font-weight: bold;">air</th><th style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0.4pt 0pt 0.4pt 0pt;    padding: 6pt 6pt 6pt 6pt; font-weight: bold;">slp</th><th style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0.4pt 0pt 0.4pt 0pt;    padding: 6pt 6pt 6pt 6pt; font-weight: bold;">sst</th><th style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0.4pt 0pt 0.4pt 0pt;    padding: 6pt 6pt 6pt 6pt; font-weight: bold;">vwnd</th><th style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0.4pt 0pt 0.4pt 0pt;    padding: 6pt 6pt 6pt 6pt; font-weight: bold;">wspd3</th><th style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0.4pt 0pt 0.4pt 0pt;    padding: 6pt 6pt 6pt 6pt; font-weight: bold;">BOP</th><th style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0.4pt 0pt 0.4pt 0pt;    padding: 6pt 6pt 6pt 6pt; font-weight: bold;">FIP</th><th style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0.4pt 0pt 0.4pt 0pt;    padding: 6pt 6pt 6pt 6pt; font-weight: bold;">HPP</th><th style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0.4pt 0.4pt 0.4pt 0pt;    padding: 6pt 6pt 6pt 6pt; font-weight: bold;">TOP</th></tr>
 <tr>
-<td style="vertical-align: top; text-align: right; white-space: nowrap; border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0.4pt; padding: 4pt 4pt 4pt 4pt; background-color: rgb(242, 242, 242);">5.25</td>
-<td style="vertical-align: top; text-align: right; white-space: nowrap; padding: 4pt 4pt 4pt 4pt; background-color: rgb(242, 242, 242);">1&nbsp;&nbsp;&nbsp;</td>
-<td style="vertical-align: top; text-align: right; white-space: nowrap; padding: 4pt 4pt 4pt 4pt; background-color: rgb(242, 242, 242);">0</td>
-<td style="vertical-align: top; text-align: right; white-space: nowrap; padding: 4pt 4pt 4pt 4pt; background-color: rgb(242, 242, 242);">0&nbsp;&nbsp;&nbsp;</td>
-<td style="vertical-align: top; text-align: right; white-space: nowrap; padding: 4pt 4pt 4pt 4pt; background-color: rgb(242, 242, 242);">0&nbsp;&nbsp;&nbsp;</td>
-<td style="vertical-align: top; text-align: right; white-space: nowrap; padding: 4pt 4pt 4pt 4pt; background-color: rgb(242, 242, 242);">0&nbsp;&nbsp;&nbsp;</td>
-<td style="vertical-align: top; text-align: right; white-space: nowrap; padding: 4pt 4pt 4pt 4pt; background-color: rgb(242, 242, 242);">0.01</td>
-<td style="vertical-align: top; text-align: right; white-space: nowrap; padding: 4pt 4pt 4pt 4pt; background-color: rgb(242, 242, 242);">0&nbsp;&nbsp;&nbsp;</td>
-<td style="vertical-align: top; text-align: right; white-space: nowrap; padding: 4pt 4pt 4pt 4pt; background-color: rgb(242, 242, 242);">0&nbsp;&nbsp;&nbsp;</td>
-<td style="vertical-align: top; text-align: right; white-space: nowrap; padding: 4pt 4pt 4pt 4pt; background-color: rgb(242, 242, 242);">0&nbsp;&nbsp;&nbsp;</td>
-<td style="vertical-align: top; text-align: right; white-space: nowrap; padding: 4pt 4pt 4pt 4pt; background-color: rgb(242, 242, 242);">0&nbsp;&nbsp;&nbsp;</td>
-<td style="vertical-align: top; text-align: right; white-space: nowrap; padding: 4pt 4pt 4pt 4pt; background-color: rgb(242, 242, 242);">0&nbsp;&nbsp;&nbsp;</td>
-<td style="vertical-align: top; text-align: right; white-space: nowrap; padding: 4pt 4pt 4pt 4pt; background-color: rgb(242, 242, 242);">0&nbsp;&nbsp;&nbsp;</td>
-<td style="vertical-align: top; text-align: right; white-space: nowrap; border-style: solid solid solid solid; border-width: 0pt 0.4pt 0pt 0pt; padding: 4pt 4pt 4pt 4pt; background-color: rgb(242, 242, 242);">0&nbsp;&nbsp;&nbsp;</td>
-</tr>
+<td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0.4pt 0pt 0pt 0.4pt;    padding: 6pt 6pt 6pt 6pt; background-color: rgb(242, 242, 242); font-weight: normal;">5.25</td><td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0.4pt 0pt 0pt 0pt;    padding: 6pt 6pt 6pt 6pt; background-color: rgb(242, 242, 242); font-weight: normal;">1&nbsp;&nbsp;&nbsp;</td><td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0.4pt 0pt 0pt 0pt;    padding: 6pt 6pt 6pt 6pt; background-color: rgb(242, 242, 242); font-weight: normal;">0</td><td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0.4pt 0pt 0pt 0pt;    padding: 6pt 6pt 6pt 6pt; background-color: rgb(242, 242, 242); font-weight: normal;">0&nbsp;&nbsp;&nbsp;</td><td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0.4pt 0pt 0pt 0pt;    padding: 6pt 6pt 6pt 6pt; background-color: rgb(242, 242, 242); font-weight: normal;">0&nbsp;&nbsp;&nbsp;</td><td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0.4pt 0pt 0pt 0pt;    padding: 6pt 6pt 6pt 6pt; background-color: rgb(242, 242, 242); font-weight: normal;">0&nbsp;&nbsp;&nbsp;</td><td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0.4pt 0pt 0pt 0pt;    padding: 6pt 6pt 6pt 6pt; background-color: rgb(242, 242, 242); font-weight: normal;">0.01</td><td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0.4pt 0pt 0pt 0pt;    padding: 6pt 6pt 6pt 6pt; background-color: rgb(242, 242, 242); font-weight: normal;">0&nbsp;&nbsp;&nbsp;</td><td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0.4pt 0pt 0pt 0pt;    padding: 6pt 6pt 6pt 6pt; background-color: rgb(242, 242, 242); font-weight: normal;">0&nbsp;&nbsp;&nbsp;</td><td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0.4pt 0pt 0pt 0pt;    padding: 6pt 6pt 6pt 6pt; background-color: rgb(242, 242, 242); font-weight: normal;">0&nbsp;&nbsp;&nbsp;</td><td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0.4pt 0pt 0pt 0pt;    padding: 6pt 6pt 6pt 6pt; background-color: rgb(242, 242, 242); font-weight: normal;">0&nbsp;&nbsp;&nbsp;</td><td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0.4pt 0pt 0pt 0pt;    padding: 6pt 6pt 6pt 6pt; background-color: rgb(242, 242, 242); font-weight: normal;">0&nbsp;&nbsp;&nbsp;</td><td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0.4pt 0pt 0pt 0pt;    padding: 6pt 6pt 6pt 6pt; background-color: rgb(242, 242, 242); font-weight: normal;">0&nbsp;&nbsp;&nbsp;</td><td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0.4pt 0.4pt 0pt 0pt;    padding: 6pt 6pt 6pt 6pt; background-color: rgb(242, 242, 242); font-weight: normal;">0&nbsp;&nbsp;&nbsp;</td></tr>
 <tr>
-<td style="vertical-align: top; text-align: right; white-space: nowrap; border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0.4pt; padding: 4pt 4pt 4pt 4pt;">2.31</td>
-<td style="vertical-align: top; text-align: right; white-space: nowrap; padding: 4pt 4pt 4pt 4pt;">1.51</td>
-<td style="vertical-align: top; text-align: right; white-space: nowrap; padding: 4pt 4pt 4pt 4pt;">0</td>
-<td style="vertical-align: top; text-align: right; white-space: nowrap; padding: 4pt 4pt 4pt 4pt;">0&nbsp;&nbsp;&nbsp;</td>
-<td style="vertical-align: top; text-align: right; white-space: nowrap; padding: 4pt 4pt 4pt 4pt;">0&nbsp;&nbsp;&nbsp;</td>
-<td style="vertical-align: top; text-align: right; white-space: nowrap; padding: 4pt 4pt 4pt 4pt;">0.03</td>
-<td style="vertical-align: top; text-align: right; white-space: nowrap; padding: 4pt 4pt 4pt 4pt;">0&nbsp;&nbsp;&nbsp;</td>
-<td style="vertical-align: top; text-align: right; white-space: nowrap; padding: 4pt 4pt 4pt 4pt;">0.04</td>
-<td style="vertical-align: top; text-align: right; white-space: nowrap; padding: 4pt 4pt 4pt 4pt;">0.03</td>
-<td style="vertical-align: top; text-align: right; white-space: nowrap; padding: 4pt 4pt 4pt 4pt;">0.02</td>
-<td style="vertical-align: top; text-align: right; white-space: nowrap; padding: 4pt 4pt 4pt 4pt;">0&nbsp;&nbsp;&nbsp;</td>
-<td style="vertical-align: top; text-align: right; white-space: nowrap; padding: 4pt 4pt 4pt 4pt;">0&nbsp;&nbsp;&nbsp;</td>
-<td style="vertical-align: top; text-align: right; white-space: nowrap; padding: 4pt 4pt 4pt 4pt;">0&nbsp;&nbsp;&nbsp;</td>
-<td style="vertical-align: top; text-align: right; white-space: nowrap; border-style: solid solid solid solid; border-width: 0pt 0.4pt 0pt 0pt; padding: 4pt 4pt 4pt 4pt;">0&nbsp;&nbsp;&nbsp;</td>
-</tr>
+<td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0.4pt;    padding: 6pt 6pt 6pt 6pt; font-weight: normal;">2.31</td><td style="vertical-align: top; text-align: right; white-space: normal; padding: 6pt 6pt 6pt 6pt; font-weight: normal;">1.51</td><td style="vertical-align: top; text-align: right; white-space: normal; padding: 6pt 6pt 6pt 6pt; font-weight: normal;">0</td><td style="vertical-align: top; text-align: right; white-space: normal; padding: 6pt 6pt 6pt 6pt; font-weight: normal;">0&nbsp;&nbsp;&nbsp;</td><td style="vertical-align: top; text-align: right; white-space: normal; padding: 6pt 6pt 6pt 6pt; font-weight: normal;">0&nbsp;&nbsp;&nbsp;</td><td style="vertical-align: top; text-align: right; white-space: normal; padding: 6pt 6pt 6pt 6pt; font-weight: normal;">0.03</td><td style="vertical-align: top; text-align: right; white-space: normal; padding: 6pt 6pt 6pt 6pt; font-weight: normal;">0&nbsp;&nbsp;&nbsp;</td><td style="vertical-align: top; text-align: right; white-space: normal; padding: 6pt 6pt 6pt 6pt; font-weight: normal;">0.04</td><td style="vertical-align: top; text-align: right; white-space: normal; padding: 6pt 6pt 6pt 6pt; font-weight: normal;">0.03</td><td style="vertical-align: top; text-align: right; white-space: normal; padding: 6pt 6pt 6pt 6pt; font-weight: normal;">0.02</td><td style="vertical-align: top; text-align: right; white-space: normal; padding: 6pt 6pt 6pt 6pt; font-weight: normal;">0&nbsp;&nbsp;&nbsp;</td><td style="vertical-align: top; text-align: right; white-space: normal; padding: 6pt 6pt 6pt 6pt; font-weight: normal;">0&nbsp;&nbsp;&nbsp;</td><td style="vertical-align: top; text-align: right; white-space: normal; padding: 6pt 6pt 6pt 6pt; font-weight: normal;">0&nbsp;&nbsp;&nbsp;</td><td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0pt 0.4pt 0pt 0pt;    padding: 6pt 6pt 6pt 6pt; font-weight: normal;">0&nbsp;&nbsp;&nbsp;</td></tr>
 <tr>
-<td style="vertical-align: top; text-align: right; white-space: nowrap; border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0.4pt; padding: 4pt 4pt 4pt 4pt; background-color: rgb(242, 242, 242);">1.05</td>
-<td style="vertical-align: top; text-align: right; white-space: nowrap; padding: 4pt 4pt 4pt 4pt; background-color: rgb(242, 242, 242);">2.24</td>
-<td style="vertical-align: top; text-align: right; white-space: nowrap; padding: 4pt 4pt 4pt 4pt; background-color: rgb(242, 242, 242);">0</td>
-<td style="vertical-align: top; text-align: right; white-space: nowrap; padding: 4pt 4pt 4pt 4pt; background-color: rgb(242, 242, 242);">0&nbsp;&nbsp;&nbsp;</td>
-<td style="vertical-align: top; text-align: right; white-space: nowrap; padding: 4pt 4pt 4pt 4pt; background-color: rgb(242, 242, 242);">0&nbsp;&nbsp;&nbsp;</td>
-<td style="vertical-align: top; text-align: right; white-space: nowrap; padding: 4pt 4pt 4pt 4pt; background-color: rgb(242, 242, 242);">0&nbsp;&nbsp;&nbsp;</td>
-<td style="vertical-align: top; text-align: right; white-space: nowrap; padding: 4pt 4pt 4pt 4pt; background-color: rgb(242, 242, 242);">0.01</td>
-<td style="vertical-align: top; text-align: right; white-space: nowrap; padding: 4pt 4pt 4pt 4pt; background-color: rgb(242, 242, 242);">0&nbsp;&nbsp;&nbsp;</td>
-<td style="vertical-align: top; text-align: right; white-space: nowrap; padding: 4pt 4pt 4pt 4pt; background-color: rgb(242, 242, 242);">0.13</td>
-<td style="vertical-align: top; text-align: right; white-space: nowrap; padding: 4pt 4pt 4pt 4pt; background-color: rgb(242, 242, 242);">0.17</td>
-<td style="vertical-align: top; text-align: right; white-space: nowrap; padding: 4pt 4pt 4pt 4pt; background-color: rgb(242, 242, 242);">0&nbsp;&nbsp;&nbsp;</td>
-<td style="vertical-align: top; text-align: right; white-space: nowrap; padding: 4pt 4pt 4pt 4pt; background-color: rgb(242, 242, 242);">0.02</td>
-<td style="vertical-align: top; text-align: right; white-space: nowrap; padding: 4pt 4pt 4pt 4pt; background-color: rgb(242, 242, 242);">0&nbsp;&nbsp;&nbsp;</td>
-<td style="vertical-align: top; text-align: right; white-space: nowrap; border-style: solid solid solid solid; border-width: 0pt 0.4pt 0pt 0pt; padding: 4pt 4pt 4pt 4pt; background-color: rgb(242, 242, 242);">0&nbsp;&nbsp;&nbsp;</td>
-</tr>
+<td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0.4pt;    padding: 6pt 6pt 6pt 6pt; background-color: rgb(242, 242, 242); font-weight: normal;">1.05</td><td style="vertical-align: top; text-align: right; white-space: normal; padding: 6pt 6pt 6pt 6pt; background-color: rgb(242, 242, 242); font-weight: normal;">2.24</td><td style="vertical-align: top; text-align: right; white-space: normal; padding: 6pt 6pt 6pt 6pt; background-color: rgb(242, 242, 242); font-weight: normal;">0</td><td style="vertical-align: top; text-align: right; white-space: normal; padding: 6pt 6pt 6pt 6pt; background-color: rgb(242, 242, 242); font-weight: normal;">0&nbsp;&nbsp;&nbsp;</td><td style="vertical-align: top; text-align: right; white-space: normal; padding: 6pt 6pt 6pt 6pt; background-color: rgb(242, 242, 242); font-weight: normal;">0&nbsp;&nbsp;&nbsp;</td><td style="vertical-align: top; text-align: right; white-space: normal; padding: 6pt 6pt 6pt 6pt; background-color: rgb(242, 242, 242); font-weight: normal;">0&nbsp;&nbsp;&nbsp;</td><td style="vertical-align: top; text-align: right; white-space: normal; padding: 6pt 6pt 6pt 6pt; background-color: rgb(242, 242, 242); font-weight: normal;">0.01</td><td style="vertical-align: top; text-align: right; white-space: normal; padding: 6pt 6pt 6pt 6pt; background-color: rgb(242, 242, 242); font-weight: normal;">0&nbsp;&nbsp;&nbsp;</td><td style="vertical-align: top; text-align: right; white-space: normal; padding: 6pt 6pt 6pt 6pt; background-color: rgb(242, 242, 242); font-weight: normal;">0.13</td><td style="vertical-align: top; text-align: right; white-space: normal; padding: 6pt 6pt 6pt 6pt; background-color: rgb(242, 242, 242); font-weight: normal;">0.17</td><td style="vertical-align: top; text-align: right; white-space: normal; padding: 6pt 6pt 6pt 6pt; background-color: rgb(242, 242, 242); font-weight: normal;">0&nbsp;&nbsp;&nbsp;</td><td style="vertical-align: top; text-align: right; white-space: normal; padding: 6pt 6pt 6pt 6pt; background-color: rgb(242, 242, 242); font-weight: normal;">0.02</td><td style="vertical-align: top; text-align: right; white-space: normal; padding: 6pt 6pt 6pt 6pt; background-color: rgb(242, 242, 242); font-weight: normal;">0&nbsp;&nbsp;&nbsp;</td><td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0pt 0.4pt 0pt 0pt;    padding: 6pt 6pt 6pt 6pt; background-color: rgb(242, 242, 242); font-weight: normal;">0&nbsp;&nbsp;&nbsp;</td></tr>
 <tr>
-<td style="vertical-align: top; text-align: right; white-space: nowrap; border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0.4pt; padding: 4pt 4pt 4pt 4pt;">1&nbsp;&nbsp;&nbsp;</td>
-<td style="vertical-align: top; text-align: right; white-space: nowrap; padding: 4pt 4pt 4pt 4pt;">2.29</td>
-<td style="vertical-align: top; text-align: right; white-space: nowrap; padding: 4pt 4pt 4pt 4pt;">1</td>
-<td style="vertical-align: top; text-align: right; white-space: nowrap; padding: 4pt 4pt 4pt 4pt;">0&nbsp;&nbsp;&nbsp;</td>
-<td style="vertical-align: top; text-align: right; white-space: nowrap; padding: 4pt 4pt 4pt 4pt;">0&nbsp;&nbsp;&nbsp;</td>
-<td style="vertical-align: top; text-align: right; white-space: nowrap; padding: 4pt 4pt 4pt 4pt;">0&nbsp;&nbsp;&nbsp;</td>
-<td style="vertical-align: top; text-align: right; white-space: nowrap; padding: 4pt 4pt 4pt 4pt;">0&nbsp;&nbsp;&nbsp;</td>
-<td style="vertical-align: top; text-align: right; white-space: nowrap; padding: 4pt 4pt 4pt 4pt;">0&nbsp;&nbsp;&nbsp;</td>
-<td style="vertical-align: top; text-align: right; white-space: nowrap; padding: 4pt 4pt 4pt 4pt;">0&nbsp;&nbsp;&nbsp;</td>
-<td style="vertical-align: top; text-align: right; white-space: nowrap; padding: 4pt 4pt 4pt 4pt;">0&nbsp;&nbsp;&nbsp;</td>
-<td style="vertical-align: top; text-align: right; white-space: nowrap; padding: 4pt 4pt 4pt 4pt;">0&nbsp;&nbsp;&nbsp;</td>
-<td style="vertical-align: top; text-align: right; white-space: nowrap; padding: 4pt 4pt 4pt 4pt;">0&nbsp;&nbsp;&nbsp;</td>
-<td style="vertical-align: top; text-align: right; white-space: nowrap; padding: 4pt 4pt 4pt 4pt;">0&nbsp;&nbsp;&nbsp;</td>
-<td style="vertical-align: top; text-align: right; white-space: nowrap; border-style: solid solid solid solid; border-width: 0pt 0.4pt 0pt 0pt; padding: 4pt 4pt 4pt 4pt;">0&nbsp;&nbsp;&nbsp;</td>
-</tr>
+<td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0.4pt;    padding: 6pt 6pt 6pt 6pt; font-weight: normal;">1&nbsp;&nbsp;&nbsp;</td><td style="vertical-align: top; text-align: right; white-space: normal; padding: 6pt 6pt 6pt 6pt; font-weight: normal;">2.29</td><td style="vertical-align: top; text-align: right; white-space: normal; padding: 6pt 6pt 6pt 6pt; font-weight: normal;">1</td><td style="vertical-align: top; text-align: right; white-space: normal; padding: 6pt 6pt 6pt 6pt; font-weight: normal;">0&nbsp;&nbsp;&nbsp;</td><td style="vertical-align: top; text-align: right; white-space: normal; padding: 6pt 6pt 6pt 6pt; font-weight: normal;">0&nbsp;&nbsp;&nbsp;</td><td style="vertical-align: top; text-align: right; white-space: normal; padding: 6pt 6pt 6pt 6pt; font-weight: normal;">0&nbsp;&nbsp;&nbsp;</td><td style="vertical-align: top; text-align: right; white-space: normal; padding: 6pt 6pt 6pt 6pt; font-weight: normal;">0&nbsp;&nbsp;&nbsp;</td><td style="vertical-align: top; text-align: right; white-space: normal; padding: 6pt 6pt 6pt 6pt; font-weight: normal;">0&nbsp;&nbsp;&nbsp;</td><td style="vertical-align: top; text-align: right; white-space: normal; padding: 6pt 6pt 6pt 6pt; font-weight: normal;">0&nbsp;&nbsp;&nbsp;</td><td style="vertical-align: top; text-align: right; white-space: normal; padding: 6pt 6pt 6pt 6pt; font-weight: normal;">0&nbsp;&nbsp;&nbsp;</td><td style="vertical-align: top; text-align: right; white-space: normal; padding: 6pt 6pt 6pt 6pt; font-weight: normal;">0&nbsp;&nbsp;&nbsp;</td><td style="vertical-align: top; text-align: right; white-space: normal; padding: 6pt 6pt 6pt 6pt; font-weight: normal;">0&nbsp;&nbsp;&nbsp;</td><td style="vertical-align: top; text-align: right; white-space: normal; padding: 6pt 6pt 6pt 6pt; font-weight: normal;">0&nbsp;&nbsp;&nbsp;</td><td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0pt 0.4pt 0pt 0pt;    padding: 6pt 6pt 6pt 6pt; font-weight: normal;">0&nbsp;&nbsp;&nbsp;</td></tr>
 <tr>
-<td style="vertical-align: top; text-align: right; white-space: nowrap; border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0.4pt; padding: 4pt 4pt 4pt 4pt; background-color: rgb(242, 242, 242);">0.96</td>
-<td style="vertical-align: top; text-align: right; white-space: nowrap; padding: 4pt 4pt 4pt 4pt; background-color: rgb(242, 242, 242);">2.33</td>
-<td style="vertical-align: top; text-align: right; white-space: nowrap; padding: 4pt 4pt 4pt 4pt; background-color: rgb(242, 242, 242);">0</td>
-<td style="vertical-align: top; text-align: right; white-space: nowrap; padding: 4pt 4pt 4pt 4pt; background-color: rgb(242, 242, 242);">0&nbsp;&nbsp;&nbsp;</td>
-<td style="vertical-align: top; text-align: right; white-space: nowrap; padding: 4pt 4pt 4pt 4pt; background-color: rgb(242, 242, 242);">0&nbsp;&nbsp;&nbsp;</td>
-<td style="vertical-align: top; text-align: right; white-space: nowrap; padding: 4pt 4pt 4pt 4pt; background-color: rgb(242, 242, 242);">0&nbsp;&nbsp;&nbsp;</td>
-<td style="vertical-align: top; text-align: right; white-space: nowrap; padding: 4pt 4pt 4pt 4pt; background-color: rgb(242, 242, 242);">0.05</td>
-<td style="vertical-align: top; text-align: right; white-space: nowrap; padding: 4pt 4pt 4pt 4pt; background-color: rgb(242, 242, 242);">0.02</td>
-<td style="vertical-align: top; text-align: right; white-space: nowrap; padding: 4pt 4pt 4pt 4pt; background-color: rgb(242, 242, 242);">0.1&nbsp;</td>
-<td style="vertical-align: top; text-align: right; white-space: nowrap; padding: 4pt 4pt 4pt 4pt; background-color: rgb(242, 242, 242);">0.21</td>
-<td style="vertical-align: top; text-align: right; white-space: nowrap; padding: 4pt 4pt 4pt 4pt; background-color: rgb(242, 242, 242);">0.01</td>
-<td style="vertical-align: top; text-align: right; white-space: nowrap; padding: 4pt 4pt 4pt 4pt; background-color: rgb(242, 242, 242);">0.01</td>
-<td style="vertical-align: top; text-align: right; white-space: nowrap; padding: 4pt 4pt 4pt 4pt; background-color: rgb(242, 242, 242);">0&nbsp;&nbsp;&nbsp;</td>
-<td style="vertical-align: top; text-align: right; white-space: nowrap; border-style: solid solid solid solid; border-width: 0pt 0.4pt 0pt 0pt; padding: 4pt 4pt 4pt 4pt; background-color: rgb(242, 242, 242);">0&nbsp;&nbsp;&nbsp;</td>
-</tr>
+<td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0.4pt;    padding: 6pt 6pt 6pt 6pt; background-color: rgb(242, 242, 242); font-weight: normal;">0.96</td><td style="vertical-align: top; text-align: right; white-space: normal; padding: 6pt 6pt 6pt 6pt; background-color: rgb(242, 242, 242); font-weight: normal;">2.33</td><td style="vertical-align: top; text-align: right; white-space: normal; padding: 6pt 6pt 6pt 6pt; background-color: rgb(242, 242, 242); font-weight: normal;">0</td><td style="vertical-align: top; text-align: right; white-space: normal; padding: 6pt 6pt 6pt 6pt; background-color: rgb(242, 242, 242); font-weight: normal;">0&nbsp;&nbsp;&nbsp;</td><td style="vertical-align: top; text-align: right; white-space: normal; padding: 6pt 6pt 6pt 6pt; background-color: rgb(242, 242, 242); font-weight: normal;">0&nbsp;&nbsp;&nbsp;</td><td style="vertical-align: top; text-align: right; white-space: normal; padding: 6pt 6pt 6pt 6pt; background-color: rgb(242, 242, 242); font-weight: normal;">0&nbsp;&nbsp;&nbsp;</td><td style="vertical-align: top; text-align: right; white-space: normal; padding: 6pt 6pt 6pt 6pt; background-color: rgb(242, 242, 242); font-weight: normal;">0.05</td><td style="vertical-align: top; text-align: right; white-space: normal; padding: 6pt 6pt 6pt 6pt; background-color: rgb(242, 242, 242); font-weight: normal;">0.02</td><td style="vertical-align: top; text-align: right; white-space: normal; padding: 6pt 6pt 6pt 6pt; background-color: rgb(242, 242, 242); font-weight: normal;">0.1&nbsp;</td><td style="vertical-align: top; text-align: right; white-space: normal; padding: 6pt 6pt 6pt 6pt; background-color: rgb(242, 242, 242); font-weight: normal;">0.21</td><td style="vertical-align: top; text-align: right; white-space: normal; padding: 6pt 6pt 6pt 6pt; background-color: rgb(242, 242, 242); font-weight: normal;">0.01</td><td style="vertical-align: top; text-align: right; white-space: normal; padding: 6pt 6pt 6pt 6pt; background-color: rgb(242, 242, 242); font-weight: normal;">0.01</td><td style="vertical-align: top; text-align: right; white-space: normal; padding: 6pt 6pt 6pt 6pt; background-color: rgb(242, 242, 242); font-weight: normal;">0&nbsp;&nbsp;&nbsp;</td><td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0pt 0.4pt 0pt 0pt;    padding: 6pt 6pt 6pt 6pt; background-color: rgb(242, 242, 242); font-weight: normal;">0&nbsp;&nbsp;&nbsp;</td></tr>
 <tr>
-<td style="vertical-align: top; text-align: right; white-space: nowrap; border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0.4pt; padding: 4pt 4pt 4pt 4pt;">0.57</td>
-<td style="vertical-align: top; text-align: right; white-space: nowrap; padding: 4pt 4pt 4pt 4pt;">3.03</td>
-<td style="vertical-align: top; text-align: right; white-space: nowrap; padding: 4pt 4pt 4pt 4pt;">0</td>
-<td style="vertical-align: top; text-align: right; white-space: nowrap; padding: 4pt 4pt 4pt 4pt;">0&nbsp;&nbsp;&nbsp;</td>
-<td style="vertical-align: top; text-align: right; white-space: nowrap; padding: 4pt 4pt 4pt 4pt;">0&nbsp;&nbsp;&nbsp;</td>
-<td style="vertical-align: top; text-align: right; white-space: nowrap; padding: 4pt 4pt 4pt 4pt;">0.03</td>
-<td style="vertical-align: top; text-align: right; white-space: nowrap; padding: 4pt 4pt 4pt 4pt;">0.15</td>
-<td style="vertical-align: top; text-align: right; white-space: nowrap; padding: 4pt 4pt 4pt 4pt;">0.24</td>
-<td style="vertical-align: top; text-align: right; white-space: nowrap; padding: 4pt 4pt 4pt 4pt;">0.12</td>
-<td style="vertical-align: top; text-align: right; white-space: nowrap; padding: 4pt 4pt 4pt 4pt;">0.01</td>
-<td style="vertical-align: top; text-align: right; white-space: nowrap; padding: 4pt 4pt 4pt 4pt;">0.02</td>
-<td style="vertical-align: top; text-align: right; white-space: nowrap; padding: 4pt 4pt 4pt 4pt;">0&nbsp;&nbsp;&nbsp;</td>
-<td style="vertical-align: top; text-align: right; white-space: nowrap; padding: 4pt 4pt 4pt 4pt;">0&nbsp;&nbsp;&nbsp;</td>
-<td style="vertical-align: top; text-align: right; white-space: nowrap; border-style: solid solid solid solid; border-width: 0pt 0.4pt 0pt 0pt; padding: 4pt 4pt 4pt 4pt;">0&nbsp;&nbsp;&nbsp;</td>
-</tr>
+<td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0.4pt;    padding: 6pt 6pt 6pt 6pt; font-weight: normal;">0.57</td><td style="vertical-align: top; text-align: right; white-space: normal; padding: 6pt 6pt 6pt 6pt; font-weight: normal;">3.03</td><td style="vertical-align: top; text-align: right; white-space: normal; padding: 6pt 6pt 6pt 6pt; font-weight: normal;">0</td><td style="vertical-align: top; text-align: right; white-space: normal; padding: 6pt 6pt 6pt 6pt; font-weight: normal;">0&nbsp;&nbsp;&nbsp;</td><td style="vertical-align: top; text-align: right; white-space: normal; padding: 6pt 6pt 6pt 6pt; font-weight: normal;">0&nbsp;&nbsp;&nbsp;</td><td style="vertical-align: top; text-align: right; white-space: normal; padding: 6pt 6pt 6pt 6pt; font-weight: normal;">0.03</td><td style="vertical-align: top; text-align: right; white-space: normal; padding: 6pt 6pt 6pt 6pt; font-weight: normal;">0.15</td><td style="vertical-align: top; text-align: right; white-space: normal; padding: 6pt 6pt 6pt 6pt; font-weight: normal;">0.24</td><td style="vertical-align: top; text-align: right; white-space: normal; padding: 6pt 6pt 6pt 6pt; font-weight: normal;">0.12</td><td style="vertical-align: top; text-align: right; white-space: normal; padding: 6pt 6pt 6pt 6pt; font-weight: normal;">0.01</td><td style="vertical-align: top; text-align: right; white-space: normal; padding: 6pt 6pt 6pt 6pt; font-weight: normal;">0.02</td><td style="vertical-align: top; text-align: right; white-space: normal; padding: 6pt 6pt 6pt 6pt; font-weight: normal;">0&nbsp;&nbsp;&nbsp;</td><td style="vertical-align: top; text-align: right; white-space: normal; padding: 6pt 6pt 6pt 6pt; font-weight: normal;">0&nbsp;&nbsp;&nbsp;</td><td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0pt 0.4pt 0pt 0pt;    padding: 6pt 6pt 6pt 6pt; font-weight: normal;">0&nbsp;&nbsp;&nbsp;</td></tr>
 <tr>
-<td style="vertical-align: top; text-align: right; white-space: nowrap; border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0.4pt; padding: 4pt 4pt 4pt 4pt; background-color: rgb(242, 242, 242);">0.35</td>
-<td style="vertical-align: top; text-align: right; white-space: nowrap; padding: 4pt 4pt 4pt 4pt; background-color: rgb(242, 242, 242);">3.9&nbsp;</td>
-<td style="vertical-align: top; text-align: right; white-space: nowrap; padding: 4pt 4pt 4pt 4pt; background-color: rgb(242, 242, 242);">0</td>
-<td style="vertical-align: top; text-align: right; white-space: nowrap; padding: 4pt 4pt 4pt 4pt; background-color: rgb(242, 242, 242);">0&nbsp;&nbsp;&nbsp;</td>
-<td style="vertical-align: top; text-align: right; white-space: nowrap; padding: 4pt 4pt 4pt 4pt; background-color: rgb(242, 242, 242);">0&nbsp;&nbsp;&nbsp;</td>
-<td style="vertical-align: top; text-align: right; white-space: nowrap; padding: 4pt 4pt 4pt 4pt; background-color: rgb(242, 242, 242);">0.14</td>
-<td style="vertical-align: top; text-align: right; white-space: nowrap; padding: 4pt 4pt 4pt 4pt; background-color: rgb(242, 242, 242);">0.13</td>
-<td style="vertical-align: top; text-align: right; white-space: nowrap; padding: 4pt 4pt 4pt 4pt; background-color: rgb(242, 242, 242);">0.24</td>
-<td style="vertical-align: top; text-align: right; white-space: nowrap; padding: 4pt 4pt 4pt 4pt; background-color: rgb(242, 242, 242);">0.04</td>
-<td style="vertical-align: top; text-align: right; white-space: nowrap; padding: 4pt 4pt 4pt 4pt; background-color: rgb(242, 242, 242);">0.16</td>
-<td style="vertical-align: top; text-align: right; white-space: nowrap; padding: 4pt 4pt 4pt 4pt; background-color: rgb(242, 242, 242);">0.01</td>
-<td style="vertical-align: top; text-align: right; white-space: nowrap; padding: 4pt 4pt 4pt 4pt; background-color: rgb(242, 242, 242);">0.09</td>
-<td style="vertical-align: top; text-align: right; white-space: nowrap; padding: 4pt 4pt 4pt 4pt; background-color: rgb(242, 242, 242);">0&nbsp;&nbsp;&nbsp;</td>
-<td style="vertical-align: top; text-align: right; white-space: nowrap; border-style: solid solid solid solid; border-width: 0pt 0.4pt 0pt 0pt; padding: 4pt 4pt 4pt 4pt; background-color: rgb(242, 242, 242);">0&nbsp;&nbsp;&nbsp;</td>
-</tr>
+<td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0.4pt;    padding: 6pt 6pt 6pt 6pt; background-color: rgb(242, 242, 242); font-weight: normal;">0.35</td><td style="vertical-align: top; text-align: right; white-space: normal; padding: 6pt 6pt 6pt 6pt; background-color: rgb(242, 242, 242); font-weight: normal;">3.9&nbsp;</td><td style="vertical-align: top; text-align: right; white-space: normal; padding: 6pt 6pt 6pt 6pt; background-color: rgb(242, 242, 242); font-weight: normal;">0</td><td style="vertical-align: top; text-align: right; white-space: normal; padding: 6pt 6pt 6pt 6pt; background-color: rgb(242, 242, 242); font-weight: normal;">0&nbsp;&nbsp;&nbsp;</td><td style="vertical-align: top; text-align: right; white-space: normal; padding: 6pt 6pt 6pt 6pt; background-color: rgb(242, 242, 242); font-weight: normal;">0&nbsp;&nbsp;&nbsp;</td><td style="vertical-align: top; text-align: right; white-space: normal; padding: 6pt 6pt 6pt 6pt; background-color: rgb(242, 242, 242); font-weight: normal;">0.14</td><td style="vertical-align: top; text-align: right; white-space: normal; padding: 6pt 6pt 6pt 6pt; background-color: rgb(242, 242, 242); font-weight: normal;">0.13</td><td style="vertical-align: top; text-align: right; white-space: normal; padding: 6pt 6pt 6pt 6pt; background-color: rgb(242, 242, 242); font-weight: normal;">0.24</td><td style="vertical-align: top; text-align: right; white-space: normal; padding: 6pt 6pt 6pt 6pt; background-color: rgb(242, 242, 242); font-weight: normal;">0.04</td><td style="vertical-align: top; text-align: right; white-space: normal; padding: 6pt 6pt 6pt 6pt; background-color: rgb(242, 242, 242); font-weight: normal;">0.16</td><td style="vertical-align: top; text-align: right; white-space: normal; padding: 6pt 6pt 6pt 6pt; background-color: rgb(242, 242, 242); font-weight: normal;">0.01</td><td style="vertical-align: top; text-align: right; white-space: normal; padding: 6pt 6pt 6pt 6pt; background-color: rgb(242, 242, 242); font-weight: normal;">0.09</td><td style="vertical-align: top; text-align: right; white-space: normal; padding: 6pt 6pt 6pt 6pt; background-color: rgb(242, 242, 242); font-weight: normal;">0&nbsp;&nbsp;&nbsp;</td><td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0pt 0.4pt 0pt 0pt;    padding: 6pt 6pt 6pt 6pt; background-color: rgb(242, 242, 242); font-weight: normal;">0&nbsp;&nbsp;&nbsp;</td></tr>
 <tr>
-<td style="vertical-align: top; text-align: right; white-space: nowrap; border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0.4pt; padding: 4pt 4pt 4pt 4pt;">0.23</td>
-<td style="vertical-align: top; text-align: right; white-space: nowrap; padding: 4pt 4pt 4pt 4pt;">4.75</td>
-<td style="vertical-align: top; text-align: right; white-space: nowrap; padding: 4pt 4pt 4pt 4pt;">0</td>
-<td style="vertical-align: top; text-align: right; white-space: nowrap; padding: 4pt 4pt 4pt 4pt;">0&nbsp;&nbsp;&nbsp;</td>
-<td style="vertical-align: top; text-align: right; white-space: nowrap; padding: 4pt 4pt 4pt 4pt;">0.02</td>
-<td style="vertical-align: top; text-align: right; white-space: nowrap; padding: 4pt 4pt 4pt 4pt;">0.33</td>
-<td style="vertical-align: top; text-align: right; white-space: nowrap; padding: 4pt 4pt 4pt 4pt;">0.15</td>
-<td style="vertical-align: top; text-align: right; white-space: nowrap; padding: 4pt 4pt 4pt 4pt;">0.15</td>
-<td style="vertical-align: top; text-align: right; white-space: nowrap; padding: 4pt 4pt 4pt 4pt;">0.45</td>
-<td style="vertical-align: top; text-align: right; white-space: nowrap; padding: 4pt 4pt 4pt 4pt;">0.07</td>
-<td style="vertical-align: top; text-align: right; white-space: nowrap; padding: 4pt 4pt 4pt 4pt;">0.01</td>
-<td style="vertical-align: top; text-align: right; white-space: nowrap; padding: 4pt 4pt 4pt 4pt;">0.03</td>
-<td style="vertical-align: top; text-align: right; white-space: nowrap; padding: 4pt 4pt 4pt 4pt;">0&nbsp;&nbsp;&nbsp;</td>
-<td style="vertical-align: top; text-align: right; white-space: nowrap; border-style: solid solid solid solid; border-width: 0pt 0.4pt 0pt 0pt; padding: 4pt 4pt 4pt 4pt;">0&nbsp;&nbsp;&nbsp;</td>
-</tr>
+<td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0.4pt;    padding: 6pt 6pt 6pt 6pt; font-weight: normal;">0.23</td><td style="vertical-align: top; text-align: right; white-space: normal; padding: 6pt 6pt 6pt 6pt; font-weight: normal;">4.75</td><td style="vertical-align: top; text-align: right; white-space: normal; padding: 6pt 6pt 6pt 6pt; font-weight: normal;">0</td><td style="vertical-align: top; text-align: right; white-space: normal; padding: 6pt 6pt 6pt 6pt; font-weight: normal;">0&nbsp;&nbsp;&nbsp;</td><td style="vertical-align: top; text-align: right; white-space: normal; padding: 6pt 6pt 6pt 6pt; font-weight: normal;">0.02</td><td style="vertical-align: top; text-align: right; white-space: normal; padding: 6pt 6pt 6pt 6pt; font-weight: normal;">0.33</td><td style="vertical-align: top; text-align: right; white-space: normal; padding: 6pt 6pt 6pt 6pt; font-weight: normal;">0.15</td><td style="vertical-align: top; text-align: right; white-space: normal; padding: 6pt 6pt 6pt 6pt; font-weight: normal;">0.15</td><td style="vertical-align: top; text-align: right; white-space: normal; padding: 6pt 6pt 6pt 6pt; font-weight: normal;">0.45</td><td style="vertical-align: top; text-align: right; white-space: normal; padding: 6pt 6pt 6pt 6pt; font-weight: normal;">0.07</td><td style="vertical-align: top; text-align: right; white-space: normal; padding: 6pt 6pt 6pt 6pt; font-weight: normal;">0.01</td><td style="vertical-align: top; text-align: right; white-space: normal; padding: 6pt 6pt 6pt 6pt; font-weight: normal;">0.03</td><td style="vertical-align: top; text-align: right; white-space: normal; padding: 6pt 6pt 6pt 6pt; font-weight: normal;">0&nbsp;&nbsp;&nbsp;</td><td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0pt 0.4pt 0pt 0pt;    padding: 6pt 6pt 6pt 6pt; font-weight: normal;">0&nbsp;&nbsp;&nbsp;</td></tr>
 <tr>
-<td style="vertical-align: top; text-align: right; white-space: nowrap; border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0.4pt; padding: 4pt 4pt 4pt 4pt; background-color: rgb(242, 242, 242);">0.18</td>
-<td style="vertical-align: top; text-align: right; white-space: nowrap; padding: 4pt 4pt 4pt 4pt; background-color: rgb(242, 242, 242);">5.42</td>
-<td style="vertical-align: top; text-align: right; white-space: nowrap; padding: 4pt 4pt 4pt 4pt; background-color: rgb(242, 242, 242);">0</td>
-<td style="vertical-align: top; text-align: right; white-space: nowrap; padding: 4pt 4pt 4pt 4pt; background-color: rgb(242, 242, 242);">0.01</td>
-<td style="vertical-align: top; text-align: right; white-space: nowrap; padding: 4pt 4pt 4pt 4pt; background-color: rgb(242, 242, 242);">0.18</td>
-<td style="vertical-align: top; text-align: right; white-space: nowrap; padding: 4pt 4pt 4pt 4pt; background-color: rgb(242, 242, 242);">0.09</td>
-<td style="vertical-align: top; text-align: right; white-space: nowrap; padding: 4pt 4pt 4pt 4pt; background-color: rgb(242, 242, 242);">0.09</td>
-<td style="vertical-align: top; text-align: right; white-space: nowrap; padding: 4pt 4pt 4pt 4pt; background-color: rgb(242, 242, 242);">0.08</td>
-<td style="vertical-align: top; text-align: right; white-space: nowrap; padding: 4pt 4pt 4pt 4pt; background-color: rgb(242, 242, 242);">0.01</td>
-<td style="vertical-align: top; text-align: right; white-space: nowrap; padding: 4pt 4pt 4pt 4pt; background-color: rgb(242, 242, 242);">0&nbsp;&nbsp;&nbsp;</td>
-<td style="vertical-align: top; text-align: right; white-space: nowrap; padding: 4pt 4pt 4pt 4pt; background-color: rgb(242, 242, 242);">0&nbsp;&nbsp;&nbsp;</td>
-<td style="vertical-align: top; text-align: right; white-space: nowrap; padding: 4pt 4pt 4pt 4pt; background-color: rgb(242, 242, 242);">0.03</td>
-<td style="vertical-align: top; text-align: right; white-space: nowrap; padding: 4pt 4pt 4pt 4pt; background-color: rgb(242, 242, 242);">0.01</td>
-<td style="vertical-align: top; text-align: right; white-space: nowrap; border-style: solid solid solid solid; border-width: 0pt 0.4pt 0pt 0pt; padding: 4pt 4pt 4pt 4pt; background-color: rgb(242, 242, 242);">0&nbsp;&nbsp;&nbsp;</td>
-</tr>
+<td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0.4pt;    padding: 6pt 6pt 6pt 6pt; background-color: rgb(242, 242, 242); font-weight: normal;">0.18</td><td style="vertical-align: top; text-align: right; white-space: normal; padding: 6pt 6pt 6pt 6pt; background-color: rgb(242, 242, 242); font-weight: normal;">5.42</td><td style="vertical-align: top; text-align: right; white-space: normal; padding: 6pt 6pt 6pt 6pt; background-color: rgb(242, 242, 242); font-weight: normal;">0</td><td style="vertical-align: top; text-align: right; white-space: normal; padding: 6pt 6pt 6pt 6pt; background-color: rgb(242, 242, 242); font-weight: normal;">0.01</td><td style="vertical-align: top; text-align: right; white-space: normal; padding: 6pt 6pt 6pt 6pt; background-color: rgb(242, 242, 242); font-weight: normal;">0.18</td><td style="vertical-align: top; text-align: right; white-space: normal; padding: 6pt 6pt 6pt 6pt; background-color: rgb(242, 242, 242); font-weight: normal;">0.09</td><td style="vertical-align: top; text-align: right; white-space: normal; padding: 6pt 6pt 6pt 6pt; background-color: rgb(242, 242, 242); font-weight: normal;">0.09</td><td style="vertical-align: top; text-align: right; white-space: normal; padding: 6pt 6pt 6pt 6pt; background-color: rgb(242, 242, 242); font-weight: normal;">0.08</td><td style="vertical-align: top; text-align: right; white-space: normal; padding: 6pt 6pt 6pt 6pt; background-color: rgb(242, 242, 242); font-weight: normal;">0.01</td><td style="vertical-align: top; text-align: right; white-space: normal; padding: 6pt 6pt 6pt 6pt; background-color: rgb(242, 242, 242); font-weight: normal;">0&nbsp;&nbsp;&nbsp;</td><td style="vertical-align: top; text-align: right; white-space: normal; padding: 6pt 6pt 6pt 6pt; background-color: rgb(242, 242, 242); font-weight: normal;">0&nbsp;&nbsp;&nbsp;</td><td style="vertical-align: top; text-align: right; white-space: normal; padding: 6pt 6pt 6pt 6pt; background-color: rgb(242, 242, 242); font-weight: normal;">0.03</td><td style="vertical-align: top; text-align: right; white-space: normal; padding: 6pt 6pt 6pt 6pt; background-color: rgb(242, 242, 242); font-weight: normal;">0.01</td><td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0pt 0.4pt 0pt 0pt;    padding: 6pt 6pt 6pt 6pt; background-color: rgb(242, 242, 242); font-weight: normal;">0&nbsp;&nbsp;&nbsp;</td></tr>
 <tr>
-<td style="vertical-align: top; text-align: right; white-space: nowrap; border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0.4pt; padding: 4pt 4pt 4pt 4pt;">0.08</td>
-<td style="vertical-align: top; text-align: right; white-space: nowrap; padding: 4pt 4pt 4pt 4pt;">7.98</td>
-<td style="vertical-align: top; text-align: right; white-space: nowrap; padding: 4pt 4pt 4pt 4pt;">0</td>
-<td style="vertical-align: top; text-align: right; white-space: nowrap; padding: 4pt 4pt 4pt 4pt;">0.02</td>
-<td style="vertical-align: top; text-align: right; white-space: nowrap; padding: 4pt 4pt 4pt 4pt;">0.04</td>
-<td style="vertical-align: top; text-align: right; white-space: nowrap; padding: 4pt 4pt 4pt 4pt;">0.23</td>
-<td style="vertical-align: top; text-align: right; white-space: nowrap; padding: 4pt 4pt 4pt 4pt;">0.29</td>
-<td style="vertical-align: top; text-align: right; white-space: nowrap; padding: 4pt 4pt 4pt 4pt;">0.09</td>
-<td style="vertical-align: top; text-align: right; white-space: nowrap; padding: 4pt 4pt 4pt 4pt;">0.01</td>
-<td style="vertical-align: top; text-align: right; white-space: nowrap; padding: 4pt 4pt 4pt 4pt;">0.16</td>
-<td style="vertical-align: top; text-align: right; white-space: nowrap; padding: 4pt 4pt 4pt 4pt;">0.4&nbsp;</td>
-<td style="vertical-align: top; text-align: right; white-space: nowrap; padding: 4pt 4pt 4pt 4pt;">0.12</td>
-<td style="vertical-align: top; text-align: right; white-space: nowrap; padding: 4pt 4pt 4pt 4pt;">0&nbsp;&nbsp;&nbsp;</td>
-<td style="vertical-align: top; text-align: right; white-space: nowrap; border-style: solid solid solid solid; border-width: 0pt 0.4pt 0pt 0pt; padding: 4pt 4pt 4pt 4pt;">0&nbsp;&nbsp;&nbsp;</td>
-</tr>
+<td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0.4pt;    padding: 6pt 6pt 6pt 6pt; font-weight: normal;">0.08</td><td style="vertical-align: top; text-align: right; white-space: normal; padding: 6pt 6pt 6pt 6pt; font-weight: normal;">7.98</td><td style="vertical-align: top; text-align: right; white-space: normal; padding: 6pt 6pt 6pt 6pt; font-weight: normal;">0</td><td style="vertical-align: top; text-align: right; white-space: normal; padding: 6pt 6pt 6pt 6pt; font-weight: normal;">0.02</td><td style="vertical-align: top; text-align: right; white-space: normal; padding: 6pt 6pt 6pt 6pt; font-weight: normal;">0.04</td><td style="vertical-align: top; text-align: right; white-space: normal; padding: 6pt 6pt 6pt 6pt; font-weight: normal;">0.23</td><td style="vertical-align: top; text-align: right; white-space: normal; padding: 6pt 6pt 6pt 6pt; font-weight: normal;">0.29</td><td style="vertical-align: top; text-align: right; white-space: normal; padding: 6pt 6pt 6pt 6pt; font-weight: normal;">0.09</td><td style="vertical-align: top; text-align: right; white-space: normal; padding: 6pt 6pt 6pt 6pt; font-weight: normal;">0.01</td><td style="vertical-align: top; text-align: right; white-space: normal; padding: 6pt 6pt 6pt 6pt; font-weight: normal;">0.16</td><td style="vertical-align: top; text-align: right; white-space: normal; padding: 6pt 6pt 6pt 6pt; font-weight: normal;">0.4&nbsp;</td><td style="vertical-align: top; text-align: right; white-space: normal; padding: 6pt 6pt 6pt 6pt; font-weight: normal;">0.12</td><td style="vertical-align: top; text-align: right; white-space: normal; padding: 6pt 6pt 6pt 6pt; font-weight: normal;">0&nbsp;&nbsp;&nbsp;</td><td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0pt 0.4pt 0pt 0pt;    padding: 6pt 6pt 6pt 6pt; font-weight: normal;">0&nbsp;&nbsp;&nbsp;</td></tr>
 <tr>
-<td style="vertical-align: top; text-align: right; white-space: nowrap; border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0.4pt; padding: 4pt 4pt 4pt 4pt; background-color: rgb(242, 242, 242);">0.01</td>
-<td style="vertical-align: top; text-align: right; white-space: nowrap; padding: 4pt 4pt 4pt 4pt; background-color: rgb(242, 242, 242);">20.1&nbsp;</td>
-<td style="vertical-align: top; text-align: right; white-space: nowrap; padding: 4pt 4pt 4pt 4pt; background-color: rgb(242, 242, 242);">0</td>
-<td style="vertical-align: top; text-align: right; white-space: nowrap; padding: 4pt 4pt 4pt 4pt; background-color: rgb(242, 242, 242);">0.05</td>
-<td style="vertical-align: top; text-align: right; white-space: nowrap; padding: 4pt 4pt 4pt 4pt; background-color: rgb(242, 242, 242);">0.29</td>
-<td style="vertical-align: top; text-align: right; white-space: nowrap; padding: 4pt 4pt 4pt 4pt; background-color: rgb(242, 242, 242);">0.02</td>
-<td style="vertical-align: top; text-align: right; white-space: nowrap; padding: 4pt 4pt 4pt 4pt; background-color: rgb(242, 242, 242);">0.04</td>
-<td style="vertical-align: top; text-align: right; white-space: nowrap; padding: 4pt 4pt 4pt 4pt; background-color: rgb(242, 242, 242);">0.07</td>
-<td style="vertical-align: top; text-align: right; white-space: nowrap; padding: 4pt 4pt 4pt 4pt; background-color: rgb(242, 242, 242);">0.04</td>
-<td style="vertical-align: top; text-align: right; white-space: nowrap; padding: 4pt 4pt 4pt 4pt; background-color: rgb(242, 242, 242);">0.13</td>
-<td style="vertical-align: top; text-align: right; white-space: nowrap; padding: 4pt 4pt 4pt 4pt; background-color: rgb(242, 242, 242);">0&nbsp;&nbsp;&nbsp;</td>
-<td style="vertical-align: top; text-align: right; white-space: nowrap; padding: 4pt 4pt 4pt 4pt; background-color: rgb(242, 242, 242);">0.67</td>
-<td style="vertical-align: top; text-align: right; white-space: nowrap; padding: 4pt 4pt 4pt 4pt; background-color: rgb(242, 242, 242);">0.64</td>
-<td style="vertical-align: top; text-align: right; white-space: nowrap; border-style: solid solid solid solid; border-width: 0pt 0.4pt 0pt 0pt; padding: 4pt 4pt 4pt 4pt; background-color: rgb(242, 242, 242);">0.15</td>
-</tr>
+<td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0.4pt;    padding: 6pt 6pt 6pt 6pt; background-color: rgb(242, 242, 242); font-weight: normal;">0.01</td><td style="vertical-align: top; text-align: right; white-space: normal; padding: 6pt 6pt 6pt 6pt; background-color: rgb(242, 242, 242); font-weight: normal;">20.1&nbsp;</td><td style="vertical-align: top; text-align: right; white-space: normal; padding: 6pt 6pt 6pt 6pt; background-color: rgb(242, 242, 242); font-weight: normal;">0</td><td style="vertical-align: top; text-align: right; white-space: normal; padding: 6pt 6pt 6pt 6pt; background-color: rgb(242, 242, 242); font-weight: normal;">0.05</td><td style="vertical-align: top; text-align: right; white-space: normal; padding: 6pt 6pt 6pt 6pt; background-color: rgb(242, 242, 242); font-weight: normal;">0.29</td><td style="vertical-align: top; text-align: right; white-space: normal; padding: 6pt 6pt 6pt 6pt; background-color: rgb(242, 242, 242); font-weight: normal;">0.02</td><td style="vertical-align: top; text-align: right; white-space: normal; padding: 6pt 6pt 6pt 6pt; background-color: rgb(242, 242, 242); font-weight: normal;">0.04</td><td style="vertical-align: top; text-align: right; white-space: normal; padding: 6pt 6pt 6pt 6pt; background-color: rgb(242, 242, 242); font-weight: normal;">0.07</td><td style="vertical-align: top; text-align: right; white-space: normal; padding: 6pt 6pt 6pt 6pt; background-color: rgb(242, 242, 242); font-weight: normal;">0.04</td><td style="vertical-align: top; text-align: right; white-space: normal; padding: 6pt 6pt 6pt 6pt; background-color: rgb(242, 242, 242); font-weight: normal;">0.13</td><td style="vertical-align: top; text-align: right; white-space: normal; padding: 6pt 6pt 6pt 6pt; background-color: rgb(242, 242, 242); font-weight: normal;">0&nbsp;&nbsp;&nbsp;</td><td style="vertical-align: top; text-align: right; white-space: normal; padding: 6pt 6pt 6pt 6pt; background-color: rgb(242, 242, 242); font-weight: normal;">0.67</td><td style="vertical-align: top; text-align: right; white-space: normal; padding: 6pt 6pt 6pt 6pt; background-color: rgb(242, 242, 242); font-weight: normal;">0.64</td><td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0pt 0.4pt 0pt 0pt;    padding: 6pt 6pt 6pt 6pt; background-color: rgb(242, 242, 242); font-weight: normal;">0.15</td></tr>
 <tr>
-<td style="vertical-align: top; text-align: right; white-space: nowrap; border-style: solid solid solid solid; border-width: 0pt 0pt 0.4pt 0.4pt; padding: 4pt 4pt 4pt 4pt;">0&nbsp;&nbsp;&nbsp;</td>
-<td style="vertical-align: top; text-align: right; white-space: nowrap; border-style: solid solid solid solid; border-width: 0pt 0pt 0.4pt 0pt; padding: 4pt 4pt 4pt 4pt;">35.5&nbsp;</td>
-<td style="vertical-align: top; text-align: right; white-space: nowrap; border-style: solid solid solid solid; border-width: 0pt 0pt 0.4pt 0pt; padding: 4pt 4pt 4pt 4pt;">0</td>
-<td style="vertical-align: top; text-align: right; white-space: nowrap; border-style: solid solid solid solid; border-width: 0pt 0pt 0.4pt 0pt; padding: 4pt 4pt 4pt 4pt;">0.92</td>
-<td style="vertical-align: top; text-align: right; white-space: nowrap; border-style: solid solid solid solid; border-width: 0pt 0pt 0.4pt 0pt; padding: 4pt 4pt 4pt 4pt;">0.47</td>
-<td style="vertical-align: top; text-align: right; white-space: nowrap; border-style: solid solid solid solid; border-width: 0pt 0pt 0.4pt 0pt; padding: 4pt 4pt 4pt 4pt;">0.12</td>
-<td style="vertical-align: top; text-align: right; white-space: nowrap; border-style: solid solid solid solid; border-width: 0pt 0pt 0.4pt 0pt; padding: 4pt 4pt 4pt 4pt;">0.09</td>
-<td style="vertical-align: top; text-align: right; white-space: nowrap; border-style: solid solid solid solid; border-width: 0pt 0pt 0.4pt 0pt; padding: 4pt 4pt 4pt 4pt;">0.06</td>
-<td style="vertical-align: top; text-align: right; white-space: nowrap; border-style: solid solid solid solid; border-width: 0pt 0pt 0.4pt 0pt; padding: 4pt 4pt 4pt 4pt;">0.07</td>
-<td style="vertical-align: top; text-align: right; white-space: nowrap; border-style: solid solid solid solid; border-width: 0pt 0pt 0.4pt 0pt; padding: 4pt 4pt 4pt 4pt;">0.06</td>
-<td style="vertical-align: top; text-align: right; white-space: nowrap; border-style: solid solid solid solid; border-width: 0pt 0pt 0.4pt 0pt; padding: 4pt 4pt 4pt 4pt;">0.55</td>
-<td style="vertical-align: top; text-align: right; white-space: nowrap; border-style: solid solid solid solid; border-width: 0pt 0pt 0.4pt 0pt; padding: 4pt 4pt 4pt 4pt;">0.01</td>
-<td style="vertical-align: top; text-align: right; white-space: nowrap; border-style: solid solid solid solid; border-width: 0pt 0pt 0.4pt 0pt; padding: 4pt 4pt 4pt 4pt;">0.35</td>
-<td style="vertical-align: top; text-align: right; white-space: nowrap; border-style: solid solid solid solid; border-width: 0pt 0.4pt 0.4pt 0pt; padding: 4pt 4pt 4pt 4pt;">0.84</td>
-</tr>
+<td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0pt 0pt 0.4pt 0.4pt;    padding: 6pt 6pt 6pt 6pt; font-weight: normal;">0&nbsp;&nbsp;&nbsp;</td><td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0pt 0pt 0.4pt 0pt;    padding: 6pt 6pt 6pt 6pt; font-weight: normal;">35.5&nbsp;</td><td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0pt 0pt 0.4pt 0pt;    padding: 6pt 6pt 6pt 6pt; font-weight: normal;">0</td><td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0pt 0pt 0.4pt 0pt;    padding: 6pt 6pt 6pt 6pt; font-weight: normal;">0.92</td><td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0pt 0pt 0.4pt 0pt;    padding: 6pt 6pt 6pt 6pt; font-weight: normal;">0.47</td><td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0pt 0pt 0.4pt 0pt;    padding: 6pt 6pt 6pt 6pt; font-weight: normal;">0.12</td><td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0pt 0pt 0.4pt 0pt;    padding: 6pt 6pt 6pt 6pt; font-weight: normal;">0.09</td><td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0pt 0pt 0.4pt 0pt;    padding: 6pt 6pt 6pt 6pt; font-weight: normal;">0.06</td><td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0pt 0pt 0.4pt 0pt;    padding: 6pt 6pt 6pt 6pt; font-weight: normal;">0.07</td><td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0pt 0pt 0.4pt 0pt;    padding: 6pt 6pt 6pt 6pt; font-weight: normal;">0.06</td><td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0pt 0pt 0.4pt 0pt;    padding: 6pt 6pt 6pt 6pt; font-weight: normal;">0.55</td><td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0pt 0pt 0.4pt 0pt;    padding: 6pt 6pt 6pt 6pt; font-weight: normal;">0.01</td><td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0pt 0pt 0.4pt 0pt;    padding: 6pt 6pt 6pt 6pt; font-weight: normal;">0.35</td><td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0pt 0.4pt 0.4pt 0pt;    padding: 6pt 6pt 6pt 6pt; font-weight: normal;">0.84</td></tr>
 </table>
 
 </div>
@@ -621,8 +434,8 @@ res &lt;-<span class="st"> </span><span class="kw">eigen</span>(<span class="kw"
 <h4>redun()</h4>
 <p>The <strong>Hmisc</strong> library also has a redundancy function (<code>redun()</code>) that can help identify which variables are redundant. This identifies variables that can be explained with an <span class="math inline">\(R^2&gt;0.9\)</span> by a linear (or non-linear) combination of other variables. We are fitting a linear model, so we set <code>nk=0</code> to force <code>redun()</code> to only look at linear combinations.</p>
 <p>We use <code>redun()</code> only on the explanatory variables and thus remove the first column, which is our response variable (anchovy).</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">a &lt;-<span class="st"> </span>Hmisc<span class="op">::</span><span class="kw">redun</span>(<span class="op">~</span><span class="st"> </span>.,<span class="dt">data=</span>df[,<span class="op">-</span><span class="dv">1</span>], <span class="dt">nk=</span><span class="dv">0</span>)
-a<span class="op">$</span>Out</code></pre></div>
+<div class="sourceCode" id="cb274"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb274-1"><a href="6-2-collinear.html#cb274-1"></a>a &lt;-<span class="st"> </span>Hmisc<span class="op">::</span><span class="kw">redun</span>(<span class="op">~</span><span class="st"> </span>.,<span class="dt">data=</span>df[,<span class="op">-</span><span class="dv">1</span>], <span class="dt">nk=</span><span class="dv">0</span>)</span>
+<span id="cb274-2"><a href="6-2-collinear.html#cb274-2"></a>a<span class="op">$</span>Out</span></code></pre></div>
 <pre><code>## [1] &quot;TOP&quot; &quot;HPP&quot;</code></pre>
 <p>This indicates that TOP and HPP can be explained by the other variables.</p>
 </div>
@@ -630,8 +443,9 @@ a<span class="op">$</span>Out</code></pre></div>
 <h3><span class="header-section-number">6.2.1</span> Effect of collinearity</h3>
 <p>One thing that happens when we have collinearity is that we will get “complementary” (negative matched by positive) and very large coefficients in the variables that are collinear. We see this when we fit a linear regression with all the variables. I use the z-scored data so that the effect sizes (x-axis) are on the same scale.</p>
 <p><img src="Fish-Forecast_files/figure-html/coef.full-1.png" width="672" style="display: block; margin: auto;" /></p>
-<p>The Year coefficients is very large and the TOP and HPP coefficients are negative and very large. If we look at the fit, we see the at the standard errors for Year, TOP and HPP are very large. The p-value for Year is significant, however in the presence of severe collinearity, reported p-values should not be trusted.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">summary</span>(fit.full)</code></pre></div>
+<p>The Year coefficients is very large and the TOP and HPP coefficients are negative and very large.
+If we look at the fit, we see the at the standard errors for Year, TOP and HPP are very large. The p-value for Year is significant, however in the presence of severe collinearity, reported p-values should not be trusted.</p>
+<div class="sourceCode" id="cb276"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb276-1"><a href="6-2-collinear.html#cb276-1"></a><span class="kw">summary</span>(fit.full)</span></code></pre></div>
 <pre><code>## 
 ## Call:
 ## lm(formula = anchovy ~ ., data = dfz)
@@ -642,7 +456,7 @@ a<span class="op">$</span>Out</code></pre></div>
 ## 
 ## Coefficients:
 ##               Estimate Std. Error t value Pr(&gt;|t|)  
-## (Intercept) -9.171e-15  7.003e-02   0.000   1.0000  
+## (Intercept) -9.175e-15  7.003e-02   0.000   1.0000  
 ## Year         2.118e+00  7.139e-01   2.966   0.0128 *
 ## Trachurus   -6.717e-02  2.983e-01  -0.225   0.8260  
 ## air          2.987e-01  1.353e-01   2.207   0.0495 *
@@ -658,7 +472,7 @@ a<span class="op">$</span>Out</code></pre></div>
 ## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
 ## 
 ## Residual standard error: 0.3359 on 11 degrees of freedom
-## Multiple R-squared:  0.946,  Adjusted R-squared:  0.8921 
+## Multiple R-squared:  0.946,	Adjusted R-squared:  0.8921 
 ## F-statistic: 17.53 on 11 and 11 DF,  p-value: 2.073e-05</code></pre>
 <p>Stergiou and Christou do not state how (if at all) they address the collinearity in the explanatory variables, but it is clearly present. In the next chapter, I will show how to develop a multivariate regression model using variable selection. This is the approach used by Stergiou and Christou. Keep in mind that variable selection will not perform well when there is collinearity in your covariates and that variable selection is prone to over-fitting and selecting covariates due to chance.</p>
 
@@ -675,11 +489,13 @@ a<span class="op">$</span>Out</code></pre></div>
   </div>
 <script src="libs/gitbook-2.6.7/js/app.min.js"></script>
 <script src="libs/gitbook-2.6.7/js/lunr.js"></script>
+<script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
 <script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
 <script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
 <script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
 <script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
 <script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script>
 <script>
 gitbook.require(["gitbook"], function(gitbook) {
 gitbook.start({
@@ -687,12 +503,11 @@ gitbook.start({
 "github": false,
 "facebook": true,
 "twitter": true,
-"google": false,
 "linkedin": false,
 "weibo": false,
 "instapaper": false,
 "vk": false,
-"all": ["facebook", "google", "twitter", "linkedin", "weibo", "instapaper"]
+"all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
 },
 "fontsettings": {
 "theme": "white",
@@ -704,6 +519,10 @@ gitbook.start({
 "text": "Edit"
 },
 "history": {
+"link": null,
+"text": null
+},
+"view": {
 "link": null,
 "text": null
 },
@@ -720,10 +539,11 @@ gitbook.start({
   (function () {
     var script = document.createElement("script");
     script.type = "text/javascript";
-    var src = "";
+    var src = "true";
     if (src === "" || src === "true") src = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML";
-    if (location.protocol !== "file:" && /^https?:/.test(src))
-      src = src.replace(/^https?:/, '');
+    if (location.protocol !== "file:")
+      if (/^https?:/.test(src))
+        src = src.replace(/^https?:/, '');
     script.src = src;
     document.getElementsByTagName("head")[0].appendChild(script);
   })();

@@ -1,12 +1,12 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<html lang="" xml:lang="">
 <head>
 
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <title>3.4 Fitting ARIMA models | Fisheries Catch Forecasting</title>
   <meta name="description" content="This book will show you how to model and forecast annual and seasonal fisheries catches using R and its time-series analysis functions and packages. Forecasting using time-varying regression, ARIMA (Box-Jenkins) models, and expoential smoothing models is demonstrated using real catch time series. The entire process from data evaluation and diagnostics, model fitting, model selection and forecast evaluation is shown. The focus of the book is on univariate time series (annual or seasonal), however multivariate regression with autocorrelated errors and multivariate autoregressive models (MAR) are covered briefly. For multivariate autoregressive models and multivariate autoregressive state-space models for fisheries and environmental sciences, see Holmes, Ward and Scheuerell (2018)." />
-  <meta name="generator" content="bookdown 0.12 and GitBook 2.6.7" />
+  <meta name="generator" content="bookdown 0.20 and GitBook 2.6.7" />
 
   <meta property="og:title" content="3.4 Fitting ARIMA models | Fisheries Catch Forecasting" />
   <meta property="og:type" content="book" />
@@ -24,15 +24,15 @@
 <meta name="author" content="Elizabeth Holmes" />
 
 
-<meta name="date" content="2019-08-22" />
+<meta name="date" content="2020-10-02" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black" />
   
   
-<link rel="prev" href="3-3-model-structure.html">
-<link rel="next" href="3-5-forecasting-1.html">
+<link rel="prev" href="3-3-model-structure.html"/>
+<link rel="next" href="3-5-forecasting.html"/>
 <script src="libs/jquery-2.2.3/jquery.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
@@ -40,6 +40,7 @@
 <link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
 
 
 
@@ -47,45 +48,75 @@
 
 
 
+
+
+<script src="libs/accessible-code-block-0.0.1/empty-anchor.js"></script>
 <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
 
 
 <style type="text/css">
-div.sourceCode { overflow-x: auto; }
-table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
-  margin: 0; padding: 0; vertical-align: baseline; border: none; }
-table.sourceCode { width: 100%; line-height: 100%; }
-td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
-td.sourceCode { padding-left: 5px; }
-code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
-code > span.dt { color: #902000; } /* DataType */
-code > span.dv { color: #40a070; } /* DecVal */
-code > span.bn { color: #40a070; } /* BaseN */
-code > span.fl { color: #40a070; } /* Float */
-code > span.ch { color: #4070a0; } /* Char */
-code > span.st { color: #4070a0; } /* String */
-code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
-code > span.ot { color: #007020; } /* Other */
-code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
-code > span.fu { color: #06287e; } /* Function */
-code > span.er { color: #ff0000; font-weight: bold; } /* Error */
-code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
-code > span.cn { color: #880000; } /* Constant */
-code > span.sc { color: #4070a0; } /* SpecialChar */
-code > span.vs { color: #4070a0; } /* VerbatimString */
-code > span.ss { color: #bb6688; } /* SpecialString */
-code > span.im { } /* Import */
-code > span.va { color: #19177c; } /* Variable */
-code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
-code > span.op { color: #666666; } /* Operator */
-code > span.bu { } /* BuiltIn */
-code > span.ex { } /* Extension */
-code > span.pp { color: #bc7a00; } /* Preprocessor */
-code > span.at { color: #7d9029; } /* Attribute */
-code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
-code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
-code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
-code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code.sourceCode > span { display: inline-block; line-height: 1.25; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode { white-space: pre; position: relative; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+code.sourceCode { white-space: pre-wrap; }
+code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
 </style>
 
 <link rel="stylesheet" href="style.css" type="text/css" />
@@ -128,7 +159,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="2.2" data-path="2-2-forecasting.html"><a href="2-2-forecasting.html"><i class="fa fa-check"></i><b>2.2</b> Forecasting</a><ul>
 <li class="chapter" data-level="2.2.1" data-path="2-2-forecasting.html"><a href="2-2-forecasting.html#the-forecast-package"><i class="fa fa-check"></i><b>2.2.1</b> The forecast package</a></li>
 </ul></li>
-<li class="chapter" data-level="2.3" data-path="2-3-summary-1.html"><a href="2-3-summary-1.html"><i class="fa fa-check"></i><b>2.3</b> Summary</a></li>
+<li class="chapter" data-level="2.3" data-path="2-1-fitting.html"><a href="2-1-fitting.html#summary"><i class="fa fa-check"></i><b>2.3</b> Summary</a></li>
 </ul></li>
 <li class="chapter" data-level="3" data-path="3-arima-models.html"><a href="3-arima-models.html"><i class="fa fa-check"></i><b>3</b> ARIMA Models</a><ul>
 <li class="chapter" data-level="3.1" data-path="3-1-overview.html"><a href="3-1-overview.html"><i class="fa fa-check"></i><b>3.1</b> Overview</a><ul>
@@ -141,7 +172,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="3.2.2" data-path="3-2-stationarity.html"><a href="3-2-stationarity.html#non-stationarity"><i class="fa fa-check"></i><b>3.2.2</b> Non-stationarity</a></li>
 <li class="chapter" data-level="3.2.3" data-path="3-2-stationarity.html"><a href="3-2-stationarity.html#stationarity-tests"><i class="fa fa-check"></i><b>3.2.3</b> Stationarity tests</a></li>
 <li class="chapter" data-level="3.2.4" data-path="3-2-stationarity.html"><a href="3-2-stationarity.html#differencing-the-data"><i class="fa fa-check"></i><b>3.2.4</b> Differencing the data</a></li>
-<li class="chapter" data-level="3.2.5" data-path="3-2-stationarity.html"><a href="3-2-stationarity.html#summary-2"><i class="fa fa-check"></i><b>3.2.5</b> Summary</a></li>
+<li class="chapter" data-level="3.2.5" data-path="2-1-fitting.html"><a href="2-1-fitting.html#summary"><i class="fa fa-check"></i><b>3.2.5</b> Summary</a></li>
 </ul></li>
 <li class="chapter" data-level="3.3" data-path="3-3-model-structure.html"><a href="3-3-model-structure.html"><i class="fa fa-check"></i><b>3.3</b> Model structure</a><ul>
 <li class="chapter" data-level="3.3.1" data-path="3-3-model-structure.html"><a href="3-3-model-structure.html#ar-and-ma-lags"><i class="fa fa-check"></i><b>3.3.1</b> AR and MA lags</a></li>
@@ -149,7 +180,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="3.3.3" data-path="3-3-model-structure.html"><a href="3-3-model-structure.html#choosing-the-ar-and-ma-levels"><i class="fa fa-check"></i><b>3.3.3</b> Choosing the AR and MA levels</a></li>
 <li class="chapter" data-level="3.3.4" data-path="3-3-model-structure.html"><a href="3-3-model-structure.html#trace-true"><i class="fa fa-check"></i><b>3.3.4</b> Trace = TRUE</a></li>
 <li class="chapter" data-level="3.3.5" data-path="3-3-model-structure.html"><a href="3-3-model-structure.html#stepwise-false"><i class="fa fa-check"></i><b>3.3.5</b> stepwise = FALSE</a></li>
-<li class="chapter" data-level="3.3.6" data-path="3-3-model-structure.html"><a href="3-3-model-structure.html#summary-3"><i class="fa fa-check"></i><b>3.3.6</b> Summary</a></li>
+<li class="chapter" data-level="3.3.6" data-path="2-1-fitting.html"><a href="2-1-fitting.html#summary"><i class="fa fa-check"></i><b>3.3.6</b> Summary</a></li>
 </ul></li>
 <li class="chapter" data-level="3.4" data-path="3-4-fitting-arima-models.html"><a href="3-4-fitting-arima-models.html"><i class="fa fa-check"></i><b>3.4</b> Fitting ARIMA models</a><ul>
 <li class="chapter" data-level="3.4.1" data-path="3-4-fitting-arima-models.html"><a href="3-4-fitting-arima-models.html#fitting-with-auto.arima"><i class="fa fa-check"></i><b>3.4.1</b> Fitting with <code>auto.arima()</code></a></li>
@@ -160,19 +191,19 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="3.4.6" data-path="3-4-fitting-arima-models.html"><a href="3-4-fitting-arima-models.html#model-checking"><i class="fa fa-check"></i><b>3.4.6</b> Model checking</a></li>
 <li class="chapter" data-level="3.4.7" data-path="3-4-fitting-arima-models.html"><a href="3-4-fitting-arima-models.html#workflow-for-non-seasonal-data"><i class="fa fa-check"></i><b>3.4.7</b> Workflow for non-seasonal data</a></li>
 <li class="chapter" data-level="3.4.8" data-path="3-4-fitting-arima-models.html"><a href="3-4-fitting-arima-models.html#stepwise-vs-exhaustive-model-selection"><i class="fa fa-check"></i><b>3.4.8</b> Stepwise vs exhaustive model selection</a></li>
-<li class="chapter" data-level="3.4.9" data-path="3-4-fitting-arima-models.html"><a href="3-4-fitting-arima-models.html#summary-4"><i class="fa fa-check"></i><b>3.4.9</b> Summary</a></li>
+<li class="chapter" data-level="3.4.9" data-path="2-1-fitting.html"><a href="2-1-fitting.html#summary"><i class="fa fa-check"></i><b>3.4.9</b> Summary</a></li>
 </ul></li>
-<li class="chapter" data-level="3.5" data-path="3-5-forecasting-1.html"><a href="3-5-forecasting-1.html"><i class="fa fa-check"></i><b>3.5</b> Forecasting</a><ul>
-<li class="chapter" data-level="3.5.1" data-path="3-5-forecasting-1.html"><a href="3-5-forecasting-1.html#forecasting-with-forecast"><i class="fa fa-check"></i><b>3.5.1</b> Forecasting with <code>forecast()</code></a></li>
-<li class="chapter" data-level="3.5.2" data-path="3-5-forecasting-1.html"><a href="3-5-forecasting-1.html#missing-values-1"><i class="fa fa-check"></i><b>3.5.2</b> Missing values</a></li>
-<li class="chapter" data-level="3.5.3" data-path="3-5-forecasting-1.html"><a href="3-5-forecasting-1.html#null-forecast-models"><i class="fa fa-check"></i><b>3.5.3</b> Null forecast models</a></li>
+<li class="chapter" data-level="3.5" data-path="2-2-forecasting.html"><a href="2-2-forecasting.html#forecasting"><i class="fa fa-check"></i><b>3.5</b> Forecasting</a><ul>
+<li class="chapter" data-level="3.5.1" data-path="3-5-forecasting.html"><a href="3-5-forecasting.html"><i class="fa fa-check"></i><b>3.5.1</b> Forecasting with <code>forecast()</code></a></li>
+<li class="chapter" data-level="3.5.2" data-path="3-4-fitting-arima-models.html"><a href="3-4-fitting-arima-models.html#missing-values"><i class="fa fa-check"></i><b>3.5.2</b> Missing values</a></li>
+<li class="chapter" data-level="3.5.3" data-path="3-5-forecasting.html"><a href="3-5-forecasting.html#null-forecast-models"><i class="fa fa-check"></i><b>3.5.3</b> Null forecast models</a></li>
 </ul></li>
 </ul></li>
 <li class="chapter" data-level="4" data-path="4-exponential-smoothing-models.html"><a href="4-exponential-smoothing-models.html"><i class="fa fa-check"></i><b>4</b> Exponential smoothing models</a><ul>
-<li class="chapter" data-level="4.1" data-path="4-1-overview-1.html"><a href="4-1-overview-1.html"><i class="fa fa-check"></i><b>4.1</b> Overview</a><ul>
-<li class="chapter" data-level="4.1.1" data-path="4-1-overview-1.html"><a href="4-1-overview-1.html#naive-model"><i class="fa fa-check"></i><b>4.1.1</b> Naive model</a></li>
-<li class="chapter" data-level="4.1.2" data-path="4-1-overview-1.html"><a href="4-1-overview-1.html#exponential-smoothing"><i class="fa fa-check"></i><b>4.1.2</b> Exponential smoothing</a></li>
-<li class="chapter" data-level="4.1.3" data-path="4-1-overview-1.html"><a href="4-1-overview-1.html#exponential-smoothing-model"><i class="fa fa-check"></i><b>4.1.3</b> Exponential smoothing model</a></li>
+<li class="chapter" data-level="4.1" data-path="3-1-overview.html"><a href="3-1-overview.html#overview"><i class="fa fa-check"></i><b>4.1</b> Overview</a><ul>
+<li class="chapter" data-level="4.1.1" data-path="4-1-overview.html"><a href="4-1-overview.html"><i class="fa fa-check"></i><b>4.1.1</b> Naive model</a></li>
+<li class="chapter" data-level="4.1.2" data-path="4-1-overview.html"><a href="4-1-overview.html#exponential-smoothing"><i class="fa fa-check"></i><b>4.1.2</b> Exponential smoothing</a></li>
+<li class="chapter" data-level="4.1.3" data-path="4-1-overview.html"><a href="4-1-overview.html#exponential-smoothing-model"><i class="fa fa-check"></i><b>4.1.3</b> Exponential smoothing model</a></li>
 </ul></li>
 <li class="chapter" data-level="4.2" data-path="4-2-ets-function.html"><a href="4-2-ets-function.html"><i class="fa fa-check"></i><b>4.2</b> <code>ets()</code> function</a><ul>
 <li class="chapter" data-level="4.2.1" data-path="4-2-ets-function.html"><a href="4-2-ets-function.html#the-weighting-function"><i class="fa fa-check"></i><b>4.2.1</b> The weighting function</a></li>
@@ -200,7 +231,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="5.3" data-path="5-3-metrics.html"><a href="5-3-metrics.html"><i class="fa fa-check"></i><b>5.3</b> Metrics</a><ul>
 <li class="chapter" data-level="5.3.1" data-path="5-3-metrics.html"><a href="5-3-metrics.html#accuracy-function"><i class="fa fa-check"></i><b>5.3.1</b> <code>accuracy()</code> function</a></li>
 <li class="chapter" data-level="5.3.2" data-path="5-3-metrics.html"><a href="5-3-metrics.html#test-multiple-models"><i class="fa fa-check"></i><b>5.3.2</b> Test multiple models</a></li>
-<li class="chapter" data-level="5.3.3" data-path="5-3-metrics.html"><a href="5-3-metrics.html#cross-validation-1"><i class="fa fa-check"></i><b>5.3.3</b> Cross-validation</a></li>
+<li class="chapter" data-level="5.3.3" data-path="5-2-cross-validation.html"><a href="5-2-cross-validation.html#cross-validation"><i class="fa fa-check"></i><b>5.3.3</b> Cross-validation</a></li>
 </ul></li>
 <li class="chapter" data-level="5.4" data-path="5-4-candidate-model-set.html"><a href="5-4-candidate-model-set.html"><i class="fa fa-check"></i><b>5.4</b> Candidate model set</a></li>
 <li class="chapter" data-level="5.5" data-path="5-5-testing-the-candidate-model-set.html"><a href="5-5-testing-the-candidate-model-set.html"><i class="fa fa-check"></i><b>5.5</b> Testing the candidate model set</a><ul>
@@ -238,10 +269,10 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="7.1.2" data-path="7-1-MREGARMA.html"><a href="7-1-MREGARMA.html#example-fitting-with-arima-and-sarima"><i class="fa fa-check"></i><b>7.1.2</b> Example: fitting with arima and sarima</a></li>
 <li class="chapter" data-level="7.1.3" data-path="7-1-MREGARMA.html"><a href="7-1-MREGARMA.html#example-fitting-with-gls"><i class="fa fa-check"></i><b>7.1.3</b> Example: fitting with gls</a></li>
 <li class="chapter" data-level="7.1.4" data-path="7-1-MREGARMA.html"><a href="7-1-MREGARMA.html#mreg-of-first-or-second-differences"><i class="fa fa-check"></i><b>7.1.4</b> MREG of first or second differences</a></li>
-<li class="chapter" data-level="7.1.5" data-path="7-1-MREGARMA.html"><a href="7-1-MREGARMA.html#discussion-1"><i class="fa fa-check"></i><b>7.1.5</b> Discussion</a></li>
+<li class="chapter" data-level="7.1.5" data-path="6-8-discussion.html"><a href="6-8-discussion.html#discussion"><i class="fa fa-check"></i><b>7.1.5</b> Discussion</a></li>
 </ul></li>
 <li class="chapter" data-level="7.2" data-path="7-2-ARMAX.html"><a href="7-2-ARMAX.html"><i class="fa fa-check"></i><b>7.2</b> ARMAX Models</a><ul>
-<li class="chapter" data-level="7.2.1" data-path="7-2-ARMAX.html"><a href="7-2-ARMAX.html#discussion-2"><i class="fa fa-check"></i><b>7.2.1</b> Discussion</a></li>
+<li class="chapter" data-level="7.2.1" data-path="6-8-discussion.html"><a href="6-8-discussion.html#discussion"><i class="fa fa-check"></i><b>7.2.1</b> Discussion</a></li>
 </ul></li>
 </ul></li>
 <li class="chapter" data-level="8" data-path="8-seasonality.html"><a href="8-seasonality.html"><i class="fa fa-check"></i><b>8</b> Seasonality</a><ul>
@@ -253,10 +284,10 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="8.2.1" data-path="8-2-seasonal-exponential-smoothing-model.html"><a href="8-2-seasonal-exponential-smoothing-model.html#force-seasonality-to-evolve-more"><i class="fa fa-check"></i><b>8.2.1</b> Force seasonality to evolve more</a></li>
 </ul></li>
 <li class="chapter" data-level="8.3" data-path="8-3-seasonal-arima-model.html"><a href="8-3-seasonal-arima-model.html"><i class="fa fa-check"></i><b>8.3</b> Seasonal ARIMA model</a></li>
-<li class="chapter" data-level="8.4" data-path="8-4-missing-values-2.html"><a href="8-4-missing-values-2.html"><i class="fa fa-check"></i><b>8.4</b> Missing values</a></li>
+<li class="chapter" data-level="8.4" data-path="3-4-fitting-arima-models.html"><a href="3-4-fitting-arima-models.html#missing-values"><i class="fa fa-check"></i><b>8.4</b> Missing values</a></li>
 <li class="chapter" data-level="8.5" data-path="8-5-forecast-evaluation.html"><a href="8-5-forecast-evaluation.html"><i class="fa fa-check"></i><b>8.5</b> Forecast evaluation</a></li>
 </ul></li>
-<li class="chapter" data-level="" data-path="references-1.html"><a href="references-1.html"><i class="fa fa-check"></i>References</a></li>
+<li class="chapter" data-level="" data-path="1-5-references.html"><a href="1-5-references.html#references"><i class="fa fa-check"></i>References</a></li>
 <li class="appendix"><span><b>Appendix</b></span></li>
 <li class="chapter" data-level="A" data-path="A-inputting-data.html"><a href="A-inputting-data.html"><i class="fa fa-check"></i><b>A</b> Inputting data</a><ul>
 <li class="chapter" data-level="" data-path="A-inputting-data.html"><a href="A-inputting-data.html#one-response-variable"><i class="fa fa-check"></i>one response variable</a></li>
@@ -295,7 +326,8 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li>Selection of the AR level (p)</li>
 <li>Selection of the MA level (q)</li>
 </ol>
-<p>B. <strong>Parameter estimation</strong> C. <strong>Model checking</strong></p>
+<p>B. <strong>Parameter estimation</strong>
+C. <strong>Model checking</strong></p>
 <div id="fitting-with-auto.arima" class="section level3">
 <h3><span class="header-section-number">3.4.1</span> Fitting with <code>auto.arima()</code></h3>
 <p><code>auto.arima()</code> (in the forecast package) has many arguments.</p>
@@ -317,13 +349,13 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <div id="load-the-data" class="section level4 unnumbered">
 <h4>Load the data</h4>
 <p>Load the data by loading the <strong>FishForecast</strong> package.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">require</span>(FishForecast)</code></pre></div>
+<div class="sourceCode" id="cb119"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb119-1"><a href="3-4-fitting-arima-models.html#cb119-1"></a><span class="kw">require</span>(FishForecast)</span></code></pre></div>
 <p><code>anchovy87ts</code> is a ts object of the log metric tons for 1964-1987. We will use this for <code>auto.arima()</code> however we could also use <code>anchovy87$log.metric.tons</code>. <code>anchovy87ts</code> is just</p>
 <pre><code>anchovy87ts &lt;- ts(anchovy87, start=1964)</code></pre>
 </div>
 <div id="fit-to-the-anchovy-data-using-auto.arima" class="section level4 unnumbered">
 <h4>Fit to the anchovy data using <code>auto.arima()</code></h4>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">fit &lt;-<span class="st"> </span>forecast<span class="op">::</span><span class="kw">auto.arima</span>(anchovy87ts)</code></pre></div>
+<div class="sourceCode" id="cb121"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb121-1"><a href="3-4-fitting-arima-models.html#cb121-1"></a>fit &lt;-<span class="st"> </span>forecast<span class="op">::</span><span class="kw">auto.arima</span>(anchovy87ts)</span></code></pre></div>
 <p>Here are the values for anchovy in Table 8 of Stergiou and Christou.</p>
 <table>
 <thead>
@@ -399,7 +431,7 @@ LB
 <div id="the-parameter-estimates" class="section level4 unnumbered">
 <h4>The parameter estimates</h4>
 <p>We can extract the parameter estimates from a fitted object in R using <code>coef()</code>.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">coef</span>(fit)</code></pre></div>
+<div class="sourceCode" id="cb122"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb122-1"><a href="3-4-fitting-arima-models.html#cb122-1"></a><span class="kw">coef</span>(fit)</span></code></pre></div>
 <pre><code>##        ma1      drift 
 ## -0.5731337  0.0640889</code></pre>
 <p>The <code>ma1</code> is the same as <span class="math inline">\(\theta_1\)</span> except its negative because of the way Stergiou and Christou write their MA models. They write it as</p>
@@ -410,14 +442,14 @@ LB
 <div id="computing-r2" class="section level4 unnumbered">
 <h4>Computing R2</h4>
 <p>This is not output as part of a arima fitted object so we need to compute it.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">res &lt;-<span class="st"> </span><span class="kw">resid</span>(fit)
-dat &lt;-<span class="st"> </span>anchovy87<span class="op">$</span>log.metric.tons
-meany &lt;-<span class="st"> </span><span class="kw">mean</span>(dat, <span class="dt">na.rm=</span><span class="ot">TRUE</span>)
-r2 &lt;-<span class="st"> </span><span class="dv">1</span><span class="op">-</span><span class="st"> </span><span class="kw">sum</span>(res<span class="op">^</span><span class="dv">2</span>,<span class="dt">na.rm=</span><span class="ot">TRUE</span>)<span class="op">/</span><span class="kw">sum</span>((dat<span class="op">-</span>meany)<span class="op">^</span><span class="dv">2</span>,<span class="dt">na.rm=</span><span class="ot">TRUE</span>)</code></pre></div>
+<div class="sourceCode" id="cb124"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb124-1"><a href="3-4-fitting-arima-models.html#cb124-1"></a>res &lt;-<span class="st"> </span><span class="kw">resid</span>(fit)</span>
+<span id="cb124-2"><a href="3-4-fitting-arima-models.html#cb124-2"></a>dat &lt;-<span class="st"> </span>anchovy87<span class="op">$</span>log.metric.tons</span>
+<span id="cb124-3"><a href="3-4-fitting-arima-models.html#cb124-3"></a>meany &lt;-<span class="st"> </span><span class="kw">mean</span>(dat, <span class="dt">na.rm=</span><span class="ot">TRUE</span>)</span>
+<span id="cb124-4"><a href="3-4-fitting-arima-models.html#cb124-4"></a>r2 &lt;-<span class="st"> </span><span class="dv">1</span><span class="op">-</span><span class="st"> </span><span class="kw">sum</span>(res<span class="op">^</span><span class="dv">2</span>,<span class="dt">na.rm=</span><span class="ot">TRUE</span>)<span class="op">/</span><span class="kw">sum</span>((dat<span class="op">-</span>meany)<span class="op">^</span><span class="dv">2</span>,<span class="dt">na.rm=</span><span class="ot">TRUE</span>)</span></code></pre></div>
 </div>
 <div id="ljung-box-statistic" class="section level4 unnumbered">
 <h4>Ljung-Box statistic</h4>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">LB &lt;-<span class="st"> </span><span class="kw">Box.test</span>(res, <span class="dt">type=</span><span class="st">&quot;Ljung-Box&quot;</span>, <span class="dt">lag=</span><span class="dv">12</span>, <span class="dt">fitdf=</span><span class="dv">2</span>)<span class="op">$</span>statistic</code></pre></div>
+<div class="sourceCode" id="cb125"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb125-1"><a href="3-4-fitting-arima-models.html#cb125-1"></a>LB &lt;-<span class="st"> </span><span class="kw">Box.test</span>(res, <span class="dt">type=</span><span class="st">&quot;Ljung-Box&quot;</span>, <span class="dt">lag=</span><span class="dv">12</span>, <span class="dt">fitdf=</span><span class="dv">2</span>)<span class="op">$</span>statistic</span></code></pre></div>
 <p>fitdf=2 is from the number of parameters estimated.</p>
 </div>
 <div id="bic" class="section level4 unnumbered">
@@ -428,7 +460,7 @@ r2 &lt;-<span class="st"> </span><span class="dv">1</span><span class="op">-</sp
 <div id="outputting-the-models-tested" class="section level3">
 <h3><span class="header-section-number">3.4.2</span> Outputting the models tested</h3>
 <p>Pass in <code>trace=TRUE</code> to see a list of the models tested in <code>auto.arima()</code>’s search. By default <code>auto.arima()</code> uses AICc for model selection and the AICc values are shown. Smaller is better for AICc and AICc values that are different by less than 2 have similar data support. Look for any models with similar AICc to the best selected model. You should consider that model also.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">forecast<span class="op">::</span><span class="kw">auto.arima</span>(anchovy87ts, <span class="dt">trace=</span><span class="ot">TRUE</span>)</code></pre></div>
+<div class="sourceCode" id="cb126"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb126-1"><a href="3-4-fitting-arima-models.html#cb126-1"></a>forecast<span class="op">::</span><span class="kw">auto.arima</span>(anchovy87ts, <span class="dt">trace=</span><span class="ot">TRUE</span>)</span></code></pre></div>
 <pre><code>## 
 ##  ARIMA(2,1,2) with drift         : 0.9971438
 ##  ARIMA(0,1,0) with drift         : -1.582738
@@ -454,9 +486,11 @@ r2 &lt;-<span class="st"> </span><span class="dv">1</span><span class="op">-</sp
 </div>
 <div id="repeat-with-the-sardine-data" class="section level3">
 <h3><span class="header-section-number">3.4.3</span> Repeat with the sardine data</h3>
-<p>Stergiou and Christou sardine model (Table 8) is ARIMA(0,1,0): <span class="math display">\[x_t = x_{t-1}+e_t\]</span></p>
-<p>The model selected by <code>auto.arima()</code> is ARIMA(0,0,1): <span class="math display">\[x_t = e_t + \theta_1 e_{t-1}\]</span></p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">forecast<span class="op">::</span><span class="kw">auto.arima</span>(sardine87ts)</code></pre></div>
+<p>Stergiou and Christou sardine model (Table 8) is ARIMA(0,1,0):
+<span class="math display">\[x_t = x_{t-1}+e_t\]</span></p>
+<p>The model selected by <code>auto.arima()</code> is ARIMA(0,0,1):
+<span class="math display">\[x_t = e_t + \theta_1 e_{t-1}\]</span></p>
+<div class="sourceCode" id="cb129"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb129-1"><a href="3-4-fitting-arima-models.html#cb129-1"></a>forecast<span class="op">::</span><span class="kw">auto.arima</span>(sardine87ts)</span></code></pre></div>
 <pre><code>## Series: sardine87ts 
 ## ARIMA(0,1,1) with drift 
 ## 
@@ -471,8 +505,8 @@ r2 &lt;-<span class="st"> </span><span class="dv">1</span><span class="op">-</sp
 <div id="repeat-using-testadf" class="section level4 unnumbered">
 <h4>Repeat using <code>test='adf'</code></h4>
 <p>Now the selected model is the same.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">fit &lt;-<span class="st"> </span><span class="kw">auto.arima</span>(sardine87ts, <span class="dt">test=</span><span class="st">&quot;adf&quot;</span>)
-fit</code></pre></div>
+<div class="sourceCode" id="cb131"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb131-1"><a href="3-4-fitting-arima-models.html#cb131-1"></a>fit &lt;-<span class="st"> </span><span class="kw">auto.arima</span>(sardine87ts, <span class="dt">test=</span><span class="st">&quot;adf&quot;</span>)</span>
+<span id="cb131-2"><a href="3-4-fitting-arima-models.html#cb131-2"></a>fit</span></code></pre></div>
 <pre><code>## Series: sardine87ts 
 ## ARIMA(0,1,1) with drift 
 ## 
@@ -561,10 +595,10 @@ LB
 <div id="missing-values" class="section level3">
 <h3><span class="header-section-number">3.4.4</span> Missing values</h3>
 <p>These functions work fine with missing values. Missing values are denoted NA.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">anchovy.miss &lt;-<span class="st"> </span>anchovy87ts
-anchovy.miss[<span class="dv">10</span><span class="op">:</span><span class="dv">14</span>] &lt;-<span class="st"> </span><span class="ot">NA</span>
-fit &lt;-<span class="st"> </span><span class="kw">auto.arima</span>(anchovy.miss)
-fit</code></pre></div>
+<div class="sourceCode" id="cb135"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb135-1"><a href="3-4-fitting-arima-models.html#cb135-1"></a>anchovy.miss &lt;-<span class="st"> </span>anchovy87ts</span>
+<span id="cb135-2"><a href="3-4-fitting-arima-models.html#cb135-2"></a>anchovy.miss[<span class="dv">10</span><span class="op">:</span><span class="dv">14</span>] &lt;-<span class="st"> </span><span class="ot">NA</span></span>
+<span id="cb135-3"><a href="3-4-fitting-arima-models.html#cb135-3"></a>fit &lt;-<span class="st"> </span><span class="kw">auto.arima</span>(anchovy.miss)</span>
+<span id="cb135-4"><a href="3-4-fitting-arima-models.html#cb135-4"></a>fit</span></code></pre></div>
 <pre><code>## Series: anchovy.miss 
 ## ARIMA(1,1,0) with drift 
 ## 
@@ -573,14 +607,16 @@ fit</code></pre></div>
 ##       -0.5622  0.067
 ## s.e.   0.2109  0.022
 ## 
-## sigma^2 estimated as 0.02245:  log likelihood=6.35
+## sigma^2 estimated as 0.02947:  log likelihood=6.35
 ## AIC=-6.71   AICc=-5.45   BIC=-3.3</code></pre>
 </div>
 <div id="fit-a-specific-arima-model" class="section level3">
 <h3><span class="header-section-number">3.4.5</span> Fit a specific ARIMA model</h3>
-<p>Sometimes you don’t want to search, but rather fit an ARIMA model with a specific order. Say you wanted to fit this model: <span class="math display">\[x_t = \beta_1 x_{t-1} + \beta_2 x_{t-2} + e_t\]</span> For that you can use <code>Arima()</code> in the forecast package:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">fit.AR2 &lt;-<span class="st"> </span>forecast<span class="op">::</span><span class="kw">Arima</span>(anchovy87ts, <span class="dt">order=</span><span class="kw">c</span>(<span class="dv">2</span>,<span class="dv">0</span>,<span class="dv">0</span>))
-fit.AR2</code></pre></div>
+<p>Sometimes you don’t want to search, but rather fit an ARIMA model with a specific order. Say you wanted to fit this model:
+<span class="math display">\[x_t = \beta_1 x_{t-1} + \beta_2 x_{t-2} + e_t\]</span>
+For that you can use <code>Arima()</code> in the forecast package:</p>
+<div class="sourceCode" id="cb137"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb137-1"><a href="3-4-fitting-arima-models.html#cb137-1"></a>fit.AR2 &lt;-<span class="st"> </span>forecast<span class="op">::</span><span class="kw">Arima</span>(anchovy87ts, <span class="dt">order=</span><span class="kw">c</span>(<span class="dv">2</span>,<span class="dv">0</span>,<span class="dv">0</span>))</span>
+<span id="cb137-2"><a href="3-4-fitting-arima-models.html#cb137-2"></a>fit.AR2</span></code></pre></div>
 <pre><code>## Series: anchovy87ts 
 ## ARIMA(2,0,0) with non-zero mean 
 ## 
@@ -605,11 +641,11 @@ fit.AR2</code></pre></div>
 <p>Look at histograms of your data:</p>
 <p><img src="Fish-Forecast_files/figure-html/unnamed-chunk-17-1.png" width="960" style="display: block; margin: auto;" /></p>
 <p>Use <code>checkresiduals()</code> to do basic diagnostics.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">fit &lt;-<span class="st"> </span>forecast<span class="op">::</span><span class="kw">auto.arima</span>(anchovy87ts)
-<span class="kw">checkresiduals</span>(fit)</code></pre></div>
+<div class="sourceCode" id="cb139"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb139-1"><a href="3-4-fitting-arima-models.html#cb139-1"></a>fit &lt;-<span class="st"> </span>forecast<span class="op">::</span><span class="kw">auto.arima</span>(anchovy87ts)</span>
+<span id="cb139-2"><a href="3-4-fitting-arima-models.html#cb139-2"></a><span class="kw">checkresiduals</span>(fit)</span></code></pre></div>
 <p><img src="Fish-Forecast_files/figure-html/unnamed-chunk-18-1.png" width="672" style="display: block; margin: auto;" /></p>
 <pre><code>## 
-##  Ljung-Box test
+## 	Ljung-Box test
 ## 
 ## data:  Residuals from ARIMA(0,1,1) with drift
 ## Q* = 1.4883, df = 3, p-value = 0.685
@@ -630,7 +666,7 @@ fit.AR2</code></pre></div>
 <div id="stepwise-vs-exhaustive-model-selection" class="section level3">
 <h3><span class="header-section-number">3.4.8</span> Stepwise vs exhaustive model selection</h3>
 <p>Stepwise model selection is fast and useful if you need to explore many models and it takes awhile to fit each model. Our models fit quickly and we don’t have season in our models. Though it will not make a difference for this particular dataset, in general set <code>stepwise=FALSE</code> to do a more thorough model search.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">forecast<span class="op">::</span><span class="kw">auto.arima</span>(anchovy87ts, <span class="dt">stepwise=</span><span class="ot">FALSE</span>, <span class="dt">approximation=</span><span class="ot">FALSE</span>)</code></pre></div>
+<div class="sourceCode" id="cb141"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb141-1"><a href="3-4-fitting-arima-models.html#cb141-1"></a>forecast<span class="op">::</span><span class="kw">auto.arima</span>(anchovy87ts, <span class="dt">stepwise=</span><span class="ot">FALSE</span>, <span class="dt">approximation=</span><span class="ot">FALSE</span>)</span></code></pre></div>
 <pre><code>## Series: anchovy87ts 
 ## ARIMA(0,1,1) with drift 
 ## 
@@ -642,12 +678,12 @@ fit.AR2</code></pre></div>
 ## sigma^2 estimated as 0.03583:  log likelihood=6.5
 ## AIC=-6.99   AICc=-5.73   BIC=-3.58</code></pre>
 </div>
-<div id="summary-4" class="section level3">
+<div id="summary" class="section level3">
 <h3><span class="header-section-number">3.4.9</span> Summary</h3>
 <ul>
 <li><p><code>auto.arima()</code> in the forecast package is a good choice for selection and fitting of ARIMA models.</p></li>
 <li><p><code>Arima()</code> is a good choice when you know the order (structure) of the model.</p></li>
-<li>You (may) need to know whether the mean of the data should be zero and whether it is stationary around a linear line.
+<li><p>You (may) need to know whether the mean of the data should be zero and whether it is stationary around a linear line.</p>
 <ul>
 <li><code>include.mean=TRUE</code> means the mean is not zero</li>
 <li><code>include.drift=TRUE</code> means fit a model that fluctuates around a trend (up or down)</li>
@@ -662,16 +698,18 @@ fit.AR2</code></pre></div>
         </div>
       </div>
 <a href="3-3-model-structure.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
-<a href="3-5-forecasting-1.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+<a href="3-5-forecasting.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
     </div>
   </div>
 <script src="libs/gitbook-2.6.7/js/app.min.js"></script>
 <script src="libs/gitbook-2.6.7/js/lunr.js"></script>
+<script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
 <script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
 <script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
 <script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
 <script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
 <script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script>
 <script>
 gitbook.require(["gitbook"], function(gitbook) {
 gitbook.start({
@@ -679,12 +717,11 @@ gitbook.start({
 "github": false,
 "facebook": true,
 "twitter": true,
-"google": false,
 "linkedin": false,
 "weibo": false,
 "instapaper": false,
 "vk": false,
-"all": ["facebook", "google", "twitter", "linkedin", "weibo", "instapaper"]
+"all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
 },
 "fontsettings": {
 "theme": "white",
@@ -696,6 +733,10 @@ gitbook.start({
 "text": "Edit"
 },
 "history": {
+"link": null,
+"text": null
+},
+"view": {
 "link": null,
 "text": null
 },
@@ -712,10 +753,11 @@ gitbook.start({
   (function () {
     var script = document.createElement("script");
     script.type = "text/javascript";
-    var src = "";
+    var src = "true";
     if (src === "" || src === "true") src = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML";
-    if (location.protocol !== "file:" && /^https?:/.test(src))
-      src = src.replace(/^https?:/, '');
+    if (location.protocol !== "file:")
+      if (/^https?:/.test(src))
+        src = src.replace(/^https?:/, '');
     script.src = src;
     document.getElementsByTagName("head")[0].appendChild(script);
   })();

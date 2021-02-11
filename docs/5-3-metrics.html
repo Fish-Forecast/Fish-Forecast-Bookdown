@@ -1,12 +1,12 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<html lang="" xml:lang="">
 <head>
 
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <title>5.3 Metrics | Fisheries Catch Forecasting</title>
   <meta name="description" content="This book will show you how to model and forecast annual and seasonal fisheries catches using R and its time-series analysis functions and packages. Forecasting using time-varying regression, ARIMA (Box-Jenkins) models, and expoential smoothing models is demonstrated using real catch time series. The entire process from data evaluation and diagnostics, model fitting, model selection and forecast evaluation is shown. The focus of the book is on univariate time series (annual or seasonal), however multivariate regression with autocorrelated errors and multivariate autoregressive models (MAR) are covered briefly. For multivariate autoregressive models and multivariate autoregressive state-space models for fisheries and environmental sciences, see Holmes, Ward and Scheuerell (2018)." />
-  <meta name="generator" content="bookdown 0.12 and GitBook 2.6.7" />
+  <meta name="generator" content="bookdown 0.20 and GitBook 2.6.7" />
 
   <meta property="og:title" content="5.3 Metrics | Fisheries Catch Forecasting" />
   <meta property="og:type" content="book" />
@@ -24,15 +24,15 @@
 <meta name="author" content="Elizabeth Holmes" />
 
 
-<meta name="date" content="2019-08-22" />
+<meta name="date" content="2020-10-02" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black" />
   
   
-<link rel="prev" href="5-2-cross-validation.html">
-<link rel="next" href="5-4-candidate-model-set.html">
+<link rel="prev" href="5-2-cross-validation.html"/>
+<link rel="next" href="5-4-candidate-model-set.html"/>
 <script src="libs/jquery-2.2.3/jquery.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
@@ -40,6 +40,7 @@
 <link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
 
 
 
@@ -47,45 +48,75 @@
 
 
 
+
+
+<script src="libs/accessible-code-block-0.0.1/empty-anchor.js"></script>
 <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
 
 
 <style type="text/css">
-div.sourceCode { overflow-x: auto; }
-table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
-  margin: 0; padding: 0; vertical-align: baseline; border: none; }
-table.sourceCode { width: 100%; line-height: 100%; }
-td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
-td.sourceCode { padding-left: 5px; }
-code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
-code > span.dt { color: #902000; } /* DataType */
-code > span.dv { color: #40a070; } /* DecVal */
-code > span.bn { color: #40a070; } /* BaseN */
-code > span.fl { color: #40a070; } /* Float */
-code > span.ch { color: #4070a0; } /* Char */
-code > span.st { color: #4070a0; } /* String */
-code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
-code > span.ot { color: #007020; } /* Other */
-code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
-code > span.fu { color: #06287e; } /* Function */
-code > span.er { color: #ff0000; font-weight: bold; } /* Error */
-code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
-code > span.cn { color: #880000; } /* Constant */
-code > span.sc { color: #4070a0; } /* SpecialChar */
-code > span.vs { color: #4070a0; } /* VerbatimString */
-code > span.ss { color: #bb6688; } /* SpecialString */
-code > span.im { } /* Import */
-code > span.va { color: #19177c; } /* Variable */
-code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
-code > span.op { color: #666666; } /* Operator */
-code > span.bu { } /* BuiltIn */
-code > span.ex { } /* Extension */
-code > span.pp { color: #bc7a00; } /* Preprocessor */
-code > span.at { color: #7d9029; } /* Attribute */
-code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
-code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
-code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
-code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code.sourceCode > span { display: inline-block; line-height: 1.25; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode { white-space: pre; position: relative; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+code.sourceCode { white-space: pre-wrap; }
+code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
 </style>
 
 <link rel="stylesheet" href="style.css" type="text/css" />
@@ -128,7 +159,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="2.2" data-path="2-2-forecasting.html"><a href="2-2-forecasting.html"><i class="fa fa-check"></i><b>2.2</b> Forecasting</a><ul>
 <li class="chapter" data-level="2.2.1" data-path="2-2-forecasting.html"><a href="2-2-forecasting.html#the-forecast-package"><i class="fa fa-check"></i><b>2.2.1</b> The forecast package</a></li>
 </ul></li>
-<li class="chapter" data-level="2.3" data-path="2-3-summary-1.html"><a href="2-3-summary-1.html"><i class="fa fa-check"></i><b>2.3</b> Summary</a></li>
+<li class="chapter" data-level="2.3" data-path="2-1-fitting.html"><a href="2-1-fitting.html#summary"><i class="fa fa-check"></i><b>2.3</b> Summary</a></li>
 </ul></li>
 <li class="chapter" data-level="3" data-path="3-arima-models.html"><a href="3-arima-models.html"><i class="fa fa-check"></i><b>3</b> ARIMA Models</a><ul>
 <li class="chapter" data-level="3.1" data-path="3-1-overview.html"><a href="3-1-overview.html"><i class="fa fa-check"></i><b>3.1</b> Overview</a><ul>
@@ -141,7 +172,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="3.2.2" data-path="3-2-stationarity.html"><a href="3-2-stationarity.html#non-stationarity"><i class="fa fa-check"></i><b>3.2.2</b> Non-stationarity</a></li>
 <li class="chapter" data-level="3.2.3" data-path="3-2-stationarity.html"><a href="3-2-stationarity.html#stationarity-tests"><i class="fa fa-check"></i><b>3.2.3</b> Stationarity tests</a></li>
 <li class="chapter" data-level="3.2.4" data-path="3-2-stationarity.html"><a href="3-2-stationarity.html#differencing-the-data"><i class="fa fa-check"></i><b>3.2.4</b> Differencing the data</a></li>
-<li class="chapter" data-level="3.2.5" data-path="3-2-stationarity.html"><a href="3-2-stationarity.html#summary-2"><i class="fa fa-check"></i><b>3.2.5</b> Summary</a></li>
+<li class="chapter" data-level="3.2.5" data-path="2-1-fitting.html"><a href="2-1-fitting.html#summary"><i class="fa fa-check"></i><b>3.2.5</b> Summary</a></li>
 </ul></li>
 <li class="chapter" data-level="3.3" data-path="3-3-model-structure.html"><a href="3-3-model-structure.html"><i class="fa fa-check"></i><b>3.3</b> Model structure</a><ul>
 <li class="chapter" data-level="3.3.1" data-path="3-3-model-structure.html"><a href="3-3-model-structure.html#ar-and-ma-lags"><i class="fa fa-check"></i><b>3.3.1</b> AR and MA lags</a></li>
@@ -149,7 +180,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="3.3.3" data-path="3-3-model-structure.html"><a href="3-3-model-structure.html#choosing-the-ar-and-ma-levels"><i class="fa fa-check"></i><b>3.3.3</b> Choosing the AR and MA levels</a></li>
 <li class="chapter" data-level="3.3.4" data-path="3-3-model-structure.html"><a href="3-3-model-structure.html#trace-true"><i class="fa fa-check"></i><b>3.3.4</b> Trace = TRUE</a></li>
 <li class="chapter" data-level="3.3.5" data-path="3-3-model-structure.html"><a href="3-3-model-structure.html#stepwise-false"><i class="fa fa-check"></i><b>3.3.5</b> stepwise = FALSE</a></li>
-<li class="chapter" data-level="3.3.6" data-path="3-3-model-structure.html"><a href="3-3-model-structure.html#summary-3"><i class="fa fa-check"></i><b>3.3.6</b> Summary</a></li>
+<li class="chapter" data-level="3.3.6" data-path="2-1-fitting.html"><a href="2-1-fitting.html#summary"><i class="fa fa-check"></i><b>3.3.6</b> Summary</a></li>
 </ul></li>
 <li class="chapter" data-level="3.4" data-path="3-4-fitting-arima-models.html"><a href="3-4-fitting-arima-models.html"><i class="fa fa-check"></i><b>3.4</b> Fitting ARIMA models</a><ul>
 <li class="chapter" data-level="3.4.1" data-path="3-4-fitting-arima-models.html"><a href="3-4-fitting-arima-models.html#fitting-with-auto.arima"><i class="fa fa-check"></i><b>3.4.1</b> Fitting with <code>auto.arima()</code></a></li>
@@ -160,19 +191,19 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="3.4.6" data-path="3-4-fitting-arima-models.html"><a href="3-4-fitting-arima-models.html#model-checking"><i class="fa fa-check"></i><b>3.4.6</b> Model checking</a></li>
 <li class="chapter" data-level="3.4.7" data-path="3-4-fitting-arima-models.html"><a href="3-4-fitting-arima-models.html#workflow-for-non-seasonal-data"><i class="fa fa-check"></i><b>3.4.7</b> Workflow for non-seasonal data</a></li>
 <li class="chapter" data-level="3.4.8" data-path="3-4-fitting-arima-models.html"><a href="3-4-fitting-arima-models.html#stepwise-vs-exhaustive-model-selection"><i class="fa fa-check"></i><b>3.4.8</b> Stepwise vs exhaustive model selection</a></li>
-<li class="chapter" data-level="3.4.9" data-path="3-4-fitting-arima-models.html"><a href="3-4-fitting-arima-models.html#summary-4"><i class="fa fa-check"></i><b>3.4.9</b> Summary</a></li>
+<li class="chapter" data-level="3.4.9" data-path="2-1-fitting.html"><a href="2-1-fitting.html#summary"><i class="fa fa-check"></i><b>3.4.9</b> Summary</a></li>
 </ul></li>
-<li class="chapter" data-level="3.5" data-path="3-5-forecasting-1.html"><a href="3-5-forecasting-1.html"><i class="fa fa-check"></i><b>3.5</b> Forecasting</a><ul>
-<li class="chapter" data-level="3.5.1" data-path="3-5-forecasting-1.html"><a href="3-5-forecasting-1.html#forecasting-with-forecast"><i class="fa fa-check"></i><b>3.5.1</b> Forecasting with <code>forecast()</code></a></li>
-<li class="chapter" data-level="3.5.2" data-path="3-5-forecasting-1.html"><a href="3-5-forecasting-1.html#missing-values-1"><i class="fa fa-check"></i><b>3.5.2</b> Missing values</a></li>
-<li class="chapter" data-level="3.5.3" data-path="3-5-forecasting-1.html"><a href="3-5-forecasting-1.html#null-forecast-models"><i class="fa fa-check"></i><b>3.5.3</b> Null forecast models</a></li>
+<li class="chapter" data-level="3.5" data-path="2-2-forecasting.html"><a href="2-2-forecasting.html#forecasting"><i class="fa fa-check"></i><b>3.5</b> Forecasting</a><ul>
+<li class="chapter" data-level="3.5.1" data-path="3-5-forecasting.html"><a href="3-5-forecasting.html"><i class="fa fa-check"></i><b>3.5.1</b> Forecasting with <code>forecast()</code></a></li>
+<li class="chapter" data-level="3.5.2" data-path="3-4-fitting-arima-models.html"><a href="3-4-fitting-arima-models.html#missing-values"><i class="fa fa-check"></i><b>3.5.2</b> Missing values</a></li>
+<li class="chapter" data-level="3.5.3" data-path="3-5-forecasting.html"><a href="3-5-forecasting.html#null-forecast-models"><i class="fa fa-check"></i><b>3.5.3</b> Null forecast models</a></li>
 </ul></li>
 </ul></li>
 <li class="chapter" data-level="4" data-path="4-exponential-smoothing-models.html"><a href="4-exponential-smoothing-models.html"><i class="fa fa-check"></i><b>4</b> Exponential smoothing models</a><ul>
-<li class="chapter" data-level="4.1" data-path="4-1-overview-1.html"><a href="4-1-overview-1.html"><i class="fa fa-check"></i><b>4.1</b> Overview</a><ul>
-<li class="chapter" data-level="4.1.1" data-path="4-1-overview-1.html"><a href="4-1-overview-1.html#naive-model"><i class="fa fa-check"></i><b>4.1.1</b> Naive model</a></li>
-<li class="chapter" data-level="4.1.2" data-path="4-1-overview-1.html"><a href="4-1-overview-1.html#exponential-smoothing"><i class="fa fa-check"></i><b>4.1.2</b> Exponential smoothing</a></li>
-<li class="chapter" data-level="4.1.3" data-path="4-1-overview-1.html"><a href="4-1-overview-1.html#exponential-smoothing-model"><i class="fa fa-check"></i><b>4.1.3</b> Exponential smoothing model</a></li>
+<li class="chapter" data-level="4.1" data-path="3-1-overview.html"><a href="3-1-overview.html#overview"><i class="fa fa-check"></i><b>4.1</b> Overview</a><ul>
+<li class="chapter" data-level="4.1.1" data-path="4-1-overview.html"><a href="4-1-overview.html"><i class="fa fa-check"></i><b>4.1.1</b> Naive model</a></li>
+<li class="chapter" data-level="4.1.2" data-path="4-1-overview.html"><a href="4-1-overview.html#exponential-smoothing"><i class="fa fa-check"></i><b>4.1.2</b> Exponential smoothing</a></li>
+<li class="chapter" data-level="4.1.3" data-path="4-1-overview.html"><a href="4-1-overview.html#exponential-smoothing-model"><i class="fa fa-check"></i><b>4.1.3</b> Exponential smoothing model</a></li>
 </ul></li>
 <li class="chapter" data-level="4.2" data-path="4-2-ets-function.html"><a href="4-2-ets-function.html"><i class="fa fa-check"></i><b>4.2</b> <code>ets()</code> function</a><ul>
 <li class="chapter" data-level="4.2.1" data-path="4-2-ets-function.html"><a href="4-2-ets-function.html#the-weighting-function"><i class="fa fa-check"></i><b>4.2.1</b> The weighting function</a></li>
@@ -200,7 +231,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="5.3" data-path="5-3-metrics.html"><a href="5-3-metrics.html"><i class="fa fa-check"></i><b>5.3</b> Metrics</a><ul>
 <li class="chapter" data-level="5.3.1" data-path="5-3-metrics.html"><a href="5-3-metrics.html#accuracy-function"><i class="fa fa-check"></i><b>5.3.1</b> <code>accuracy()</code> function</a></li>
 <li class="chapter" data-level="5.3.2" data-path="5-3-metrics.html"><a href="5-3-metrics.html#test-multiple-models"><i class="fa fa-check"></i><b>5.3.2</b> Test multiple models</a></li>
-<li class="chapter" data-level="5.3.3" data-path="5-3-metrics.html"><a href="5-3-metrics.html#cross-validation-1"><i class="fa fa-check"></i><b>5.3.3</b> Cross-validation</a></li>
+<li class="chapter" data-level="5.3.3" data-path="5-2-cross-validation.html"><a href="5-2-cross-validation.html#cross-validation"><i class="fa fa-check"></i><b>5.3.3</b> Cross-validation</a></li>
 </ul></li>
 <li class="chapter" data-level="5.4" data-path="5-4-candidate-model-set.html"><a href="5-4-candidate-model-set.html"><i class="fa fa-check"></i><b>5.4</b> Candidate model set</a></li>
 <li class="chapter" data-level="5.5" data-path="5-5-testing-the-candidate-model-set.html"><a href="5-5-testing-the-candidate-model-set.html"><i class="fa fa-check"></i><b>5.5</b> Testing the candidate model set</a><ul>
@@ -238,10 +269,10 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="7.1.2" data-path="7-1-MREGARMA.html"><a href="7-1-MREGARMA.html#example-fitting-with-arima-and-sarima"><i class="fa fa-check"></i><b>7.1.2</b> Example: fitting with arima and sarima</a></li>
 <li class="chapter" data-level="7.1.3" data-path="7-1-MREGARMA.html"><a href="7-1-MREGARMA.html#example-fitting-with-gls"><i class="fa fa-check"></i><b>7.1.3</b> Example: fitting with gls</a></li>
 <li class="chapter" data-level="7.1.4" data-path="7-1-MREGARMA.html"><a href="7-1-MREGARMA.html#mreg-of-first-or-second-differences"><i class="fa fa-check"></i><b>7.1.4</b> MREG of first or second differences</a></li>
-<li class="chapter" data-level="7.1.5" data-path="7-1-MREGARMA.html"><a href="7-1-MREGARMA.html#discussion-1"><i class="fa fa-check"></i><b>7.1.5</b> Discussion</a></li>
+<li class="chapter" data-level="7.1.5" data-path="6-8-discussion.html"><a href="6-8-discussion.html#discussion"><i class="fa fa-check"></i><b>7.1.5</b> Discussion</a></li>
 </ul></li>
 <li class="chapter" data-level="7.2" data-path="7-2-ARMAX.html"><a href="7-2-ARMAX.html"><i class="fa fa-check"></i><b>7.2</b> ARMAX Models</a><ul>
-<li class="chapter" data-level="7.2.1" data-path="7-2-ARMAX.html"><a href="7-2-ARMAX.html#discussion-2"><i class="fa fa-check"></i><b>7.2.1</b> Discussion</a></li>
+<li class="chapter" data-level="7.2.1" data-path="6-8-discussion.html"><a href="6-8-discussion.html#discussion"><i class="fa fa-check"></i><b>7.2.1</b> Discussion</a></li>
 </ul></li>
 </ul></li>
 <li class="chapter" data-level="8" data-path="8-seasonality.html"><a href="8-seasonality.html"><i class="fa fa-check"></i><b>8</b> Seasonality</a><ul>
@@ -253,10 +284,10 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="8.2.1" data-path="8-2-seasonal-exponential-smoothing-model.html"><a href="8-2-seasonal-exponential-smoothing-model.html#force-seasonality-to-evolve-more"><i class="fa fa-check"></i><b>8.2.1</b> Force seasonality to evolve more</a></li>
 </ul></li>
 <li class="chapter" data-level="8.3" data-path="8-3-seasonal-arima-model.html"><a href="8-3-seasonal-arima-model.html"><i class="fa fa-check"></i><b>8.3</b> Seasonal ARIMA model</a></li>
-<li class="chapter" data-level="8.4" data-path="8-4-missing-values-2.html"><a href="8-4-missing-values-2.html"><i class="fa fa-check"></i><b>8.4</b> Missing values</a></li>
+<li class="chapter" data-level="8.4" data-path="3-4-fitting-arima-models.html"><a href="3-4-fitting-arima-models.html#missing-values"><i class="fa fa-check"></i><b>8.4</b> Missing values</a></li>
 <li class="chapter" data-level="8.5" data-path="8-5-forecast-evaluation.html"><a href="8-5-forecast-evaluation.html"><i class="fa fa-check"></i><b>8.5</b> Forecast evaluation</a></li>
 </ul></li>
-<li class="chapter" data-level="" data-path="references-1.html"><a href="references-1.html"><i class="fa fa-check"></i>References</a></li>
+<li class="chapter" data-level="" data-path="1-5-references.html"><a href="1-5-references.html#references"><i class="fa fa-check"></i>References</a></li>
 <li class="appendix"><span><b>Appendix</b></span></li>
 <li class="chapter" data-level="A" data-path="A-inputting-data.html"><a href="A-inputting-data.html"><i class="fa fa-check"></i><b>A</b> Inputting data</a><ul>
 <li class="chapter" data-level="" data-path="A-inputting-data.html"><a href="A-inputting-data.html#one-response-variable"><i class="fa fa-check"></i>one response variable</a></li>
@@ -290,8 +321,8 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <p>How to we quantify the difference between the forecast and the actual values in the test data set?</p>
 <p>Let’s take the example of a training set/test set.</p>
 <p>The forecast errors are the difference between the test data and the forecasts.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">fr.err &lt;-<span class="st"> </span>testdat <span class="op">-</span><span class="st"> </span>fr<span class="op">$</span>mean
-fr.err</code></pre></div>
+<div class="sourceCode" id="cb201"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb201-1"><a href="5-3-metrics.html#cb201-1"></a>fr.err &lt;-<span class="st"> </span>testdat <span class="op">-</span><span class="st"> </span>fr<span class="op">$</span>mean</span>
+<span id="cb201-2"><a href="5-3-metrics.html#cb201-2"></a>fr.err</span></code></pre></div>
 <pre><code>## Time Series:
 ## Start = 1988 
 ## End = 1989 
@@ -300,7 +331,7 @@ fr.err</code></pre></div>
 <div id="accuracy-function" class="section level3">
 <h3><span class="header-section-number">5.3.1</span> <code>accuracy()</code> function</h3>
 <p>The <code>accuracy()</code> function in forecast provides many different metrics such as mean error, root mean square error, mean absolute error, mean percentage error, mean absolute percentage error. It requires a forecast object and a test data set that is the same length.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">accuracy</span>(fr, testdat)</code></pre></div>
+<div class="sourceCode" id="cb203"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb203-1"><a href="5-3-metrics.html#cb203-1"></a><span class="kw">accuracy</span>(fr, testdat)</span></code></pre></div>
 <pre><code>##                       ME      RMSE       MAE        MPE     MAPE      MASE
 ## Training set -0.00473511 0.1770653 0.1438523 -0.1102259 1.588409 0.7698386
 ## Test set     -0.33245398 0.3698342 0.3324540 -3.4390277 3.439028 1.7791577
@@ -310,59 +341,59 @@ fr.err</code></pre></div>
 <p>The metrics are:</p>
 <div id="me-mean-err" class="section level4 unnumbered">
 <h4>ME Mean err</h4>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">me &lt;-<span class="st"> </span><span class="kw">mean</span>(fr.err)
-me</code></pre></div>
+<div class="sourceCode" id="cb205"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb205-1"><a href="5-3-metrics.html#cb205-1"></a>me &lt;-<span class="st"> </span><span class="kw">mean</span>(fr.err)</span>
+<span id="cb205-2"><a href="5-3-metrics.html#cb205-2"></a>me</span></code></pre></div>
 <pre><code>## [1] -0.332454</code></pre>
 </div>
 <div id="rmse-root-mean-squared-error" class="section level4 unnumbered">
 <h4>RMSE Root mean squared error</h4>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">rmse &lt;-<span class="st"> </span><span class="kw">sqrt</span>(<span class="kw">mean</span>(fr.err<span class="op">^</span><span class="dv">2</span>))
-rmse</code></pre></div>
+<div class="sourceCode" id="cb207"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb207-1"><a href="5-3-metrics.html#cb207-1"></a>rmse &lt;-<span class="st"> </span><span class="kw">sqrt</span>(<span class="kw">mean</span>(fr.err<span class="op">^</span><span class="dv">2</span>))</span>
+<span id="cb207-2"><a href="5-3-metrics.html#cb207-2"></a>rmse</span></code></pre></div>
 <pre><code>## [1] 0.3698342</code></pre>
 </div>
 <div id="mae-mean-absolute-error" class="section level4 unnumbered">
 <h4>MAE Mean absolute error</h4>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">mae &lt;-<span class="st"> </span><span class="kw">mean</span>(<span class="kw">abs</span>(fr.err))
-mae</code></pre></div>
+<div class="sourceCode" id="cb209"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb209-1"><a href="5-3-metrics.html#cb209-1"></a>mae &lt;-<span class="st"> </span><span class="kw">mean</span>(<span class="kw">abs</span>(fr.err))</span>
+<span id="cb209-2"><a href="5-3-metrics.html#cb209-2"></a>mae</span></code></pre></div>
 <pre><code>## [1] 0.332454</code></pre>
 </div>
 <div id="mpe-mean-percentage-error" class="section level4 unnumbered">
 <h4>MPE Mean percentage error</h4>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">fr.pe &lt;-<span class="st"> </span><span class="dv">100</span><span class="op">*</span>fr.err<span class="op">/</span>testdat
-mpe &lt;-<span class="st"> </span><span class="kw">mean</span>(fr.pe)
-mpe</code></pre></div>
+<div class="sourceCode" id="cb211"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb211-1"><a href="5-3-metrics.html#cb211-1"></a>fr.pe &lt;-<span class="st"> </span><span class="dv">100</span><span class="op">*</span>fr.err<span class="op">/</span>testdat</span>
+<span id="cb211-2"><a href="5-3-metrics.html#cb211-2"></a>mpe &lt;-<span class="st"> </span><span class="kw">mean</span>(fr.pe)</span>
+<span id="cb211-3"><a href="5-3-metrics.html#cb211-3"></a>mpe</span></code></pre></div>
 <pre><code>## [1] -3.439028</code></pre>
 </div>
 <div id="mape-mean-absolute-percentage-error" class="section level4 unnumbered">
 <h4>MAPE Mean absolute percentage error</h4>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">mape &lt;-<span class="st"> </span><span class="kw">mean</span>(<span class="kw">abs</span>(fr.pe))
-mape</code></pre></div>
+<div class="sourceCode" id="cb213"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb213-1"><a href="5-3-metrics.html#cb213-1"></a>mape &lt;-<span class="st"> </span><span class="kw">mean</span>(<span class="kw">abs</span>(fr.pe))</span>
+<span id="cb213-2"><a href="5-3-metrics.html#cb213-2"></a>mape</span></code></pre></div>
 <pre><code>## [1] 3.439028</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">accuracy</span>(fr, testdat)[,<span class="dv">1</span><span class="op">:</span><span class="dv">5</span>]</code></pre></div>
+<div class="sourceCode" id="cb215"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb215-1"><a href="5-3-metrics.html#cb215-1"></a><span class="kw">accuracy</span>(fr, testdat)[,<span class="dv">1</span><span class="op">:</span><span class="dv">5</span>]</span></code></pre></div>
 <pre><code>##                       ME      RMSE       MAE        MPE     MAPE
 ## Training set -0.00473511 0.1770653 0.1438523 -0.1102259 1.588409
 ## Test set     -0.33245398 0.3698342 0.3324540 -3.4390277 3.439028</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">c</span>(me, rmse, mae, mpe, mape)</code></pre></div>
+<div class="sourceCode" id="cb217"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb217-1"><a href="5-3-metrics.html#cb217-1"></a><span class="kw">c</span>(me, rmse, mae, mpe, mape)</span></code></pre></div>
 <pre><code>## [1] -0.3324540  0.3698342  0.3324540 -3.4390277  3.4390277</code></pre>
 </div>
 </div>
 <div id="test-multiple-models" class="section level3">
 <h3><span class="header-section-number">5.3.2</span> Test multiple models</h3>
 <p>Now that you have some metrics for forecast accuracy, you can compute these for all the models in your candidate set.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># The model picked by auto.arima</span>
-fit1 &lt;-<span class="st"> </span>forecast<span class="op">::</span><span class="kw">Arima</span>(traindat, <span class="dt">order=</span><span class="kw">c</span>(<span class="dv">0</span>,<span class="dv">1</span>,<span class="dv">1</span>))
-fr1 &lt;-<span class="st"> </span>forecast<span class="op">::</span><span class="kw">forecast</span>(fit1, <span class="dt">h=</span><span class="dv">2</span>)
-test1 &lt;-<span class="st"> </span>forecast<span class="op">::</span><span class="kw">accuracy</span>(fr1, testdat)[<span class="dv">2</span>,<span class="dv">1</span><span class="op">:</span><span class="dv">5</span>]
-
-<span class="co"># AR-1</span>
-fit2 &lt;-<span class="st"> </span>forecast<span class="op">::</span><span class="kw">Arima</span>(traindat, <span class="dt">order=</span><span class="kw">c</span>(<span class="dv">1</span>,<span class="dv">1</span>,<span class="dv">0</span>))
-fr2 &lt;-<span class="st"> </span>forecast<span class="op">::</span><span class="kw">forecast</span>(fit2, <span class="dt">h=</span><span class="dv">2</span>)
-test2 &lt;-<span class="st"> </span>forecast<span class="op">::</span><span class="kw">accuracy</span>(fr2, testdat)[<span class="dv">2</span>,<span class="dv">1</span><span class="op">:</span><span class="dv">5</span>]
-
-<span class="co"># Naive model with drift</span>
-fit3 &lt;-<span class="st"> </span>forecast<span class="op">::</span><span class="kw">rwf</span>(traindat, <span class="dt">drift=</span><span class="ot">TRUE</span>)
-fr3 &lt;-<span class="st"> </span>forecast<span class="op">::</span><span class="kw">forecast</span>(fit3, <span class="dt">h=</span><span class="dv">2</span>)
-test3 &lt;-<span class="st"> </span>forecast<span class="op">::</span><span class="kw">accuracy</span>(fr3, testdat)[<span class="dv">2</span>,<span class="dv">1</span><span class="op">:</span><span class="dv">5</span>]</code></pre></div>
+<div class="sourceCode" id="cb219"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb219-1"><a href="5-3-metrics.html#cb219-1"></a><span class="co"># The model picked by auto.arima</span></span>
+<span id="cb219-2"><a href="5-3-metrics.html#cb219-2"></a>fit1 &lt;-<span class="st"> </span>forecast<span class="op">::</span><span class="kw">Arima</span>(traindat, <span class="dt">order=</span><span class="kw">c</span>(<span class="dv">0</span>,<span class="dv">1</span>,<span class="dv">1</span>))</span>
+<span id="cb219-3"><a href="5-3-metrics.html#cb219-3"></a>fr1 &lt;-<span class="st"> </span>forecast<span class="op">::</span><span class="kw">forecast</span>(fit1, <span class="dt">h=</span><span class="dv">2</span>)</span>
+<span id="cb219-4"><a href="5-3-metrics.html#cb219-4"></a>test1 &lt;-<span class="st"> </span>forecast<span class="op">::</span><span class="kw">accuracy</span>(fr1, testdat)[<span class="dv">2</span>,<span class="dv">1</span><span class="op">:</span><span class="dv">5</span>]</span>
+<span id="cb219-5"><a href="5-3-metrics.html#cb219-5"></a></span>
+<span id="cb219-6"><a href="5-3-metrics.html#cb219-6"></a><span class="co"># AR-1</span></span>
+<span id="cb219-7"><a href="5-3-metrics.html#cb219-7"></a>fit2 &lt;-<span class="st"> </span>forecast<span class="op">::</span><span class="kw">Arima</span>(traindat, <span class="dt">order=</span><span class="kw">c</span>(<span class="dv">1</span>,<span class="dv">1</span>,<span class="dv">0</span>))</span>
+<span id="cb219-8"><a href="5-3-metrics.html#cb219-8"></a>fr2 &lt;-<span class="st"> </span>forecast<span class="op">::</span><span class="kw">forecast</span>(fit2, <span class="dt">h=</span><span class="dv">2</span>)</span>
+<span id="cb219-9"><a href="5-3-metrics.html#cb219-9"></a>test2 &lt;-<span class="st"> </span>forecast<span class="op">::</span><span class="kw">accuracy</span>(fr2, testdat)[<span class="dv">2</span>,<span class="dv">1</span><span class="op">:</span><span class="dv">5</span>]</span>
+<span id="cb219-10"><a href="5-3-metrics.html#cb219-10"></a></span>
+<span id="cb219-11"><a href="5-3-metrics.html#cb219-11"></a><span class="co"># Naive model with drift</span></span>
+<span id="cb219-12"><a href="5-3-metrics.html#cb219-12"></a>fit3 &lt;-<span class="st"> </span>forecast<span class="op">::</span><span class="kw">rwf</span>(traindat, <span class="dt">drift=</span><span class="ot">TRUE</span>)</span>
+<span id="cb219-13"><a href="5-3-metrics.html#cb219-13"></a>fr3 &lt;-<span class="st"> </span>forecast<span class="op">::</span><span class="kw">forecast</span>(fit3, <span class="dt">h=</span><span class="dv">2</span>)</span>
+<span id="cb219-14"><a href="5-3-metrics.html#cb219-14"></a>test3 &lt;-<span class="st"> </span>forecast<span class="op">::</span><span class="kw">accuracy</span>(fr3, testdat)[<span class="dv">2</span>,<span class="dv">1</span><span class="op">:</span><span class="dv">5</span>]</span></code></pre></div>
 <div id="show-a-summary" class="section level4 unnumbered">
 <h4>Show a summary</h4>
 <table>
@@ -452,27 +483,27 @@ Naive
 </table>
 </div>
 </div>
-<div id="cross-validation-1" class="section level3">
+<div id="cross-validation" class="section level3">
 <h3><span class="header-section-number">5.3.3</span> Cross-validation</h3>
 <p>Computing forecast errors and performance metrics with time series cross-validation is similar to the training set/test test approach.</p>
 <p>The first step to using the <code>tsCV()</code> function is to define the function that returns a forecast for your model. Your function needs to take <code>x</code>, a time series, and <code>h</code> the length of the forecast. You can also have other arguments if needed. Here is an example function for a forecast from an ARIMA model.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">fun &lt;-<span class="st"> </span><span class="cf">function</span>(x, h, order){
-  forecast<span class="op">::</span><span class="kw">forecast</span>(<span class="kw">Arima</span>(x, <span class="dt">order=</span>order), <span class="dt">h=</span>h)
-}</code></pre></div>
+<div class="sourceCode" id="cb220"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb220-1"><a href="5-3-metrics.html#cb220-1"></a>fun &lt;-<span class="st"> </span><span class="cf">function</span>(x, h, order){</span>
+<span id="cb220-2"><a href="5-3-metrics.html#cb220-2"></a>  forecast<span class="op">::</span><span class="kw">forecast</span>(<span class="kw">Arima</span>(x, <span class="dt">order=</span>order), <span class="dt">h=</span>h)</span>
+<span id="cb220-3"><a href="5-3-metrics.html#cb220-3"></a>}</span></code></pre></div>
 <p>We pass this into the <code>tsCV()</code> function. <code>tsCV()</code> requires our dataset and our forecast function. The arguments after the forecast function are those we included in our <code>fun</code> definition. <code>tsCV()</code> returns a time series of errors.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">e &lt;-<span class="st"> </span>forecast<span class="op">::</span><span class="kw">tsCV</span>(traindat, fun, <span class="dt">h=</span><span class="dv">1</span>, <span class="dt">order=</span><span class="kw">c</span>(<span class="dv">0</span>,<span class="dv">1</span>,<span class="dv">1</span>))</code></pre></div>
+<div class="sourceCode" id="cb221"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb221-1"><a href="5-3-metrics.html#cb221-1"></a>e &lt;-<span class="st"> </span>forecast<span class="op">::</span><span class="kw">tsCV</span>(traindat, fun, <span class="dt">h=</span><span class="dv">1</span>, <span class="dt">order=</span><span class="kw">c</span>(<span class="dv">0</span>,<span class="dv">1</span>,<span class="dv">1</span>))</span></code></pre></div>
 <p>We then can compute performance metrics from these errors.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">tscv1 &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="dt">ME=</span><span class="kw">mean</span>(e, <span class="dt">na.rm=</span><span class="ot">TRUE</span>), <span class="dt">RMSE=</span><span class="kw">sqrt</span>(<span class="kw">mean</span>(e<span class="op">^</span><span class="dv">2</span>, <span class="dt">na.rm=</span><span class="ot">TRUE</span>)), <span class="dt">MAE=</span><span class="kw">mean</span>(<span class="kw">abs</span>(e), <span class="dt">na.rm=</span><span class="ot">TRUE</span>))
-tscv1</code></pre></div>
+<div class="sourceCode" id="cb222"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb222-1"><a href="5-3-metrics.html#cb222-1"></a>tscv1 &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="dt">ME=</span><span class="kw">mean</span>(e, <span class="dt">na.rm=</span><span class="ot">TRUE</span>), <span class="dt">RMSE=</span><span class="kw">sqrt</span>(<span class="kw">mean</span>(e<span class="op">^</span><span class="dv">2</span>, <span class="dt">na.rm=</span><span class="ot">TRUE</span>)), <span class="dt">MAE=</span><span class="kw">mean</span>(<span class="kw">abs</span>(e), <span class="dt">na.rm=</span><span class="ot">TRUE</span>))</span>
+<span id="cb222-2"><a href="5-3-metrics.html#cb222-2"></a>tscv1</span></code></pre></div>
 <pre><code>##        ME      RMSE       MAE 
 ## 0.1128788 0.2261706 0.1880392</code></pre>
 <div id="cross-validation-farther-in-future" class="section level4 unnumbered">
 <h4>Cross-validation farther in future</h4>
 <p>Compare accuracy of forecasts 1 year out versus 4 years out. If <code>h</code> is greater than 1, then the errors are returned as a matrix with each <code>h</code> in a column. Column 4 is the forecast, 4 years out.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">e &lt;-<span class="st"> </span>forecast<span class="op">::</span><span class="kw">tsCV</span>(traindat, fun, <span class="dt">h=</span><span class="dv">4</span>, <span class="dt">order=</span><span class="kw">c</span>(<span class="dv">0</span>,<span class="dv">1</span>,<span class="dv">1</span>))[,<span class="dv">4</span>]
-<span class="co">#RMSE</span>
-tscv4 &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="dt">ME=</span><span class="kw">mean</span>(e, <span class="dt">na.rm=</span><span class="ot">TRUE</span>), <span class="dt">RMSE=</span><span class="kw">sqrt</span>(<span class="kw">mean</span>(e<span class="op">^</span><span class="dv">2</span>, <span class="dt">na.rm=</span><span class="ot">TRUE</span>)), <span class="dt">MAE=</span><span class="kw">mean</span>(<span class="kw">abs</span>(e), <span class="dt">na.rm=</span><span class="ot">TRUE</span>))
-<span class="kw">rbind</span>(tscv1, tscv4)</code></pre></div>
+<div class="sourceCode" id="cb224"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb224-1"><a href="5-3-metrics.html#cb224-1"></a>e &lt;-<span class="st"> </span>forecast<span class="op">::</span><span class="kw">tsCV</span>(traindat, fun, <span class="dt">h=</span><span class="dv">4</span>, <span class="dt">order=</span><span class="kw">c</span>(<span class="dv">0</span>,<span class="dv">1</span>,<span class="dv">1</span>))[,<span class="dv">4</span>]</span>
+<span id="cb224-2"><a href="5-3-metrics.html#cb224-2"></a><span class="co">#RMSE</span></span>
+<span id="cb224-3"><a href="5-3-metrics.html#cb224-3"></a>tscv4 &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="dt">ME=</span><span class="kw">mean</span>(e, <span class="dt">na.rm=</span><span class="ot">TRUE</span>), <span class="dt">RMSE=</span><span class="kw">sqrt</span>(<span class="kw">mean</span>(e<span class="op">^</span><span class="dv">2</span>, <span class="dt">na.rm=</span><span class="ot">TRUE</span>)), <span class="dt">MAE=</span><span class="kw">mean</span>(<span class="kw">abs</span>(e), <span class="dt">na.rm=</span><span class="ot">TRUE</span>))</span>
+<span id="cb224-4"><a href="5-3-metrics.html#cb224-4"></a><span class="kw">rbind</span>(tscv1, tscv4)</span></code></pre></div>
 <pre><code>##              ME      RMSE       MAE
 ## tscv1 0.1128788 0.2261706 0.1880392
 ## tscv4 0.2839064 0.3812815 0.3359689</code></pre>
@@ -481,21 +512,21 @@ tscv4 &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="dt">M
 <div id="cross-validation-with-a-fixed-window" class="section level4 unnumbered">
 <h4>Cross-validation with a fixed window</h4>
 <p>Compare accuracy of forecasts with a fixed 10-year window and 1-year out forecasts.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">e &lt;-<span class="st"> </span>forecast<span class="op">::</span><span class="kw">tsCV</span>(traindat, fun, <span class="dt">h=</span><span class="dv">1</span>, <span class="dt">order=</span><span class="kw">c</span>(<span class="dv">0</span>,<span class="dv">1</span>,<span class="dv">1</span>), <span class="dt">window=</span><span class="dv">10</span>)
-<span class="co">#RMSE</span>
-tscvf1 &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="dt">ME=</span><span class="kw">mean</span>(e, <span class="dt">na.rm=</span><span class="ot">TRUE</span>), <span class="dt">RMSE=</span><span class="kw">sqrt</span>(<span class="kw">mean</span>(e<span class="op">^</span><span class="dv">2</span>, <span class="dt">na.rm=</span><span class="ot">TRUE</span>)), <span class="dt">MAE=</span><span class="kw">mean</span>(<span class="kw">abs</span>(e), <span class="dt">na.rm=</span><span class="ot">TRUE</span>))
-tscvf1</code></pre></div>
+<div class="sourceCode" id="cb226"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb226-1"><a href="5-3-metrics.html#cb226-1"></a>e &lt;-<span class="st"> </span>forecast<span class="op">::</span><span class="kw">tsCV</span>(traindat, fun, <span class="dt">h=</span><span class="dv">1</span>, <span class="dt">order=</span><span class="kw">c</span>(<span class="dv">0</span>,<span class="dv">1</span>,<span class="dv">1</span>), <span class="dt">window=</span><span class="dv">10</span>)</span>
+<span id="cb226-2"><a href="5-3-metrics.html#cb226-2"></a><span class="co">#RMSE</span></span>
+<span id="cb226-3"><a href="5-3-metrics.html#cb226-3"></a>tscvf1 &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="dt">ME=</span><span class="kw">mean</span>(e, <span class="dt">na.rm=</span><span class="ot">TRUE</span>), <span class="dt">RMSE=</span><span class="kw">sqrt</span>(<span class="kw">mean</span>(e<span class="op">^</span><span class="dv">2</span>, <span class="dt">na.rm=</span><span class="ot">TRUE</span>)), <span class="dt">MAE=</span><span class="kw">mean</span>(<span class="kw">abs</span>(e), <span class="dt">na.rm=</span><span class="ot">TRUE</span>))</span>
+<span id="cb226-4"><a href="5-3-metrics.html#cb226-4"></a>tscvf1</span></code></pre></div>
 <pre><code>##        ME      RMSE       MAE 
 ## 0.1387670 0.2286572 0.1942840</code></pre>
 </div>
 <div id="all-the-forecasts-tests-together" class="section level4 unnumbered">
 <h4>All the forecasts tests together</h4>
 <p>Here are all 4 types of forecasts tests together. There is not right approach. Time series cross-validation has the advantage that you test many more forecasts and use all your data.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">comp.tab &lt;-<span class="st"> </span><span class="kw">rbind</span>(<span class="dt">train.test=</span>test1[<span class="kw">c</span>(<span class="st">&quot;ME&quot;</span>,<span class="st">&quot;RMSE&quot;</span>,<span class="st">&quot;MAE&quot;</span>)],
-      <span class="dt">tsCV.variable1=</span>tscv1,
-      <span class="dt">tsCV.variable4=</span>tscv4,
-      <span class="dt">tsCV.fixed1=</span>tscvf1)
-knitr<span class="op">::</span><span class="kw">kable</span>(comp.tab, <span class="dt">format=</span><span class="st">&quot;html&quot;</span>)</code></pre></div>
+<div class="sourceCode" id="cb228"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb228-1"><a href="5-3-metrics.html#cb228-1"></a>comp.tab &lt;-<span class="st"> </span><span class="kw">rbind</span>(<span class="dt">train.test=</span>test1[<span class="kw">c</span>(<span class="st">&quot;ME&quot;</span>,<span class="st">&quot;RMSE&quot;</span>,<span class="st">&quot;MAE&quot;</span>)],</span>
+<span id="cb228-2"><a href="5-3-metrics.html#cb228-2"></a>      <span class="dt">tsCV.variable1=</span>tscv1,</span>
+<span id="cb228-3"><a href="5-3-metrics.html#cb228-3"></a>      <span class="dt">tsCV.variable4=</span>tscv4,</span>
+<span id="cb228-4"><a href="5-3-metrics.html#cb228-4"></a>      <span class="dt">tsCV.fixed1=</span>tscvf1)</span>
+<span id="cb228-5"><a href="5-3-metrics.html#cb228-5"></a>knitr<span class="op">::</span><span class="kw">kable</span>(comp.tab, <span class="dt">format=</span><span class="st">&quot;html&quot;</span>)</span></code></pre></div>
 <table>
 <thead>
 <tr>
@@ -586,11 +617,13 @@ tsCV.fixed1
   </div>
 <script src="libs/gitbook-2.6.7/js/app.min.js"></script>
 <script src="libs/gitbook-2.6.7/js/lunr.js"></script>
+<script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
 <script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
 <script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
 <script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
 <script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
 <script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script>
 <script>
 gitbook.require(["gitbook"], function(gitbook) {
 gitbook.start({
@@ -598,12 +631,11 @@ gitbook.start({
 "github": false,
 "facebook": true,
 "twitter": true,
-"google": false,
 "linkedin": false,
 "weibo": false,
 "instapaper": false,
 "vk": false,
-"all": ["facebook", "google", "twitter", "linkedin", "weibo", "instapaper"]
+"all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
 },
 "fontsettings": {
 "theme": "white",
@@ -615,6 +647,10 @@ gitbook.start({
 "text": "Edit"
 },
 "history": {
+"link": null,
+"text": null
+},
+"view": {
 "link": null,
 "text": null
 },
@@ -631,10 +667,11 @@ gitbook.start({
   (function () {
     var script = document.createElement("script");
     script.type = "text/javascript";
-    var src = "";
+    var src = "true";
     if (src === "" || src === "true") src = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML";
-    if (location.protocol !== "file:" && /^https?:/.test(src))
-      src = src.replace(/^https?:/, '');
+    if (location.protocol !== "file:")
+      if (/^https?:/.test(src))
+        src = src.replace(/^https?:/, '');
     script.src = src;
     document.getElementsByTagName("head")[0].appendChild(script);
   })();
